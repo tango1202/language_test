@@ -1,0 +1,55 @@
+cmake_minimum_required(VERSION 3.0.0) # 최소요구버전
+project(UnitTester VERSION 0.1.0) # PROJECT_NAME 과 PROJECT_VERSION
+
+#set(CMAKE_C_STANDARD 99)
+#set(CMAKE_CXX_STANDARD 11)
+
+set(This UnitTester) # 빌드 타겟
+set(SrcLib SrcLib) # cpp/src 라이브러리
+
+# CTest 지원
+enable_testing() 
+
+# cpp/src 라이브러리 빌드
+set(SrcFiles 
+    cpp/src/Plus.cpp
+    cpp/src/Minus.cpp
+)
+add_library(${SrcLib} STATIC ${SrcFiles})
+
+# googletest 빌드
+add_subdirectory(googletest-1.13.0)
+
+# test 폴더 하위 테스트케이스 빌드
+set(TestFiles
+   test/TestPlus.cpp
+   test/TestMinus.cpp
+   test/Test_Fixture.cpp
+   test/Test_Principle_Liskov_Substitution.cpp 
+   test/Test_Principle_Interface_Segregation.cpp
+   test/Test_Principle_Dependency_Inversion.cpp
+   test/Test_Principle_Encapsulation.cpp
+   test/Test_Principle_Explicit_Dependencies.cpp
+   test/Test_Principle_TellDontAsk.cpp
+   test/Test_Principle_Hollywood.cpp
+   test/Test_Principle_Single_Responsibility.cpp
+   test/Test_Principle_Open_Closed.cpp
+   test/Test_ClassicCpp_Type.cpp
+   test/Test_ClassicCpp_Scope.cpp
+   test/Test_ClassicCpp_Initialization.cpp
+   test/Test_ClassicCpp_Const.cpp
+   test/Test_ClassicCpp_Pointer_Reference.cpp
+)
+
+# 실행파일 구성
+add_executable(${This} ${TestFiles}) 
+
+# googletest와 SrcLib 포함
+target_link_libraries(${This} 
+    gtest_main 
+    ${SrcLib}
+)
+
+# CTest가 googletest의 테스트케이스 정보를 찾을 수 있게 함
+include(GoogleTest)
+gtest_discover_tests(${This}) 

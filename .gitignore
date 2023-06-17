@@ -1,0 +1,4 @@
+.vscode/
+build/
+googletest-1.13.0/
+*.exe
