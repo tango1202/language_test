@@ -97,7 +97,7 @@ namespace {
 }
 
 TEST(TestPrinciple, OpenClosed) {
-    Rectangle rect(0, 0, 10, 20); 
+    Rectangle rect(0, 0, 10, 20);  
     Circle circle(0, 0, 10);
 
     ScaleVisitor scaleVisitor; // 방문하여 개체들을 Scale 합니다.
