@@ -140,5 +140,5 @@ TEST(TestClassicCpp, PointerReference) {
         Derived d;
         Base& r8 = d; // 부모 클래스 참조자로 자식 클래스 제어
         r8.f(); // Derived 출력
-    }
+    } 
 }
