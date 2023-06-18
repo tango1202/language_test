@@ -33,6 +33,11 @@ namespace {
 
 TEST(TestClassicCpp, PointerReference) {
     {
+        int* p = nullptr;
+        // int& r = *p; // (X) *p로 nullptr 의 개체를 구하는 건 오동작 할 수 있습니다. 
+        // r = 10; // (X) 예외가 발생합니다. 이렇게 사용하시면 안됩니다.
+    }
+    {
         int x = 20;
         int* p = &x; // p는 x의 주소를 가집니다.
         *p = 30; // p가 가리키는 곳이 30이 됩니다.
@@ -114,7 +119,7 @@ TEST(TestClassicCpp, PointerReference) {
         int& r1 = obj; // r1 수정 가능
         r1 = 20;
 
-        const int& r2 = obj; // r2 수정 불가
+        const int& r2 = obj; // const 형이어서 r2 수정 불가
         // r2 = 20; // (X)
 
         int& r3 = obj;

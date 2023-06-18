@@ -46,7 +46,7 @@ TEST(TestClassicCpp, StructClass) {
             // 구체 정의를 사용하려면, 헤더 파일과 cpp 파일을 분리하고, cpp 부분에서 구체 정의를 사용하세요.
             YourClass* your;
             
-            void f(); // 선언
+            void f(); // 선언만 하고, cpp에서 yourClass를 사용할 겁니다.
         };
         class YourClass {
             MyClass my; // MyClass는 상위에 정의되어 사용할 수 있습니다.
@@ -66,7 +66,7 @@ TEST(TestClassicCpp, StructClass) {
         };
         Derived d;
         d.val = 10;
-        EXPECT_TRUE(d.val == 10);
+        EXPECT_TRUE(d.val == 10); // 이제 public이라 접근 가능합니다.
     }
     {
         class T {
@@ -110,9 +110,9 @@ TEST(TestClassicCpp, StructClass) {
         EXPECT_TRUE(sizeof(u) == sizeof(S2));
 
         u.s1.x = 10; // s1을 바꿨지만, c와 s2도 변경됩니다.
+        EXPECT_TRUE(u.GetX() == 10);
         EXPECT_TRUE(u.c.GetVal1() == 10);
-        EXPECT_TRUE(u.s2.x == 10);
-        EXPECT_TRUE(u.GetX() == 10);   
+        EXPECT_TRUE(u.s2.x == 10); 
 
         u.c.SetVal1(20); // c를 바꿨지만, s1과 s2도 변경됩니다.
         EXPECT_TRUE(u.c.GetVal1() == 20);

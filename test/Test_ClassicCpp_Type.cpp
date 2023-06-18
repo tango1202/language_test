@@ -52,5 +52,5 @@ TEST(TestClassicCpp, SizeOf) {
     MyClass& myClassRef = myClass;
 
     EXPECT_TRUE(sizeof(myClass) == 8);
-    EXPECT_TRUE(sizeof(myClass) == sizeof(myClassRef));
+    EXPECT_TRUE(sizeof(myClass) == sizeof(myClassRef)); // sizeof() 시 참조하는 개체와 참조자는 크기가 같습니다.
 }

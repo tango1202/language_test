@@ -11,7 +11,7 @@ namespace {
     };
     class App {
     private:
-        bool m_Dirty;
+        bool m_Dirty; // 내용이 수정되면 true입니다.
         std::wstring m_PathName;
         ISaveListener* m_SaveListener;
     public:
