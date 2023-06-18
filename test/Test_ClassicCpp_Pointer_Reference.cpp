@@ -83,35 +83,43 @@ TEST(TestClassicCpp, PointerReference) {
     }
     // 배열 포인터
     {
-        int a[2];
-        int *p5 = a; // p5 == &a[0]
+        int a[2] = {1, 2};
+
+        // 배열 자체를 가리키는 포인터
+        int(* p5)[2] = &a; // int[2]를 배열 가리키는 포인터 
+        EXPECT_TRUE((*p5)[0] == 1 && (*p5)[1] == 2); // (*p5) 로 배열 개체 접근
+    
+        // 배열의 첫번째 요소를 가리키는 포인터
+        int* p6 = a; // 혹은 int* p6 = &a[0]; 
+        EXPECT_TRUE(*(p6 + 0) == 1 && *(p6 + 1) == 2);
+        EXPECT_TRUE(p6[0] == 1 && p6[1] == 2);
     }
     // 함수 포인터
     {
-        void (*p6)(int) = &TestFunc;
-        void (*p7)(int) = TestFunc; // &TestFunc 랑 동일
+        void (*p7)(int) = &TestFunc;
+        void (*p8)(int) = TestFunc; // &TestFunc 랑 동일
 
-        p6(10); // (*p6)(10); 도 가능. TestFunc 함수 호출 
-        p7(10); // (*p7)(10); 도 가능. TestFunc 함수 호출        
+        p7(10); // (*p6)(10); 도 가능. TestFunc 함수 호출 
+        p8(10); // (*p7)(10); 도 가능. TestFunc 함수 호출        
     }
     // 다형성 포인터
     {
         Derived d;
-        Base* p8 = &d; // 부모 클래스 포인터로 자식 클래스 제어
-        p8->f(); // Derived 출력
+        Base* p9 = &d; // 부모 클래스 포인터로 자식 클래스 제어
+        p9->f(); // Derived 출력
     }
     // 멤버 변수 포인터 - 라이브러리 개발시 사용할 수도 있음
     {
-        int Base::* p9 = &Base::m_Value; // Base 클래스 멤버 변수 m을 가리킴
+        int Base::* p10 = &Base::m_Value; // Base 클래스 멤버 변수 m을 가리킴
         Base b;
-        b.*p9 = 10;
+        b.*p10 = 10;
         EXPECT_TRUE(b.m_Value == 10);
     }
     // 멤버 함수 포인터 - 라이브러리 개발시 사용할 수도 있음
     {
-        void (Base::* p10)() = &Base::f; // Base 클래스 멤버 함수 f를 가리킴
+        void (Base::* p11)() = &Base::f; // Base 클래스 멤버 함수 f를 가리킴
         Base b;
-        (b.*p10)(); // 멤버 함수 포인터는 괄호 필요. Base 출력
+        (b.*p11)(); // 멤버 함수 포인터는 괄호 필요. Base 출력
     }        
     // 개체 참조자
     {

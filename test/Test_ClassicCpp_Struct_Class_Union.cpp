@@ -16,10 +16,9 @@ namespace {
         };
         typedef NestedClass Inner; // 형식 재정의
     }; 
-
 }
 
-TEST(TestClassicCpp, StructClass) {
+TEST(TestClassicCpp, StructClassUnion) {
 
     {
         struct S {

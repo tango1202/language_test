@@ -39,7 +39,8 @@ set(TestFiles
    test/Test_ClassicCpp_Initialization.cpp
    test/Test_ClassicCpp_Const.cpp
    test/Test_ClassicCpp_Pointer_Reference.cpp
-   test/Test_ClassicCpp_Struct_Class.cpp
+   test/Test_ClassicCpp_Struct_Class_Union.cpp
+   test/Test_ClassicCpp_Array.cpp
 )
 
 # 실행파일 구성
