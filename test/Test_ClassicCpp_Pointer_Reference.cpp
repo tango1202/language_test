@@ -61,7 +61,6 @@ TEST(TestClassicCpp, PointerReference) {
      // 개체 포인터
     {
         int obj = 10;
-
         int* p1 = &obj; // *p1 수정 가능. p1 수정 가능
         *p1 = 20;
 

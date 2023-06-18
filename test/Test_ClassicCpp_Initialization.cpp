@@ -36,13 +36,22 @@ TEST(TestClassicCpp, Initialization) {
     {    
         T obj = T(2); // int를 전달받는 생성자 호출.(T(2) 로 개체 생성후 obj의 복사 생성자 호출하지는 않음)
     }
-    // 배열 초기화
-    // int arr1[] = {}; // 갯수가 지정되지 않음. 오류
-    int arr2[] = {0, 1, 2}; // 갯수만큼 초기화
-    int arr3[3] = {}; // 3개 모두 0으로 초기화
-    int arr4[3] = {0, 1, }; // 갯수가 적거나 같아야 함. 모자라면 0
+    {
+        // 배열 초기화
+        // int arr1[] = {}; // 갯수가 지정되지 않음. 오류
+        int arr2[] = {0, 1, 2}; // 갯수만큼 초기화
+        int arr3[3] = {}; // 3개 모두 0으로 초기화
+        int arr4[3] = {0, 1, }; // 갯수가 적거나 같아야 함. 모자라면 0
 
-    EXPECT_TRUE(arr2[2] == 2);
-    EXPECT_TRUE(arr3[0] == 0 && arr3[1] == 0 && arr3[2] == 0);
-    EXPECT_TRUE(arr4[2] == 0);
+        EXPECT_TRUE(arr2[2] == 2);
+        EXPECT_TRUE(arr3[0] == 0 && arr3[1] == 0 && arr3[2] == 0);
+        EXPECT_TRUE(arr4[2] == 0);
+    }
+    {
+        // 값 초기화
+        struct T { int x; int y; }; 
+        T t = {10, 20}; // 중괄호로 초기화
+
+        EXPECT_TRUE(t.x == 10 && t.y == 20);
+    }
 }
