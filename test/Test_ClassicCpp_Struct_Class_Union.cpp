@@ -83,8 +83,8 @@ TEST(TestClassicCpp, StructClassUnion) {
             int val1;
             int val2;
         public:
-            // C(int v1, int v2) {} // (X) 공용체 멤버는 생성자를 가질 수 없음
-            // ~C() {} // (X) 공용체 멤버는 소멸자를 가질 수 없음
+            // C(int v1, int v2) {} // (X) 컴파일 오류. 공용체 멤버는 생성자를 가질 수 없음
+            // ~C() {} // (X) 컴파일 오류. 공용체 멤버는 소멸자를 가질 수 없음
             int GetVal1() const { return val1; } // 멤버 함수가 있어도 되나, virtual 이면 안됨
             void SetVal1(int val) { val1 = val; }
         };

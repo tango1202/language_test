@@ -24,7 +24,7 @@ TEST(TestClassicCpp, Initialization) {
     T other;
     {
         // 복사 초기화
-        // T obj = 1; // explicit 가 아니라면 int를 전달받는 생성자
+        // T obj = 1; // (X) 컴파일 오류. explicit 가 아니라면 int를 전달받는 생성자
         T obj5 = other; // 타입이 같다면 복사 생성자
         T obj6(other); // 복사 생성자
     }
@@ -38,7 +38,7 @@ TEST(TestClassicCpp, Initialization) {
     }
     {
         // 배열 초기화
-        // int arr1[] = {}; // 갯수가 지정되지 않음. 오류
+        // int arr1[] = {}; // (X) 컴파일 오류. 갯수가 지정되지 않음. 오류
         int arr2[] = {0, 1, 2}; // 갯수만큼 초기화
         int arr3[3] = {}; // 3개 모두 0으로 초기화
         int arr4[3] = {0, 1, }; // 갯수가 적거나 같아야 함. 모자라면 0

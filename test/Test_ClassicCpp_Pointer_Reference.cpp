@@ -34,8 +34,16 @@ namespace {
 TEST(TestClassicCpp, PointerReference) {
     {
         int* p = nullptr;
-        // int& r = *p; // (X) *p로 nullptr 의 개체를 구하는 건 오동작 할 수 있습니다. 
-        // r = 10; // (X) 예외가 발생합니다. 이렇게 사용하시면 안됩니다.
+        // int& r = *p; // (X) 오동작. *p로 nullptr 의 개체를 구하는 건 오동작 할 수 있습니다. 
+        // r = 10; // (X) 오동작. 예외가 발생합니다. 이렇게 사용하시면 안됩니다.
+        
+        int x = 10;
+        int y = 20;
+
+        int& r = x;
+        r = y; // (O) r 이 y를 참조하는 것이 아니라, y의 값을 대입 받습니다.
+        y = 30;
+        EXPECT_TRUE(x == 20 && r == 20 && y == 30); // r은 x를 참조하기 때문에 x와 같은 값입니다.
     }
     {
         int x = 20;
@@ -60,7 +68,7 @@ TEST(TestClassicCpp, PointerReference) {
         EXPECT_TRUE(x == 20);
     }
     {
-        // int result = GetX(); // 예외 발생. 이미 소멸된 지역변수를 참조함
+        // int result = GetX(); // (X) 예외 발생. 이미 소멸된 지역변수를 참조함
         // EXPECT_TRUE(result == 10);
     }
      // 개체 포인터
@@ -70,16 +78,16 @@ TEST(TestClassicCpp, PointerReference) {
         *p1 = 20;
 
         const int* p2 = &obj; // *p2 수정 불가. p2 수정 가능
-        // *p2 = 20; // (X)
+        // *p2 = 20; // (X) 컴파일 오류
         p2 = p1;
 
         int* const p3 = &obj; // *p3 수정 가능. p3 수정 불가
         *p3 = 20;
-        // p3 = p1; // (X)
+        // p3 = p1; // (X) 컴파일 오류
 
         const int* const p4 = &obj; // // *p4 수정 불가. p4 수정 불가
-        // *p4 = 20; // (X)
-        // p4 = p1; // (X)
+        // *p4 = 20; // (X) 컴파일 오류
+        // p4 = p1; // (X) 컴파일 오류
     }
     // 배열 포인터
     {
@@ -128,11 +136,11 @@ TEST(TestClassicCpp, PointerReference) {
         r1 = 20;
 
         const int& r2 = obj; // const 형이어서 r2 수정 불가
-        // r2 = 20; // (X)
+        // r2 = 20; // (X) 컴파일 오류
 
         int& r3 = obj;
-        // r3 = other; // (X) 참조자는 값 변경 불가
-        // int& r4 = 20; // (X) T& 상수 참조 불가
+        // r3 = other; // (X) 컴파일 오류. 참조자는 값 변경 불가
+        // int& r4 = 20; // (X) 컴파일 오류. T& 상수 참조 불가
         const int& r5 = 20; // (O) const T&로 상수 참조 가능
     }
     // 배열 참조자
