@@ -8,6 +8,7 @@ namespace {
         virtual void f1(int) = 0; // 순가상 함수
         virtual void f2(int) {} // 가상 함수    
         void f3(int) {} // 함수
+        static void f4(int) {} // 정적 함수
     
         enum {left, top, right, bottom}; // 열거형 상수
     

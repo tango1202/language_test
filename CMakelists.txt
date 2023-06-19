@@ -37,11 +37,12 @@ set(TestFiles
    test/Test_ClassicCpp_Type.cpp
    test/Test_ClassicCpp_Scope.cpp
    test/Test_ClassicCpp_Initialization.cpp
-   test/Test_ClassicCpp_Const.cpp
+   test/Test_ClassicCpp_Const_Mutable.cpp
    test/Test_ClassicCpp_Pointer_Reference.cpp
    test/Test_ClassicCpp_Struct_Class_Union.cpp
    test/Test_ClassicCpp_Array.cpp
    test/Test_ClassicCpp_Enum.cpp
+   test/Test_ClassicCpp_Static.cpp
 )
 
 # 실행파일 구성

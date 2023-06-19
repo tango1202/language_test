@@ -48,3 +48,18 @@ TEST(TestClassicCpp, Const) {
     // EXPECT_TRUE(arr3[0] == 0 && arr3[1] == 0 && arr3[2] == 0);
     // EXPECT_TRUE(arr4[2] == 0);
 }
+TEST(TestClassicCpp, Mutable) {
+    class T {
+    public:
+        mutable std::wstring m_Lazy; // const 함수에서 수정할 수 있습니다.
+        
+        // 개념적으로 내부 String을 리턴하므로 const 함수
+        // 하지만 내부에서 m_Lazy를 세팅하기 때문에 mutable을 사용합니다.
+        const std::wstring& GetString() const {
+            m_Lazy = L"Lazy String";
+            return m_Lazy;
+        }
+    };
+    T t;
+    EXPECT_TRUE(t.GetString() == L"Lazy String");
+}
