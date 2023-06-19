@@ -28,6 +28,10 @@ namespace {
 
 TEST(TestClassicCpp, Enum) {
     {
+        Week::Val val = Week::Sunday; // 클래스명 사용
+        EXPECT_TRUE(val == Week::Sunday);
+    }
+    {
         EXPECT_TRUE(
             Week::Sunday == 0 && 
             Week::Monday == 1 && 
@@ -39,12 +43,14 @@ TEST(TestClassicCpp, Enum) {
         );
     }
     {
-        int val = Week::Saturday; // 열거형 상수의 int 형변환 가능
-        EXPECT_TRUE(val == 13); 
+        Week::Val val1 = Week::Saturday; // (O) 형변환 하지 마세요.
+        int val2 = Week::Saturday; // (X) 권장하지 않습니다. 열거형 상수의 int 형변환 가능
+        EXPECT_TRUE(val1 ==  Week::Saturday);
+        EXPECT_TRUE(val2 == 13);
+
+        val1 = static_cast<Week::Val>(val2 - 1); // int는 static_cast로 열겨형으로 형변환 합니다.
+        EXPECT_TRUE(val1 ==  Week::Friday);
     }
-    {
-        Week::Val val = Week::Sunday; // 클래스명 사용
-        EXPECT_TRUE(val == Week::Sunday);
-    }
+
 
 }
