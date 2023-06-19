@@ -48,7 +48,7 @@ TEST(TestClassicCpp, Enum) {
         EXPECT_TRUE(val1 ==  Week::Saturday);
         EXPECT_TRUE(val2 == 13);
 
-        val1 = static_cast<Week::Val>(val2 - 1); // int는 static_cast로 열겨형으로 형변환 합니다.
+        val1 = static_cast<Week::Val>(val2 - 1); // (X) 권장하지 않습니다. int는 static_cast로 열겨형으로 형변환 합니다.
         EXPECT_TRUE(val1 ==  Week::Friday);
     }
 
