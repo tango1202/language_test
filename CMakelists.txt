@@ -43,6 +43,7 @@ set(TestFiles
    test/Test_ClassicCpp_Array.cpp
    test/Test_ClassicCpp_Enum.cpp
    test/Test_ClassicCpp_Static.cpp
+   test/Test_ClassicCpp_Inline.cpp
 )
 
 # 실행파일 구성
