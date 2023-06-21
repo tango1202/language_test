@@ -77,7 +77,7 @@ TEST(TestClassicCpp, Conversions) {
         EXPECT_TRUE(a == 20); 
     }
     {
-        // 실수를 정수로 명시적 변환
+        // (X) 비권장. 실수를 정수로 명시적 변환. 그냥 내림, 반올림, 올림 함수를 쓰세요.
         int a = static_cast<int>(3.14F);
         EXPECT_TRUE(a == 3); 
 
