@@ -71,9 +71,25 @@ namespace MyModule {
     class Date {};
     void MyFunc() {}
 } 
+
+namespace MyModule1 {
+    void Test() {}
+}
+namespace MyModule2 {
+    void Test() {} 
+}
+using namespace MyModule1; // 전역 공간에 MyModule1의 항목들을 모두 가져옵니다.
+using namespace MyModule2; // 전역 공간에 MyModule2의 항목들을 모두 가져옵니다.
+
+namespace MyModule3 {
+    void f() {
+        //Test(); // (X) 컴파일 오류. MyModule1::Test() 인지, MyModule2::Test() 인지 모릅니다.
+    } 
+}
 namespace { 
     void f(MyModule::Date d) {
-        // (X) 컴파일 오류. 인자중 MyModule 네임스페이스가 있어서 탐색 가능하다고 하는데 GCC 8.1에서 컴파일 오류가 발생합니다.
+        // (X) 컴파일 오류. 인자중 MyModule 네임스페이스가 있어서 탐색 가능하다고 하는데
+        // GCC 8.1에서 컴파일 오류가 발생합니다.
         // MyFunc(); 
     }
 }
