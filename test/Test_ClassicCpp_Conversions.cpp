@@ -70,7 +70,7 @@ TEST(TestClassicCpp, Conversions) {
         int a = 10;
         const int& r = a;
 
-        // r이 상수성 계약으로 참조하는데 멋데로 바꿨습니다.
+        // r이 상수성 계약으로 참조하는데 멋대로 바꿨습니다.
         // (X) 비권장. 코딩 계약상 금지입니다.
         const_cast<int&>(r) = 20; // 포인터와 참조자만 가능
 
