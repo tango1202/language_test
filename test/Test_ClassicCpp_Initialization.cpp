@@ -48,6 +48,19 @@ TEST(TestClassicCpp, Initialization) {
         EXPECT_TRUE(arr4[2] == 0);
     }
     {
+        char str1[] = "abc"; // {'a', `b`, 'c', '\0'};
+        EXPECT_TRUE(str1[0] == 'a');
+        EXPECT_TRUE(str1[1] == 'b');
+        EXPECT_TRUE(str1[2] == 'c');
+        EXPECT_TRUE(str1[3] == '\0');
+
+        wchar_t str2[] = L"abc"; // {L'a', L`b`, L'c', L'\0'};
+        EXPECT_TRUE(str2[0] == L'a');
+        EXPECT_TRUE(str2[1] == L'b');
+        EXPECT_TRUE(str2[2] == L'c');
+        EXPECT_TRUE(str2[3] == L'\0');
+    }
+    {
         // 값 초기화
         struct T { int x; int y; }; 
         T t = {10, 20}; // 중괄호로 초기화
