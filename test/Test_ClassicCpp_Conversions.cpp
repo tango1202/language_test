@@ -198,4 +198,35 @@ TEST(TestClassicCpp, Conversions) {
         }
         EXPECT_TRUE(status == true);
     }
+    {
+        class T {
+        public:
+            int m_Val;
+        public:
+            // int 형 1개만 전달받는 생성자 입니다.
+            //(△) 비권장. 암시적 형변환을 허용합니다.
+            T(int val) : m_Val(val) {}
+            int GetVal() const { return m_Val; }
+        };
+
+        T obj1(1); // (O) int 를 전달하여 T(int) {}로 생성합니다.
+        T obj2 = 1; // (△) 비권장. int 를 전달하여 T(int) {}로 생성합니다. 
+        obj1 = 2; // (△) 비권장. T(int) {}로 임시 생성된 개체를 obj1 에 대입합니다.
+        EXPECT_TRUE(obj1.GetVal() == 2);
+    }
+    {
+        class T {
+        public:
+            int m_Val;
+        public:
+            // int 형 1개만 전달받는 생성자 입니다.
+            //(O) 암시적 형변환을 금지합니다.
+            explicit T(int val) : m_Val(val) {}
+            int GetVal() const { return m_Val; }
+        };
+
+        T obj1(1); // (O) int 를 전달하여 T(int) {}로 생성합니다.
+        //T obj2 = 1; // (X) 컴파일 오류. 
+        //obj1 = 2; // (X) 컴파일 오류. 
+    }
 }
