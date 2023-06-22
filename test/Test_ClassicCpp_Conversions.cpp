@@ -58,7 +58,7 @@ TEST(TestClassicCpp, Conversions) {
     }
     {
         // 괄호를 이용한 형변환
-        // (X) 비권장. 잘못 사용하여 데이터 절삭으로 고생할 수 있으니, 
+        // (△) 비권장. 잘못 사용하여 데이터 절삭으로 고생할 수 있으니, 
         // 나중에 검색이라도 쉽게 되도록 `static_cast`를 사용하세요.
         float f = 10.F;
         int a = (int)f;
@@ -71,24 +71,24 @@ TEST(TestClassicCpp, Conversions) {
         const int& r = a;
 
         // r이 상수성 계약으로 참조하는데 멋대로 바꿨습니다.
-        // (X) 비권장. 코딩 계약상 금지입니다.
+        // (△) 비권장. 코딩 계약상 금지입니다.
         const_cast<int&>(r) = 20; // 포인터와 참조자만 가능
 
         EXPECT_TRUE(a == 20); 
     }
     {
         // 실수를 정수로 명시적 변환. 
-        // (X) 비권장. 그냥 내림, 반올림, 올림 함수를 쓰세요.
+        // (△) 비권장. 그냥 내림, 반올림, 올림 함수를 쓰세요.
         int a = static_cast<int>(3.14F);
         EXPECT_TRUE(a == 3); 
 
         // 정수를 열거형 상수로 변환. 
-        // (X) 비권장. 변환 함수를 따로 만드세요.
+        // (△) 비권장. 변환 함수를 따로 만드세요.
         enum Color {Black = 0};
         Color b = static_cast<Color>(0);
 
         // void* 를 다른 포인터로 변환. 
-        // (X) 비권장. 괜히 void*로 바꿔놓지 말고 원래 포인터 타입으로 쓰세요.
+        // (△) 비권장. 괜히 void*로 바꿔놓지 말고 원래 포인터 타입으로 쓰세요.
         int c = 10;
         void* v = &c;
         int* p = static_cast<int*>(v);
@@ -103,7 +103,7 @@ TEST(TestClassicCpp, Conversions) {
         Derived d;
         Base& b = d;
         // static_cast는 상속관계가 있어야 함(런타임 검사를 수행하지 않음). 
-        // (X) 비권장. 자식 개체에 의존성을 두지 마세요.
+        // (△) 비권장. 자식 개체에 의존성을 두지 마세요.
         Derived& downCasting = static_cast<Derived&>(b);
         
         // (X) 컴파일 오류. b는 Other와 아무런 상속관계가 없음
@@ -123,7 +123,7 @@ TEST(TestClassicCpp, Conversions) {
         Base* b = &d;
         // dynamic_cast는 상속관계가 있어야 함(런타임 검사를 수행함)
         // dynamic_cast를 사용하려면 가상함수가 있어야 합니다.(가상함수가 없으면 컴파일 오류)
-        // (X) 비권장. 자식 개체에 의존성을 두지 마세요. 부모 개체의 인터페이스가 충분한지 확인하세요.
+        // (△) 비권장. 자식 개체에 의존성을 두지 마세요. 부모 개체의 인터페이스가 충분한지 확인하세요.
         Derived* downCasting = dynamic_cast<Derived*>(b);      
         EXPECT_TRUE(downCasting != NULL);
 
@@ -135,7 +135,7 @@ TEST(TestClassicCpp, Conversions) {
         class Base {};
         class Other {};
         Base b;
-        // (X) 비권장. 상속관계가 없더라도 변환해 줍니다.
+        // (△) 비권장. 상속관계가 없더라도 변환해 줍니다.
         Other& other = reinterpret_cast<Other&>(b);
         
         // (X) 컴파일 오류. 다행히 개체의 주소를 그냥 char에 담아버리지는 않습니다.
@@ -188,7 +188,7 @@ TEST(TestClassicCpp, Conversions) {
 
         T t;
         bool status = false;
-        // (X) 비권장. 컴파일 오류가 나지 않는 비극
+        // (△) 비권장. 컴파일 오류가 나지 않는 비극
         // t가 bool로 변환되어 true가 되고, 
         // 암시적으로 true가 int로 변환되어 1이 되고 조건식이 참이 됨
         // 의도한 코드인지를 모르겠으나,
