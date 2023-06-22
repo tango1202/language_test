@@ -141,9 +141,11 @@ TEST(TestClassicCpp, Conversions) {
         // (X) 컴파일 오류. 상수성은 지켜 줍니다.
         // int* p2 = reinterpret_cast<int*>(p1);
 
-        // (△) 비권장. 포인터와 정수간 변환을 합니다.
-        p2 = reinterpret_cast<int*>(i);
-        i = reinterpret_cast<int>(p2);
+        // (△) 비권장. 정수를 포인터로 변환합니다.
+        int* p3 = reinterpret_cast<int*>(i);
+
+        // (X) 컴파일 오류. 포인터를 정수로 변환은 안됩니다.
+        // int j = reinterpret_cast<int>(p3);
     }
     {
         class T {

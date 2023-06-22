@@ -1,9 +1,5 @@
 #include "gtest/gtest.h" 
 
-namespace {
-   
-}
-
 TEST(TestClassicCpp, Array) {
     {
         // 자료형 재정의

@@ -52,13 +52,13 @@ TEST(TestClassicCpp, Initialization) {
         EXPECT_TRUE(str1[0] == 'a');
         EXPECT_TRUE(str1[1] == 'b');
         EXPECT_TRUE(str1[2] == 'c');
-        EXPECT_TRUE(str1[3] == '\0');
+        EXPECT_TRUE(str1[3] == '\0'); // 널문자가 추가됨
 
         wchar_t str2[] = L"abc"; // {L'a', L`b`, L'c', L'\0'};
         EXPECT_TRUE(str2[0] == L'a');
         EXPECT_TRUE(str2[1] == L'b');
         EXPECT_TRUE(str2[2] == L'c');
-        EXPECT_TRUE(str2[3] == L'\0');
+        EXPECT_TRUE(str2[3] == L'\0'); // 널문자가 추가됨
     }
     {
         // 값 초기화
