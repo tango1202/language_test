@@ -1,9 +1,5 @@
 #include "gtest/gtest.h" 
 
-
-namespace { 
-
-}
 TEST(TestClassicCpp, Conversions) {
     {
         // char, signed char, unsigned char, short 는 가능하면 int로 변환, 안되면 unsigned int
@@ -71,7 +67,7 @@ TEST(TestClassicCpp, Conversions) {
         const int& r = a;
 
         // r이 상수성 계약으로 참조하는데 멋대로 바꿨습니다.
-        // (△) 비권장. 코딩 계약상 금지입니다.
+        // (△) 비권장. 상수성 계약상 금지입니다.
         const_cast<int&>(r) = 20; // 포인터와 참조자만 가능
 
         EXPECT_TRUE(a == 20); 
@@ -92,7 +88,6 @@ TEST(TestClassicCpp, Conversions) {
         int c = 10;
         void* v = &c;
         int* p = static_cast<int*>(v);
-
     }
     {
         // 부모 개체를 자식 개체로 변환(Down Casting)
