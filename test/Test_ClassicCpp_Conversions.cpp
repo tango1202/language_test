@@ -140,6 +140,10 @@ TEST(TestClassicCpp, Conversions) {
         const int* p1 = &i;
         // (X) 컴파일 오류. 상수성은 지켜 줍니다.
         // int* p2 = reinterpret_cast<int*>(p1);
+
+        // (△) 비권장. 포인터와 정수간 변환을 합니다.
+        p2 = reinterpret_cast<int*>(i);
+        i = reinterpret_cast<int>(p2);
     }
     {
         class T {
