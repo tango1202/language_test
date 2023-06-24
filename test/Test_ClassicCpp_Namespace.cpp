@@ -22,7 +22,7 @@ namespace C {
     int g(); // 선언
 }
 
-int C::g() { // A::명시해서 정의할 수 있음
+int C::g() { // C::명시해서 정의할 수 있음
     return f(); // 같은 namespace이면 C::f() 와 같이 명시하지 않아도 됨
 }
 
