@@ -40,7 +40,7 @@ TEST(TestClassicCpp, StructClassUnion) {
         public:
             C(int x, int y) {} // 값 생성자 정의
         };
-        C c(10, 20); // 값 생성자를 재정의 해서 사용       
+        C c(10, 20); // 값 생성자를 사용       
     }
     // ----
     // 전방 선언
