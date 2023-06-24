@@ -1,20 +1,24 @@
 #include "gtest/gtest.h" 
 
+// ----
 // 이름 충돌 테스트
+// ----
 namespace A {
     int f() {return 10;}
 }
 namespace B {
     int f() {return 20;}
 }
-
+// ----
 // Parser 에 필요한 항목들을 논리적으로 묶음
+// ----
 namespace Parser {
    void Tokenizer() {}
    void Load() {}
 }
-
+// ----
 // 네임스페이스 항목의 함수 선언과 정의 분리
+// ----
 namespace C {
     int f() {return 30;} // 정의
     int g(); // 선언
@@ -23,7 +27,9 @@ namespace C {
 int C::g() { // C::명시해서 정의할 수 있음
     return f(); // 같은 네임스페이스이면 C::f() 와 같이 명시하지 않아도 됨
 }
+// ----
 // 서로 다른 네임스페이스 항목 사용
+// ----
 namespace D {
     void d() {}
 
@@ -41,16 +47,6 @@ namespace E {
         D::Func(); // Func은 네임스페이스명 지정
     }
 }
-
-namespace MyTestLibrary {
-    void f() {}
-}
-namespace MTL = MyTestLibrary; // 별칭 정의
-
-//namespace MTL { 
-// void g() {} // (X) 컴파일 오류. 별칭으로 정의한 네임스페이스에 새로운 정의는 추가할 수 없다.
-//}
-
 namespace F {
     using namespace D; // D의 것은 다 가져옴
 
@@ -59,19 +55,9 @@ namespace F {
         Func(); // D의 것은 그냥 사용
     }
 }
-
-
+// ----
 // 전역 공간 `using`지시문 금지
-namespace MyModule { // 여러개의 네임스페이스를 합성할 수 있음
-   using namespace A;
-   using namespace B;
-}
-
-namespace MyModule {
-    class Date {};
-    void MyFunc() {}
-} 
-
+// ----
 namespace MyModule1 {
     void Test() {}
 }
@@ -86,7 +72,29 @@ namespace MyModule3 {
         //Test(); // (X) 컴파일 오류. MyModule1::Test() 인지, MyModule2::Test() 인지 모릅니다.
     } 
 }
+// ----
+// 별칭과 합성
+// ----
+namespace MyTestLibrary {
+    void f() {}
+}
+namespace MTL = MyTestLibrary; // 별칭 정의
 
+//namespace MTL { 
+// void g() {} // (X) 컴파일 오류. 별칭으로 정의한 네임스페이스에 새로운 정의는 추가할 수 없다.
+//}
+
+namespace MyModule { // 여러개의 네임스페이스를 합성할 수 있음
+   using namespace A;
+   using namespace B;
+}
+// ----
+// 이름 탐색 규칙
+// ----
+namespace MyModule {
+    class Date {};
+    void MyFunc() {}
+} 
 namespace { 
     void f(MyModule::Date d) {
         // (X) 컴파일 오류. 인자중 MyModule 네임스페이스가 있어서 탐색 가능하다고 하는데
