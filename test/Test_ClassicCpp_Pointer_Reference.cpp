@@ -101,7 +101,7 @@ TEST(TestClassicCpp, PointerReference) {
         *p3 = 20;
         // p3 = p1; // (X) 컴파일 오류
 
-        const int* const p4 = &obj; // // *p4 수정 불가. p4 수정 불가
+        const int* const p4 = &obj; // *p4 수정 불가. p4 수정 불가
         // *p4 = 20; // (X) 컴파일 오류
         // p4 = p1; // (X) 컴파일 오류
     }

@@ -58,7 +58,7 @@ TEST(TestClassicCpp, Enum) {
     // 열거형 상수 형변환
     // ----    
     {
-        Week::Val val1 = Week::Saturday; // (O) 형변환 하지 마세요.
+        Week::Val val1 = Week::Saturday; // (△) 비권장. 형변환 하지 마세요.
         int val2 = Week::Saturday; // (△) 비권장. 열거형 상수의 int 형변환 가능
         EXPECT_TRUE(val1 ==  Week::Saturday);
         EXPECT_TRUE(val2 == 13);
@@ -66,6 +66,4 @@ TEST(TestClassicCpp, Enum) {
         val1 = static_cast<Week::Val>(val2 - 1); // (△) 비권장. int는 static_cast로 열겨형으로 형변환 합니다.
         EXPECT_TRUE(val1 ==  Week::Friday);
     }
-
-
 }

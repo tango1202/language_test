@@ -37,7 +37,7 @@ TEST(TestClassicCpp, Initialization) {
     // ----   
     T other;
     {
-        // T obj = 1; // (X) 컴파일 오류. explicit 가 아니라면 int를 전달받는 생성자
+        // T obj = 1; // (X) 컴파일 오류. explicit 가 아니라면 int를 전달받는 값 생성자
         T obj5 = other; // 타입이 같다면 복사 생성자
         T obj6(other); // 복사 생성자
     }

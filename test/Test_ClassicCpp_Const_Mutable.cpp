@@ -6,14 +6,24 @@ TEST(TestClassicCpp, Const) {
     // ----
     {
         // const int x; // (X) 컴파일 오류. 초기값 없음
-        const int x = 10; // (O) x의 값은 변경될 수 없음
+        const int x = 10; // (O) x의 값은 이제 변경될 수 없음
     }
     {
-        int x = 10; 
-        const int* p1; // (O) *p를 수정할 수 없음. *p = 30; 불가
-        int const* p2; // (O) const int* 와 동일(자주 사용하지 않는 형식)
-        int* const p3 = &x; // (O) p의 값을 수정할 수 없음. *p = 30;은 가능
-        const int* const p4 = &x; // (O) p, *p를 수정할 수 없음.
+        int obj = 10;
+        int* p1 = &obj; // *p1 수정 가능. p1 수정 가능
+        *p1 = 20;
+
+        const int* p2 = &obj; // *p2 수정 불가. p2 수정 가능
+        // *p2 = 20; // (X) 컴파일 오류
+        p2 = p1;
+
+        int* const p3 = &obj; // *p3 수정 가능. p3 수정 불가
+        *p3 = 20;
+        // p3 = p1; // (X) 컴파일 오류
+
+        const int* const p4 = &obj; // *p4 수정 불가. p4 수정 불가
+        // *p4 = 20; // (X) 컴파일 오류
+        // p4 = p1; // (X) 컴파일 오류
     }
     // ----
     // 리턴값의 상수성
@@ -27,7 +37,6 @@ TEST(TestClassicCpp, Const) {
 
             // (△) 비권장. 멤버 변수의 값을 쓸데없이 const로 리턴하는 const 함수. 
             // int k = t.GetX2(); 로 실행하므로 const int 리턴은 무의미함. 
-            // operator ++() 에서는 유효할 수도 있다. 연산자 오버로딩 참고
             const int GetX2() const { return m_X; }            
  
             // (O) 멤버 변수의 값을 수정하지 않는 const 함수
@@ -59,6 +68,7 @@ TEST(TestClassicCpp, Mutable) {
     // ----
     class T {
     public:
+        // 메모리를 절약하기 위해 GetString() 으로 실제 데이터를 요청할때 문자열을 채울겁니다.
         mutable std::wstring m_Lazy; // const 함수에서 수정할 수 있습니다.
         
         // 개념적으로 내부 String을 리턴하므로 const 함수
