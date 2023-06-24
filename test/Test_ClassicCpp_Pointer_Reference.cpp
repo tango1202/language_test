@@ -127,8 +127,8 @@ TEST(TestClassicCpp, PointerReference) {
         void (*p7)(int) = &TestFunc;
         void (*p8)(int) = TestFunc; // &TestFunc 랑 동일
 
-        p7(10); // (*p6)(10); 도 가능. TestFunc 함수 호출 
-        p8(10); // (*p7)(10); 도 가능. TestFunc 함수 호출        
+        p7(10); // (*p7)(10); 도 가능. TestFunc 함수 호출 
+        p8(10); // (*p8)(10); 도 가능. TestFunc 함수 호출        
     }
     // ----
     // 포인터 사용법 - 다형성 포인터
