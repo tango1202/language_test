@@ -1,7 +1,9 @@
 #include "gtest/gtest.h" 
 
 TEST(TestClassicCpp, Const) {
-    // 상수 변수 정의
+    // ----
+    // 상수 변수
+    // ----
     {
         // const int x; // (X) 컴파일 오류. 초기값 없음
         const int x = 10; // (O) x의 값은 변경될 수 없음
@@ -13,6 +15,9 @@ TEST(TestClassicCpp, Const) {
         int* const p3 = &x; // (O) p의 값을 수정할 수 없음. *p = 30;은 가능
         const int* const p4 = &x; // (O) p, *p를 수정할 수 없음.
     }
+    // ----
+    // 리턴값의 상수성
+    // ----
     {
         class T {
             int m_X;
@@ -36,6 +41,9 @@ TEST(TestClassicCpp, Const) {
 
         };
     }
+    // ----
+    // 인자(함수 선언에 작성된 Parameter)의 상수성
+    // ----
     {
         void f(int x); // (O) 인수를 x에 복사해서 사용함.
         void f(const int x); // (△) 비권장. 인수를 x에 복사해서 쓰되 f에서 수정하지 않음. 호출하는 쪽에선 무의미
@@ -43,12 +51,12 @@ TEST(TestClassicCpp, Const) {
         void f(int* x); void f(int& x); // (O) 인수를 f에서 수정함.
         void f(const int* x); void f(const int& x); // (O) 인수를 f에서 수정하지 않음.  
     }
-
-    // EXPECT_TRUE(arr2[2] == 2);
-    // EXPECT_TRUE(arr3[0] == 0 && arr3[1] == 0 && arr3[2] == 0);
-    // EXPECT_TRUE(arr4[2] == 0);
 }
 TEST(TestClassicCpp, Mutable) {
+
+    // ----
+    // 변경 가능 지정자(mutable)
+    // ----
     class T {
     public:
         mutable std::wstring m_Lazy; // const 함수에서 수정할 수 있습니다.

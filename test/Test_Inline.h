@@ -1,6 +1,9 @@
 #ifndef Test_Inline_h 
 #define Test_Inline_h
 
+// ----
+// 여러 cpp에서 사용하는 인라인 함수 정의
+// ----
 namespace TestInline { // 이름 충돌을 피하기 위해 네임스페이스에서 정의
 
     // 헤더파일에 함수를 정의하면, 이를 include한 여러 cpp에서 중복 정의되므로 

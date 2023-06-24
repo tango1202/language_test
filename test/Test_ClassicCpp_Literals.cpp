@@ -1,6 +1,9 @@
 #include "gtest/gtest.h" 
 
-TEST(TestClassicCpp, Literal) {
+TEST(TestClassicCpp, Literals) {
+    // ----
+    // bool 과 숫자
+    // ----
     {
         // bool 형
         bool a = true; // 참
@@ -23,10 +26,16 @@ TEST(TestClassicCpp, Literal) {
         long double n = 3.14L; // l 또는 L
         long double o = 3.14e10L;
     }
+    // ----
+    // 문자 상수
+    // ----
     {
         char a = 'A';
         wchar_t b = L'A'; // 와이드 문자 2byte 또는 4byte
     }
+    // ----
+    // 문자열 상수
+    // ----
     {
         const char* str1 = "abc"; // 문자열 상수
         const wchar_t* str2 = L"abc"; // 와이드 문자열 상수
@@ -44,13 +53,16 @@ TEST(TestClassicCpp, Literal) {
         EXPECT_TRUE(str4[3] == L'\0'); // 널문자가 추가됨
 
         char* temp = const_cast<char*>(str1);
-        // (X) 예외발생. 문자열 상수를 가리키는 포인터를 이용하여 값을 변경할 수 없습니다.
+        // (X) 예외 발생. 문자열 상수를 가리키는 포인터를 이용하여 값을 변경할 수 없습니다.
         // *temp = 'd';
 
         // (O) 배열은 문자열 상수의 복제본이어서 항목을 수정할 수 있습니다.
         str3[0] = 'd';
         EXPECT_TRUE(str3[0] == 'd');
     }
+    // ----
+    // 이스케이프 문자
+    // ----
     {
         // 0x25B3(△)
         std::cout<<"\u25B3"<<std::endl;

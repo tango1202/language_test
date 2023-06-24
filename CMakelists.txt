@@ -46,7 +46,8 @@ set(TestFiles
    test/Test_ClassicCpp_Inline.cpp
    test/Test_ClassicCpp_Namespace.cpp
    test/Test_ClassicCpp_Conversions.cpp
-   test/Test_ClassicCpp_Literal.cpp
+   test/Test_ClassicCpp_Literals.cpp
+   test/Test_ClassicCpp_Operators.cpp
 )
 
 # 실행파일 구성

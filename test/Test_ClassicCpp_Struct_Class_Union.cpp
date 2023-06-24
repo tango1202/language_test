@@ -1,6 +1,9 @@
 #include "gtest/gtest.h" 
 
 namespace {
+    // ----
+    // 멤버 사양
+    // ----
     class T {
         int d1; // 비정적 데이터 멤버
         static const int d2 = 1; // 정적 데이터 멤버. 단 nested 클래스에서는 사용 못함
@@ -20,7 +23,9 @@ namespace {
 }
 
 TEST(TestClassicCpp, StructClassUnion) {
-
+    // ----
+    // 개요
+    // ----
     {
         struct S {
             int x; // 기본적으로 public
@@ -28,7 +33,6 @@ TEST(TestClassicCpp, StructClassUnion) {
         };
 
         S s = {10, 20}; // 중괄호 초기화 지원
-
 
         class C {
             int x; // 기본적으로 private
@@ -38,6 +42,9 @@ TEST(TestClassicCpp, StructClassUnion) {
         };
         C c(10, 20); // 값 생성자를 재정의 해서 사용       
     }
+    // ----
+    // 전방 선언
+    // ----
     {
         class YourClass; // 전방 선언
         class MyClass {
@@ -54,6 +61,9 @@ TEST(TestClassicCpp, StructClassUnion) {
             void f() {}
         }; 
     }
+    // ----
+    // using 선언
+    // ----   
     {
         class Base {
         protected:
@@ -68,6 +78,9 @@ TEST(TestClassicCpp, StructClassUnion) {
         d.val = 10;
         EXPECT_TRUE(d.val == 10); // 이제 public이라 접근 가능합니다.
     }
+    // ----
+    // 함수 내부의 로컬 클래스
+    // ----   
     {
         class T {
         public:
@@ -77,6 +90,9 @@ TEST(TestClassicCpp, StructClassUnion) {
         t.x = 10; 
         EXPECT_TRUE(t.x == 10);
     }
+    // ----
+    // 공용체
+    // ----  
     {
         class C {
         private:
@@ -119,7 +135,4 @@ TEST(TestClassicCpp, StructClassUnion) {
         EXPECT_TRUE(u.s1.x == 20);
         EXPECT_TRUE(u.s2.x == 20);
     }
-
-
-
 }

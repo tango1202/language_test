@@ -1,6 +1,9 @@
 #include "gtest/gtest.h" 
 
 TEST(TestClassicCpp, Conversions) {
+    // ----
+    // 암시적 형변환
+    // ----
     {
         // char, signed char, unsigned char, short 는 가능하면 int로 변환, 안되면 unsigned int
         int a = (char)'a';
@@ -52,6 +55,9 @@ TEST(TestClassicCpp, Conversions) {
         Derived d;
         Base& b = d;
     }
+    // ----
+    // 명시적 형변환
+    // ----
     {
         // 괄호를 이용한 형변환
         // (△) 비권장. 잘못 사용하여 데이터 절삭으로 고생할 수 있으니, 
@@ -62,6 +68,7 @@ TEST(TestClassicCpp, Conversions) {
 
         EXPECT_TRUE(a == 10 && b == 10);
     }
+    // const_cast
     {
         int a = 10;
         const int& r = a;
@@ -72,6 +79,7 @@ TEST(TestClassicCpp, Conversions) {
 
         EXPECT_TRUE(a == 20); 
     }
+    // static_cast
     {
         // 실수를 정수로 명시적 변환. 
         // (△) 비권장. 그냥 내림, 반올림, 올림 함수를 쓰세요.
@@ -104,6 +112,7 @@ TEST(TestClassicCpp, Conversions) {
         // (X) 컴파일 오류. b는 Other와 아무런 상속관계가 없음
         // Other& other = static_cast<Other&>(b);
     }
+    // dynamic_cast
     {
         class Base {
         public:
@@ -126,6 +135,7 @@ TEST(TestClassicCpp, Conversions) {
         Other* other = dynamic_cast<Other*>(b);
         EXPECT_TRUE(other == NULL);
     }
+    // reinterpret_cast
     {
         class Base {};
         class Other {};
@@ -147,6 +157,9 @@ TEST(TestClassicCpp, Conversions) {
         // (X) 컴파일 오류. 포인터를 정수로 변환은 안됩니다.
         // int j = reinterpret_cast<int>(p3);
     }
+    // ----
+    // 형변환 정의
+    // ----
     {
         class T {
         public:
@@ -181,6 +194,9 @@ TEST(TestClassicCpp, Conversions) {
         EXPECT_TRUE(i == 10);
         EXPECT_TRUE(c == 1);
     }
+    // ----
+    // 안전하지 않은 bool 형변환 정의
+    // ----
     {
         class T {
         public:
@@ -199,6 +215,9 @@ TEST(TestClassicCpp, Conversions) {
         }
         EXPECT_TRUE(status == true);
     }
+    // ----
+    // 명시적 변환 생성 지정자(explicit)
+    // ----
     {
         class T {
         public:

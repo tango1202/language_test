@@ -1,8 +1,14 @@
 #include "gtest/gtest.h" 
 
 namespace {
+    // ----
+    // 정적 전역 변수
+    // ----
     static int s_Val = 10; // 현재 파일에서 사용 가능  
 
+    // ----
+    // 정적 멤버 변수
+    // ----
     // 선언에서
     class T {
     public:
@@ -15,28 +21,44 @@ namespace {
     int T::m_Val1 = 10; // 초기값 세팅
 }
 TEST(TestClassicCpp, Static) {
+    // ----
+    // 정적 전역 변수
+    // ----
     {
         EXPECT_TRUE(s_Val == 10);   
     }
+    // ----
+    // 정적 멤버 변수
+    // ----
     {
         EXPECT_TRUE(T::m_Val1 == 10);
         EXPECT_TRUE(T::m_Val2 == 20);
     }
+    // ----
+    // 정적 멤버 함수
+    // ----
     {
         class T {
         public:
             static int f() { return 10; } // 정적 함수
+        };
 
+        EXPECT_TRUE(T::f() == 10); // (O) T의 정적 함수 호출
+        T a;
+        EXPECT_TRUE(a.f() == 10); // (△) 비권장. T의 정적 함수 호출. 되기는 합니다만 일반 멤버 함수 호출과 구분이 안되어 가독성이 떨어집니다.
+    }
+    // ----
+    // 함수내 정적 지역 변수
+    // ----
+    {
+        class T {
+        public:
             static int GetVal() {
                 static int val = 30; // 최초 1회 초기화됩니다.
                 ++val; // 호출시마다 증가합니다.
                 return val;
             }
         };
-
-        EXPECT_TRUE(T::f() == 10); // (O) T의 정적 함수 호출
-        T a;
-        EXPECT_TRUE(a.f() == 10); // (△) 비권장. T의 정적 함수 호출. 되기는 합니다만 일반 멤버 함수 호출과 구분이 안되어 가독성이 떨어집니다.
 
         EXPECT_TRUE(T::GetVal() == 31); // 1회 호출
         EXPECT_TRUE(T::GetVal() == 32); // 2회 호출
