@@ -2,7 +2,7 @@
 
 namespace {
     // 포인터를 인자로 사용하면, 널검사가 필요합니다.
-    void f(int*p) {
+    void f(int* p) {
         if (p == NULL) {
             // p가 NULL이면 뭘 해야 할까요?
         }
@@ -35,7 +35,7 @@ TEST(TestClassicCpp, PointerReference) {
     {
         int* p = NULL;
         // int& r = *p; // (X) 오동작. *p로 NULL 의 개체를 구하는 건 오동작 할 수 있습니다. 
-        // r = 10; // (X) 오동작. 예외가 발생합니다. 이렇게 사용하시면 안됩니다.
+        // r = 10; // (X) 예외 발생. p가 NULL이라 10을 NULL(0)주소 위치에 넣다가 예외 발생 합니다. 이렇게 사용하시면 안됩니다.
         
         int x = 10;
         int y = 20;
