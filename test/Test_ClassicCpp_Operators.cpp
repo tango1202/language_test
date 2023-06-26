@@ -99,7 +99,7 @@ TEST(TestClassicCpp, Operators) {
 
         T t;
         EXPECT_TRUE(t(10, 20) == 30); // operator() 호출
-        EXPECT_TRUE(t.operator ()(10, 20) == 30); // operator()를 명시적으로 호출        
+        EXPECT_TRUE(t.operator ()(10, 20) == 30); // t(10, 20) 호출과 동일. operator()를 명시적으로 호출        
     }
     // ----
     // 생성/소멸 연산자
