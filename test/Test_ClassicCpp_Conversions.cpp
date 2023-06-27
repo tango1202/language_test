@@ -224,7 +224,7 @@ TEST(TestClassicCpp, Conversions) {
             int m_Val;
         public:
             // int 형 1개만 전달받는 생성자 입니다.
-            //(△) 비권장. 암시적 형변환을 허용합니다.
+            // (△) 비권장. 암시적 형변환을 허용합니다.
             T(int val) : m_Val(val) {}
             int GetVal() const {return m_Val;}
         };
