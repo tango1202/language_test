@@ -78,7 +78,7 @@ TEST(TestClassicCpp, Initialization) {
     // 구조체 초기화
     // ----     
     {
-        struct T { int x; int y; }; 
+        struct T {int x; int y;}; 
         T t = {10, 20}; // 중괄호로 초기화
 
         EXPECT_TRUE(t.x == 10 && t.y == 20);

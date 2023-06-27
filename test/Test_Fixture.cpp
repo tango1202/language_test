@@ -8,9 +8,9 @@ namespace {
     private:
         std::vector<int> data;
     public:
-        void Add(int a) { data.push_back(a); }
-        int GetAt(int i) const { return data[i];  }
-        int GetCount() const { return data.size(); }
+        void Add(int a) {data.push_back(a);}
+        int GetAt(int i) const {return data[i];}
+        int GetCount() const {return data.size();}
     };
 
     // MyVector를 사용하는 Fixture 입니다.

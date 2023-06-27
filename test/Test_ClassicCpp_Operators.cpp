@@ -10,7 +10,7 @@ namespace {
         int m_Val;
     public:
         explicit T(int val) : m_Val(val) {}
-        int GetVal() const { return m_Val; }
+        int GetVal() const {return m_Val;}
 
         T& operator +=(const T& other) {
             this->m_Val += other.m_Val;
@@ -94,7 +94,7 @@ TEST(TestClassicCpp, Operators) {
     {
         class T {
         public:
-            int operator ()(int a, int b) const { return a + b; }
+            int operator ()(int a, int b) const {return a + b;}
         };
 
         T t;
@@ -202,7 +202,7 @@ TEST(TestClassicCpp, Operators) {
             int m_Val;
         public:
             explicit T(int val) : m_Val(val) {}
-            int GetVal() const { return m_Val; }
+            int GetVal() const {return m_Val;}
 
             // 같은 T타입인 경우
             T& operator +=(const T& other) {
@@ -279,7 +279,7 @@ TEST(TestClassicCpp, Operators) {
             int m_Val;
         public:
             explicit T(int val) : m_Val(val) {}
-            int GetVal() const { return m_Val; }
+            int GetVal() const {return m_Val;}
 
             // 전위형
             T& operator ++() {
@@ -312,7 +312,7 @@ TEST(TestClassicCpp, Operators) {
             int m_Val;
         public:
             explicit T(int val) : m_Val(val) {}
-            int GetVal() const { return m_Val; }
+            int GetVal() const {return m_Val;}
 
             bool operator <(const T& other) const {
                 return this->m_Val < other.m_Val;

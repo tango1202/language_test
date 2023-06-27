@@ -33,20 +33,20 @@ TEST(TestClassicCpp, Const) {
             int m_X;
         public:
             // (O) 멤버 변수의 값을 리턴하는 const 함수
-            int GetX1() const { return m_X; } 
+            int GetX1() const {return m_X;} 
 
             // (△) 비권장. 멤버 변수의 값을 쓸데없이 const로 리턴하는 const 함수. 
             // int k = t.GetX2(); 로 실행하므로 const int 리턴은 무의미함. 
-            const int GetX2() const { return m_X; }            
+            const int GetX2() const {return m_X;}            
  
             // (O) 멤버 변수의 값을 수정하지 않는 const 함수
-            const int* GetX3() const { return &m_X; }    
+            const int* GetX3() const {return &m_X;}    
 
             // (△) 비권장. 멤버 변수의 값을 몰래 수정할 수 있는 const 함수
-            int* GetX4() const { return const_cast<int*>(&m_X); }
+            int* GetX4() const {return const_cast<int*>(&m_X);}
 
             // (O) 맴버 변수의 값을 수정하는 none-const 함수      
-            int* GetX5() { return &m_X; } 	 
+            int* GetX5() {return &m_X;} 	 
 
         };
     }

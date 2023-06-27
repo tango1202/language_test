@@ -27,11 +27,11 @@ namespace {
         ~ResizeableImpl() {} // has-a 관계로 사용되기 때문에, 단독으로 생성되지 않도록 protected입니다.
     public:    
         // Get/Set 함수
-        virtual int GetWidth() const override { return m_Width; }
-        virtual int GetHeight() const override { return m_Height; }
+        virtual int GetWidth() const override {return m_Width;}
+        virtual int GetHeight() const override {return m_Height;}
 
-        virtual void SetWidth(int val) override { m_Width = val; }
-        virtual void SetHeight(int val) override { m_Height = val; }
+        virtual void SetWidth(int val) override {m_Width = val;}
+        virtual void SetHeight(int val) override {m_Height = val;}
     };
         
     // 부모 클래스 입니다. m_Width와 m_Height를 뺐습니다.
@@ -46,11 +46,11 @@ namespace {
         virtual ~Shape() {} // 다형적 소멸
     public:
         // Get/Set 함수
-        int GetLeft() const { return m_Left; }
-        int GetTop() const { return m_Top; }
+        int GetLeft() const {return m_Left;}
+        int GetTop() const {return m_Top;}
 
-        void SetLeft(int val) { m_Left = val; }
-        void SetTop(int val) { m_Top = val; }
+        void SetLeft(int val) {m_Left = val;}
+        void SetTop(int val) {m_Top = val;}
 
         // m_Left, m_Top을 이용하여 자식 클래스들이 알아서 그려야 함
         virtual void Draw() const = 0; 
@@ -99,9 +99,9 @@ namespace {
         virtual ~Square() override {}
 
         // Get/Set 함수
-        int GetLength() const { return m_Length; }
+        int GetLength() const {return m_Length;}
 
-        void SeLength(int val) { m_Length = val; }
+        void SeLength(int val) {m_Length = val;}
 
         virtual void Draw() const override {
             // m_Left, m_Top, m_Length를 이용하여 정사각형을 그립니다.

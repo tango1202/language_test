@@ -12,9 +12,9 @@ namespace {
     // 선언에서
     class T {
     public:
-        static int m_Val1; //  선언 외부에서 초기값이 세팅되어야 함
+        static int m_Val1; // 선언과 정의 분리 필요. 외부에서 초기값이 세팅되어야 함
         // static int m_Val1 = 10; // (X) 컴파일 오류. const만 클래스 선언에서 초기화 지원
-        static const int m_Val2 = 20; // const 인 경우 클래스 선언에서 초기화 지원    };
+        static const int m_Val2 = 20; // const 인 경우 클래스 선언에서 초기화 지원
     };
     // 선언 외부에서
     int T::m_Val1 = 10; // 초기값 세팅
@@ -39,7 +39,7 @@ TEST(TestClassicCpp, Static) {
     {
         class T {
         public:
-            static int f() { return 10; } // 정적 함수
+            static int f() {return 10;} // 정적 함수
         };
 
         EXPECT_TRUE(T::f() == 10); // (O) T의 정적 함수 호출

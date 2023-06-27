@@ -20,9 +20,9 @@ namespace {
             m_PathName(pathName),
             m_SaveListener(saveListener) {}
     public:
-        bool IsDirty() const { return m_Dirty; }
-        void SetDirty(bool val) { m_Dirty = val; }
-        const std::wstring& GetPathName() const { return m_PathName; }
+        bool IsDirty() const {return m_Dirty;}
+        void SetDirty(bool val) {m_Dirty = val;}
+        const std::wstring& GetPathName() const {return m_PathName;}
 
         void Save() {
 
@@ -33,7 +33,7 @@ namespace {
             }
 
             // 저장할 필요가 있는지 확인
-            if (!IsDirty()) { return; }
+            if (!IsDirty()) {return;}
 
             // 문서 내용 저장
             if (m_SaveListener != nullptr) {

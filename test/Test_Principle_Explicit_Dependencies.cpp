@@ -4,8 +4,8 @@ namespace {
     class Degree {};
     class View {
     public:
-        float GetCenterX() const { return 0.F; }
-        float GetCenterY() const { return 0.F; }
+        float GetCenterX() const {return 0.F;}
+        float GetCenterY() const {return 0.F;}
     };
 
     class Rectangle {
