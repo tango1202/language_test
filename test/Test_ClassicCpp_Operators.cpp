@@ -42,14 +42,20 @@ TEST(TestClassicCpp, Operators) {
     // 증감 연산자
     // ----
     {
-        int n = 10;
-        int a = ++n;
-        EXPECT_TRUE(a == 11); // 증가시킨 후 값
-        EXPECT_TRUE(n == 11);
-
-        int b = n++;
-        EXPECT_TRUE(b == 11); // (△) 비권장. 의도한 것인지 조금 헷갈립니다. 증가시킨 전 값. 
-        EXPECT_TRUE(n == 12);
+        // 전위형 - 증감시킨 값을 리턴
+        {
+            int n = 10;
+            int val = ++n;
+            EXPECT_TRUE(val == 11); // 증가시킨 후 값
+            EXPECT_TRUE(n == 11);
+        }
+        // 후위형 - 증감시키기 전의 값을 리턴
+        {
+            int n = 10;
+            int val = n++;
+            EXPECT_TRUE(val == 10); // (△) 비권장. 의도한 것인지 조금 헷갈립니다. 증가시킨 전 값. 
+            EXPECT_TRUE(n == 11);
+        }
     }
 
     // ----
@@ -140,8 +146,8 @@ TEST(TestClassicCpp, Operators) {
     // ----
     {
         // 가상 함수 없음
-        class Base {};
-        class Derived : public Base {};
+        class Base1 {};
+        class Derived1 : public Base1 {};
 
         // 가상 함수 있음
         class Base2 { 
@@ -150,23 +156,30 @@ TEST(TestClassicCpp, Operators) {
         };
         class Derived2 : public Base2 {};
 
-        Base b;
-        const std::type_info& b1 = typeid(Base);
-        const std::type_info& b2 = typeid(b);
-        EXPECT_TRUE(b1 == b2);
-        EXPECT_TRUE(b1.hash_code() == b2.hash_code());
+        // 타입인 Base1과 개체 b1은 hash_code가 동일합니다.
+        {
+            Base1 b1;
+            const std::type_info& ti1 = typeid(Base1);
+            const std::type_info& ti2 = typeid(b1);
+            EXPECT_TRUE(ti1 == ti2);
+            EXPECT_TRUE(ti1.hash_code() == ti2.hash_code());
+        }
+        // 가상함수가 없는 경우의 참조 - 참조 대상이 Derived1이지만, 정의한 Base1 타입으로 변경됨
+        {
+            Derived1 d1;
+            Base1& b1Ref = d1; // 가상 함수 없음
 
-        Derived d;
-        Base& bRef = d; // 가상 함수 없음
+            // b1Ref = d1으로 bRef는 Base1 타입이 됨
+            EXPECT_TRUE(typeid(b1Ref).hash_code() == typeid(Base1).hash_code());
+        }
+        // 가상함수가 있는 경우의 참조 - 참조 대상인 Derived2 타입으로 유지됨
+        {
+            Derived2 d2;
+            Base2& b2Ref = d2; // 가상 함수 있음
 
-        // bRef = d로 bRef는 Base 타입이 됨
-        EXPECT_TRUE(typeid(bRef).hash_code() == typeid(b).hash_code());
-
-        Derived2 d2;
-        Base2& b2Ref = d2; // 가상 함수 있음
-
-         // b2Ref = d2로 b2Ref는 다형적 동작하며, 여전히 d2 타입임.(원래 개체의 타입 정보)
-        EXPECT_TRUE(typeid(b2Ref).hash_code() == typeid(d2).hash_code());   
+            // b2Ref = d2로 b2Ref는 다형적 동작하며, 여전히 Derived2 타입임.(원래 개체의 타입 정보)
+            EXPECT_TRUE(typeid(b2Ref).hash_code() == typeid(Derived2).hash_code());   
+        }
     }
     // ----
     // 조건 연산자
