@@ -72,16 +72,16 @@ TEST(TestClassicCpp, StructClassUnion) {
     {
         class Base {
         protected:
-            int val;
+            int m_Val;
         };
         
         class Derived : public Base {
         public:
-            using Base::val; // (△) 비권장. Base val을 public으로 변경합니다.
+            using Base::m_Val; // (△) 비권장. Base m_Val을 public으로 변경합니다.
         };
         Derived d;
-        d.val = 10;
-        EXPECT_TRUE(d.val == 10); // 이제 public이라 접근 가능합니다.
+        d.m_Val = 10;
+        EXPECT_TRUE(d.m_Val == 10); // 이제 public이라 접근 가능합니다.
     }
     // ----
     // 함수 내부의 로컬 클래스
@@ -89,11 +89,11 @@ TEST(TestClassicCpp, StructClassUnion) {
     {
         class T {
         public:
-            int x;
+            int m_X;
         };
         T t; // 함수내에서만 사용 가능
-        t.x = 10; 
-        EXPECT_TRUE(t.x == 10);
+        t.m_X = 10; 
+        EXPECT_TRUE(t.m_X == 10);
     }
     // ----
     // 공용체
