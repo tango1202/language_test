@@ -60,6 +60,17 @@ TEST(TestClassicCpp, Const) {
         void f(int* x); void f(int& x); // (O) 인수를 f에서 수정함.
         void f(const int* x); void f(const int& x); // (O) 인수를 f에서 수정하지 않음.  
     }
+    // 상수 함수
+    {
+        class T {
+        private:
+            int m_Val; 
+        public:
+            void f() const { // 상수 멤버 함수입니다.
+                // m_Val = 10; // (X) 컴파일 오류. 상수 멤버 함수에서 멤버 변수를 수정할 수 없습니다.
+            }
+        };
+    }
 }
 TEST(TestClassicCpp, Mutable) {
 
