@@ -44,8 +44,8 @@ TEST(TestClassicCpp, TypeLimit) {
 
 TEST(TestClassicCpp, SizeOf) {
     class MyClass {
-        int i;
-        int j;
+        int m_X;
+        int m_Y;
     };
 
     MyClass myClass;
