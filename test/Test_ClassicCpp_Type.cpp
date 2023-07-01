@@ -5,7 +5,16 @@ namespace {
     #define TRUE 1
     #define FALSE 0
 
+    // ----
+    // 함수 포인터 타입 재정의
+    // ----
+    typedef int (*Func)(int, int); // 함수 포인터 typedef
+
+    int f(int a, int b) {return a + b;} // 함수 정의
+
+    // ----
     // template의 타입 재정의
+    // ----
     template<class T> 
     struct ClassT { 
         typedef T Type;
@@ -35,6 +44,8 @@ TEST(TestClassicCpp, TypeDef) {
     pMyData myData3;
 
     ClassT<int>::ConstType constVal = 20;  
+
+    Func func = f; // 함수 포인터 저장
 }
 
 TEST(TestClassicCpp, TypeLimit) {

@@ -87,20 +87,6 @@ namespace MyModule { // 여러개의 네임스페이스를 합성할 수 있음
    using namespace A;
    using namespace B;
 }
-// ----
-// 이름 탐색 규칙
-// ----
-namespace MyModule {
-    class Date {};
-    void MyFunc() {}
-} 
-namespace { 
-    void f(MyModule::Date d) {
-        // (X) 컴파일 오류. 인자중 MyModule 네임스페이스가 있어서 탐색 가능하다고 하는데
-        // GCC 8.1에서 컴파일 오류가 발생합니다.
-        // MyFunc(); 
-    }
-}
 TEST(TestClassicCpp, Namespace) {
     EXPECT_TRUE(A::f() == 10); // 네임스페이스 A의 f() 호출
     EXPECT_TRUE(B::f() == 20); // 네임스페이스 B의 f() 호출
