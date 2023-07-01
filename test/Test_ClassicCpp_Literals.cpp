@@ -63,6 +63,13 @@ TEST(TestClassicCpp, Literals) {
         str2[0] = 'd';
         EXPECT_TRUE(str2[0] == 'd');
     }
+    {
+        const char* str1 = "Hello World"; 
+        const char* str2 = "Hello " "World"; // (O) 두 문자열 상수 이어 붙이기
+        const char* str3 = "Hello " // (O) 개행된 문자열 상수 붙이기
+                           "World";   
+        EXPECT_TRUE(str1 == str2 && str2 == str3); // (O) 동일한 문자열 상수는 컴파일러가 1개만 생성해 줍니다.   
+    }
     // ----
     // 이스케이프 문자
     // ----

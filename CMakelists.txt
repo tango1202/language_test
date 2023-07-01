@@ -50,6 +50,7 @@ set(TestFiles
    test/Test_ClassicCpp_Literals.cpp
    test/Test_ClassicCpp_Operators.cpp
    test/Test_ClassicCpp_Function.cpp
+   test/Test_ClassicCpp_Preprocessor.cpp
 )
 
 # 실행파일 구성
