@@ -20,6 +20,14 @@ namespace {
         typedef T Type;
         typedef const T ConstType; 
     }; 
+
+    // double 비교
+    bool Equals(double a, double b) {
+        double diff = std::fabs(a - b); // 두수의 차
+
+        // (△) 비권장. 두수의 차가 오차 범위보다 작으면 같은 수
+        return (diff < std::numeric_limits<double>::epsilon()) ? true : false;
+    }
 }
 
 TEST(TestClassicCpp, Type) {
@@ -64,4 +72,12 @@ TEST(TestClassicCpp, SizeOf) {
 
     EXPECT_TRUE(sizeof(myClass) == 8);
     EXPECT_TRUE(sizeof(myClass) == sizeof(myClassRef)); // sizeof() 시 참조하는 개체와 참조자는 크기가 같습니다.
+}
+
+TEST(TestClassicCpp, Float) {
+    double a = 10.0;
+    double b = a;
+    b += 1.0;
+    b -= 1.0;
+    EXPECT_TRUE(Equals(a, b)); 
 }
