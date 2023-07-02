@@ -84,7 +84,7 @@ TEST(TestClassicCpp, Preprocessor) {
     // ----
     // define 함수 # 과 ##
     // ----   
-    EXPECT_TRUE(MAKE_STRING_LITERAL(Hello World) == "Hello World"); // 매크로 함수 결과 문자열로 변경됨
-    EXPECT_TRUE(g_Func() == 10); // 매크로 함수 결과 g_Func 이라는 이름으로 합성됨
+    EXPECT_TRUE(MAKE_STRING_LITERAL(Hello World) == "Hello World"); // 문자열로 변경됨
+    EXPECT_TRUE(g_Func() == 10); // g_Func 호출
 }
 
