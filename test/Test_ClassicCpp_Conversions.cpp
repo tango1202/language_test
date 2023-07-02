@@ -116,7 +116,7 @@ TEST(TestClassicCpp, Conversions) {
     {
         class Base {
         public:
-            // dynamic_cast를 사용하려면 가상함수가 있어야 합니다.
+            // dynamic_cast를 사용하려면 가상 함수가 있어야 합니다.
             // RTTI(Runtime Type Info) 가 필요하기 때문입니다.
             virtual ~Base() {} 
         };
@@ -126,7 +126,7 @@ TEST(TestClassicCpp, Conversions) {
         Derived d;
         Base* b = &d;
         // dynamic_cast는 상속관계가 있어야 함(런타임 검사를 수행함)
-        // dynamic_cast를 사용하려면 가상함수가 있어야 합니다.(가상함수가 없으면 컴파일 오류)
+        // dynamic_cast를 사용하려면 가상 함수가 있어야 합니다.(가상 함수가 없으면 컴파일 오류)
         // (△) 비권장. 자식 개체에 의존성을 두지 마세요. 부모 개체의 인터페이스가 충분한지 확인하세요.
         Derived* downCasting = dynamic_cast<Derived*>(b);      
         EXPECT_TRUE(downCasting != NULL);

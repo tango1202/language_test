@@ -7,7 +7,7 @@ namespace {
 TEST(TestClassicCpp, Scope) {
     EXPECT_TRUE(x == 1); // 전역 변수
     int x = 2; 
-    EXPECT_TRUE(x == 2); // 지역변수가 전역 x를 가림
+    EXPECT_TRUE(x == 2); // 지역 변수가 전역 x를 가림
     {
         int x = 3;
         EXPECT_TRUE(x == 3); // 블록이 지역 x를 가림. 지역 x에 접근할 방법이 없어요.

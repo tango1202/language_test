@@ -52,7 +52,7 @@ namespace {
     //    void f3(T* p = this) {} // (X) 컴파일 오류. this는 기본값을 사용할 수 없음
     };
 
-    // 전역변수 기본값
+    // 전역 변수 기본값
     int g_Val = 10;
     int f4(int val = g_Val) { // g_Val의 런타임 호출 시점의 값이 사용됩니다.
         return val;

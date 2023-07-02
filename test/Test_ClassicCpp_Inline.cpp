@@ -14,7 +14,7 @@ namespace {
         int y = 20;
 
         int z = Plus(x, y);
-        // Plus 함수가 인라인화 되면 하기와 같이 변경됩니다.
+        // Plus 함수가 인라인화 되면 다음과 같이 변경됩니다.
         // int z = x + y;
     }
     // ----

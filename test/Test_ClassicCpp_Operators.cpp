@@ -164,7 +164,7 @@ TEST(TestClassicCpp, Operators) {
             EXPECT_TRUE(ti1 == ti2);
             EXPECT_TRUE(ti1.hash_code() == ti2.hash_code());
         }
-        // 가상함수가 없는 경우의 참조 - 참조 대상이 Derived1이지만, 정의한 Base1 타입으로 변경됨
+        // 가상 함수가 없는 경우의 참조 - 참조 대상이 Derived1이지만, 정의한 Base1 타입으로 변경됨
         {
             Derived1 d1;
             Base1& b1Ref = d1; // 가상 함수 없음
@@ -172,7 +172,7 @@ TEST(TestClassicCpp, Operators) {
             // b1Ref = d1으로 bRef는 Base1 타입이 됨
             EXPECT_TRUE(typeid(b1Ref).hash_code() == typeid(Base1).hash_code());
         }
-        // 가상함수가 있는 경우의 참조 - 참조 대상인 Derived2 타입으로 유지됨
+        // 가상 함수가 있는 경우의 참조 - 참조 대상인 Derived2 타입으로 유지됨
         {
             Derived2 d2;
             Base2& b2Ref = d2; // 가상 함수 있음

@@ -83,7 +83,7 @@ TEST(TestClassicCpp, PointerReference) {
     // Dangling 참조자
     // ----
     {
-        // int result = GetX(); // (X) 예외 발생. 이미 소멸된 지역변수를 참조함
+        // int result = GetX(); // (X) 예외 발생. 이미 소멸된 지역 변수를 참조함
     }
     // ----
     // 포인터 사용법 - 개체 포인터

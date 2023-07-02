@@ -1,4 +1,5 @@
 #include "gtest/gtest.h" 
+#include <cmath>
 
 namespace {
     #define BOOL int
@@ -23,7 +24,7 @@ namespace {
 
     // double 비교
     bool Equals(double a, double b) {
-        double diff = std::fabs(a - b); // 두수의 차
+        double diff = fabs(a - b); // 두수의 차
 
         // (△) 비권장. 두수의 차가 오차 범위보다 작으면 같은 수
         return (diff < std::numeric_limits<double>::epsilon()) ? true : false;
