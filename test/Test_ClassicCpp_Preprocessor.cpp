@@ -83,8 +83,32 @@ TEST(TestClassicCpp, Preprocessor) {
     }
     // ----
     // define 함수 # 과 ##
-    // ----   
-    EXPECT_TRUE(MAKE_STRING_LITERAL(Hello World) == "Hello World"); // 문자열로 변경됨
-    EXPECT_TRUE(g_Func() == 10); // g_Func 호출
+    // ---- 
+    {  
+        EXPECT_TRUE(MAKE_STRING_LITERAL(Hello World) == "Hello World"); // 문자열로 변경됨
+        EXPECT_TRUE(g_Func() == 10); // g_Func 호출
+    }
+    // ----
+    // undef
+    // ----
+    {
+        #define PI 3.14
+        EXPECT_TRUE(PI == 3.14); // (O)
+
+        #undef PI // 제거됩니다.
+        // EXPECT_TRUE(PI == 3.14); // (X) 컴파일 오류  
+    }
+    {
+        #define MY_DEBUG // MY_DEBUG 정의 유무만 알면 되므로 꼭 대체 목록을 작성할 필요 없음
+
+        int status = 0;
+        #if defined(MY_DEBUG)
+            status = 1;
+        #else 
+            status = 2;
+        #endif
+
+        EXPECT_TRUE(status == 1); // MY_DEBUG가 정의되어 1
+    }
 }
 
