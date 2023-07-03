@@ -75,7 +75,7 @@ TEST(TestClassicCpp, Conversions) {
 
         // r이 상수성 계약으로 참조하는데 멋대로 바꿨습니다.
         // (△) 비권장. 상수성 계약상 금지입니다.
-        const_cast<int&>(r) = 20; // 포인터와 참조자만 가능
+        const_cast<int&>(r) = 20; // const_cast는 포인터와 참조자만 가능함
 
         EXPECT_TRUE(a == 20); 
     }
@@ -157,6 +157,20 @@ TEST(TestClassicCpp, Conversions) {
         // (X) 컴파일 오류. 포인터를 정수로 변환은 안됩니다.
         // int j = reinterpret_cast<int>(p3);
     }
+    // 연관 관계가 없는 타입간 형변환
+    {
+        class T {};
+        class U {};
+
+        T t;
+        // U u1 = (U)t; // (X) 컴파일 오류
+        // U u2 = static_cast<U>(t); // (X) 컴파일 오류
+        // U u3 = reinterpret_cast<U>(t); // (X) 컴파일 오류
+
+        U* u4 = (U*)&t; // (△) 비권장 
+        // U* u5 = static_cast<U*>(&t); // (X) 컴파일 오류
+        U* u6 = reinterpret_cast<U*>(&t); // (△) 비권장 
+    } 
     // ----
     // 형변환 정의
     // ----
@@ -178,6 +192,20 @@ TEST(TestClassicCpp, Conversions) {
         EXPECT_TRUE(c == 1);
     }
     {
+        class U {};
+        class T {
+        public:
+            operator U() const {return U();} // (△) 비권장. 형변환 연산자를 정의하여 암시적으로 형변환 됨
+        };
+ 
+        T t;
+
+        U u1 = t; // (△) 비권장. 암시적 변환
+        U u2 = (U)t; // (△) 비권장. C언어 스타일 형변환
+        U u3 = static_cast<U>(t); // (O) static_cast 변환
+    }     
+    {
+        class U {};
         class T {
         public:
             // int로 변환합니다.
@@ -185,12 +213,15 @@ TEST(TestClassicCpp, Conversions) {
             
             // char로 변환합니다.
             char ToChar() const {return 1;}
+
+            // U로 변환합니다.
+            U ToU() const {return U();} 
         };
-
         T t;
-        int i = t.ToInt();
+        int i = t.ToInt(); // (O) 명시적으로 변환 함수 호출
         char c = t.ToChar();
-
+        U u = t.ToU(); 
+        
         EXPECT_TRUE(i == 10);
         EXPECT_TRUE(c == 1);
     }
@@ -219,34 +250,38 @@ TEST(TestClassicCpp, Conversions) {
     // 명시적 변환 생성 지정자(explicit)
     // ----
     {
-        class T {
+        class T {};
+        class U {
         public:
-            int m_Val;
-        public:
-            // int 형 1개만 전달받는 생성자 입니다.
-            // (△) 비권장. 암시적 형변환을 허용합니다.
-            T(int val) : m_Val(val) {}
-            int GetVal() const {return m_Val;}
-        };
+            U() {} // 기본 생성자
+            U(T t) {} // (△) 비권장. explicit 없이 값 생성자를 정의하면 암시적으로 형변환됨
+        }; 
 
-        T obj1(1); // (O) int 를 전달하여 T(int) {}로 생성합니다.
-        T obj2 = 1; // (△) 비권장. int 를 전달하여 T(int) {}로 생성합니다. 
-        obj1 = 2; // (△) 비권장. T(int) {}로 임시 생성된 개체를 obj1 에 대입합니다.
-        EXPECT_TRUE(obj1.GetVal() == 2);
+        T t;
+
+        U u1(t); // (O) 명시적으로 값 생성자 호출
+        U u2 = t; // (△) 비권장. 암시적 변환
+        U u3 = (U)t; //(△) 비권장. C언어 스타일 형변환
+        U u4 = static_cast<U>(t); // (O) static_cast 변환
+        U u5; // 기본 생성자로 생성
+        u5 = t; // (△) 비권장. 생성후 값 대입시 암시적 변환
     }
     {
-        class T {
+        class T {};
+        class U {
         public:
-            int m_Val;
-        public:
-            // int 형 1개만 전달받는 생성자 입니다.
-            //(O) 암시적 형변환을 금지합니다.
-            explicit T(int val) : m_Val(val) {}
-            int GetVal() const {return m_Val;}
-        };
+            U() {} // 기본 생성자
+            explicit U(T t) {} // (O) 암시적 형변환을 금지합니다. 명시적 변환은 가능합니다.
+        }; 
 
-        T obj1(1); // (O) int 를 전달하여 T(int) {}로 생성합니다.
-        //T obj2 = 1; // (X) 컴파일 오류. 
-        //obj1 = 2; // (X) 컴파일 오류. 
+        T t;
+
+        U u1(t); // (O) 명시적으로 값 생성자 호출
+        // U u2 = t; // (X) 컴파일 오류
+        U u3 = (U)t; //(△) 비권장. C언어 스타일 형변환
+        U u4 = static_cast<U>(t); // (O) static_cast 변환
+        U u5; // 기본 생성자로 생성
+        // u5 = t; // (X) 컴파일 오류
     }
+   
 }

@@ -34,5 +34,5 @@ TEST(TestClassicCpp, Inline) {
     // ----
     // 여러 cpp에서 사용하는 인라인 함수 정의
     // ----
-    EXPECT_TRUE(TestInline::Plus(10, 20) == 30);
+    EXPECT_TRUE(TestInline::Plus(10, 20) == 30); // TestInline::Plus(10, 20)은 10 + 20 으로 인라인화 됨
 }

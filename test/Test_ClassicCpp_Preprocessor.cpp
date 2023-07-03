@@ -110,5 +110,45 @@ TEST(TestClassicCpp, Preprocessor) {
 
         EXPECT_TRUE(status == 1); // MY_DEBUG가 정의되어 1
     }
+    // ----
+    // __LINE__, __FILE__, #line
+    // ----
+    { 
+        // Line Number:118 Filename:C:\Data\language_test\test\Test_ClassicCpp_Preprocessor.cpp
+        std::cout<<"Line Number:"<<__LINE__<<" Filename:"<<__FILE__<<std::endl; 
+
+#line 1234 "test.cpp" 
+        std::cout<<"Line Number:"<<__LINE__<<" Filename:"<<__FILE__<<std::endl;  // Line Number:1234 Filename:test.cpp      
+    }
+    {
+// #define OS_WIN
+// #ifndef OS_WIN
+//     #warning "Only Windows."
+//     #error "Only Windows."
+// #else
+// #endif
+    }
+    // ----
+    // pragma pack(push, 1)
+    // ----
+    {
+        class T {
+            char m_Char; // 1byte, 메모리 접근 편의를 위해 32bit(4byte) 단위로 할당(패딩). 3byte 빈공간이 생김 
+            int m_Int; // 4byte
+        };
+
+        EXPECT_TRUE(sizeof(T) == 8); // char가 패딩됨
+    } 
+#pragma pack(push, 1) // 데이터 버스 크기를 1 바이트 단위로 설정      
+    {
+        class T {
+            char m_Char; // 1byte 
+            int m_Int; // 4byte
+        };
+
+        EXPECT_TRUE(sizeof(T) == 5); // 1 + 4 = 5byte
+    }
+#pragma pack(pop) // 데이터 버스 크기 설정 원복     
 }
+
 

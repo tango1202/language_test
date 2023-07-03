@@ -108,6 +108,22 @@ TEST(TestClassicCpp, Operators) {
         EXPECT_TRUE(t.operator ()(10, 20) == 30); // t(10, 20) 호출과 동일. operator()를 명시적으로 호출        
     }
     // ----
+    // 콤마 연산자
+    // ----
+    {
+        class T {
+        public:
+            static int f(int val) {return val;}
+        };
+
+        int arr[] = {1, 2, 3};
+        int i = 0;
+
+        // 1를 증가시키고, v의 i 항목을 f 에 전달합니다.
+        // (△) 비권장. 분석하기 복잡합니다.
+        EXPECT_TRUE(T::f((++i, arr[i])) == 2); 
+    }
+    // ----
     // 생성/소멸 연산자
     // ----
     {
@@ -156,7 +172,7 @@ TEST(TestClassicCpp, Operators) {
         };
         class Derived2 : public Base2 {};
 
-        // 타입인 Base1과 개체 b1은 hash_code가 동일합니다.
+        // Base1과 개체 b1은 hash_code가 동일합니다.
         {
             Base1 b1;
             const std::type_info& ti1 = typeid(Base1);

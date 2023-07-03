@@ -21,19 +21,6 @@ namespace {
         return a - b;
     }
     // ----
-    // 가변 인자(...)
-    // ----
-    int sum(int count, ...) {
-        int result = 0;
-        std::va_list argList; // 가변 인자
-        va_start(argList, count); // 가변 인자 처리 시작
-        for (int i = 0; i < count; ++i) {
-            result += va_arg(argList, int); // 가변 인자 추출
-        }
-        va_end(argList); // 가변인자 처리 끝
-        return result;       
-    }
-    // ----
     // 기본값 인자
     // ----  
     int f1(int a = 10) { 
@@ -106,7 +93,13 @@ TEST(TestClassicCpp, Function) {
         p(10); // f 함수 실행. (*p)(10); 과 동일
     }
     {
-        // typedef 사용한 버전
+        typedef void (*Func)(int); // void 를 리턴하고 int형을 인수로 전달받는 함수의 함수 포인터 타입 정의
+
+        Func p; // 함수 포인터 p 정의
+        p = f; // 함수 포인터에 f 함수 대입. p = &f; 와 동일
+        p(10); // f 함수 실행. (*p)(10); 과 동일        
+    }
+    {
         typedef int (*Func)(int, int); // 함수 포인터 typedef
         class Button {
         private: 
@@ -121,7 +114,7 @@ TEST(TestClassicCpp, Function) {
 
         // 버튼 생성시 어떤 연산을 수행할지 함수를 전달해 둡니다.
         Button plusButton(plus); // 클릭시 더하기
-        Button minusButton(minus); //클릭시 빼기
+        Button minusButton(minus); // 클릭시 빼기
 
         EXPECT_TRUE(plusButton.Click(10, 20) == 30); 
         EXPECT_TRUE(minusButton.Click(10, 20) == -10); 
@@ -139,11 +132,49 @@ TEST(TestClassicCpp, Function) {
         Data data;
         EXPECT_TRUE((data.*func)() == 1); // data 개체로 부터 멤버 함수 포인터 실행
     }
+    {
+        class Data { 
+        public: 
+            int Print() const {return 1;}
+            int Preview() const {return 2;}
+        };
+        typedef int (Data::*Func)() const; // Data 클래스 멤버 함수 typedef
+        
+        class Button {
+        private: 
+            const Data& m_Data; // 버튼이 관리하는 Data
+        public:
+            explicit Button(const Data& data) :
+                m_Data(data) {}
+            int Click(Func func) { 
+                return (m_Data.*func)(); // 전달된 멤버 함수 포인터 실행
+            }
+        };
+
+        Data data;
+        Button button(data);
+
+        EXPECT_TRUE(button.Click(&Data::Print) == 1); // data 개체로 부터 Print 함수 실행
+        EXPECT_TRUE(button.Click(&Data::Preview) == 2); // data 개체로 부터 Preview 함수 실행
+    }    
     // ----
     // 가변 인자
     // ----
     {
-        EXPECT_TRUE(sum(3, 1, 2, 3) == 1 + 2 + 3);
+        class T {
+        public:
+            static int Sum(int count, ...) {
+                int result = 0;
+                std::va_list paramList; // 가변 인자
+                va_start(paramList, count); // 가변 인자 처리 시작
+                for (int i = 0; i < count; ++i) {
+                    result += va_arg(paramList, int); // 가변 인자 추출
+                }
+                va_end(paramList); // 가변인자 처리 끝
+                return result;       
+            }
+        };
+        EXPECT_TRUE(T::Sum(3, 1, 2, 3) == 1 + 2 + 3);
     }
     {
         EXPECT_TRUE(f1() == 10); // 아무값도 주지 않으면 a 는 10
@@ -228,7 +259,7 @@ TEST(TestClassicCpp, Function) {
                 int f(int) const {return 8;} 
 
                 // (X) 컴파일 오류. 리턴 타입은 오버로딩 함수를 취급하는데 사용하지 않습니다.
-                // double f(int) {return 1.};
+                // double f(int) {return 9.};
             };
 
             T t;

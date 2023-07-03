@@ -35,8 +35,7 @@ TEST(TestClassicCpp, Const) {
             // (O) 멤버 변수의 값을 리턴하는 const 함수
             int GetX1() const {return m_X;} 
 
-            // (△) 비권장. 멤버 변수의 값을 쓸데없이 const로 리턴하는 const 함수. 
-            // int k = t.GetX2(); 로 실행하므로 const int 리턴은 무의미함. 
+            // (△) 비권장. 리턴값을 쓸데없이 const로 리턴하는 const 함수. 
             const int GetX2() const {return m_X;}            
  
             // (O) 멤버 변수의 값을 수정하지 않는 const 함수
@@ -57,8 +56,11 @@ TEST(TestClassicCpp, Const) {
         void f(int x); // (O) 인수를 x에 복사해서 사용함.
         void f(const int x); // (△) 비권장. 인수를 x에 복사해서 쓰되 f에서 수정하지 않음. 호출하는 쪽에선 무의미
 
-        void f(int* x); void f(int& x); // (O) 인수를 f에서 수정함.
-        void f(const int* x); void f(const int& x); // (O) 인수를 f에서 수정하지 않음.  
+        void f(int* x); // (O) 인수를 f에서 수정함.
+        void f(int& x); 
+
+        void f(const int* x); // (O) 인수를 f에서 수정하지 않음.  
+        void f(const int& x); 
     }
     // 상수 함수
     {

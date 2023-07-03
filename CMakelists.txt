@@ -51,6 +51,8 @@ set(TestFiles
    test/Test_ClassicCpp_Operators.cpp
    test/Test_ClassicCpp_Function.cpp
    test/Test_ClassicCpp_Preprocessor.cpp
+
+   test/Test_CppPattern_IncludeGuard.cpp
 )
 
 # 실행파일 구성
