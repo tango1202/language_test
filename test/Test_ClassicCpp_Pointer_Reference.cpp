@@ -49,7 +49,7 @@ TEST(TestClassicCpp, PointerReference) {
     {
         int x = 20;
         int* p = &x; // p는 x의 주소를 가집니다.
-        *p = 30; // p가 가리키는 곳이 30이 됩니다.
+        *p = 30; // p가 가리키는 곳(x)의 실제값이 30이 됩니다.
         EXPECT_TRUE(*p == 30 && x == 30); 
     }
     // ----
@@ -58,7 +58,7 @@ TEST(TestClassicCpp, PointerReference) {
     {
         int x = 20;
         int& r = x; // r은 x의 별칭입니다.
-        r = 30; // x는 30이 됩니다.
+        r = 30; // r이 참조하는 곳(x)의 실제값이 30이 됩니다.
         EXPECT_TRUE(r == 30 && x == 30);
     }
     // ----
@@ -67,10 +67,6 @@ TEST(TestClassicCpp, PointerReference) {
     {
         // int& r; // (X) 컴파일 오류. 생성만 할 수 없습니다. 초기값을 넣어주어야 합니다. 쓰레기값을 가질 일이 없습니다.
 
-        int* p = NULL;
-        // int& r = *p; // (X) 오동작. *p로 NULL 의 개체를 구하는 건 오동작 할 수 있습니다. 
-        // r = 10; // (X) 예외 발생. p가 NULL이라 10을 NULL(0)주소 위치에 넣다가 예외 발생 합니다. 이렇게 사용하시면 안됩니다.
-        
         int x = 10;
         int y = 20;
 
@@ -84,6 +80,10 @@ TEST(TestClassicCpp, PointerReference) {
     // ----
     {
         // int result = GetX(); // (X) 예외 발생. 이미 소멸된 지역 변수를 참조함
+
+        int* p = NULL;
+        // int& r = *p; // (X) 오동작. *p로 NULL 의 개체를 구하는 건 오동작 할 수 있습니다. 
+        // r = 10; // (X) 예외 발생. p가 NULL이라 10을 NULL(0)주소 위치에 넣다가 예외 발생 합니다. 이렇게 사용하시면 안됩니다.
     }
     // ----
     // 포인터 사용법 - 개체 포인터
@@ -154,7 +154,7 @@ TEST(TestClassicCpp, PointerReference) {
         void (Base::* p11)() = &Base::f; // Base 클래스 멤버 함수 f를 가리킴
         Base b;
         (b.*p11)(); // 멤버 함수 포인터는 괄호 필요. Base 출력
-    }        
+    } 
     // ----
     // 참조자 사용법 - 개체 참조자
     // ----

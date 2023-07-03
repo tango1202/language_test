@@ -47,14 +47,26 @@ TEST(TestClassicCpp, Type) {
     // EXPECT_TRUE(~b == FALSE); // (X) ~b 는 0xfffffffe 입니다.
 }
 TEST(TestClassicCpp, TypeDef) {
+
+    // 배열
+    typedef int MyArray[5]; 
+    MyArray arr; // int arr[5]; 와 동일 
+    arr[0] = 10; // 첫번째 요소에 값 대입
+    EXPECT_TRUE(arr[0] == 10);
+
+    // 구조체
     typedef struct {int a; int b;} MyData, *pMyData;
     MyData myData1;
     MyData* myData2;
-    pMyData myData3;
-
-    ClassT<int>::ConstType constVal = 20;  
-
+    pMyData myData3; // MyData* 와 같음
+    myData1.a = 10; // a에 값 대입
+    EXPECT_TRUE(myData1.a == 10);
+   
+    // 함수 포인터
     Func func = f; // 함수 포인터 저장
+
+    // template의 타입 재정의
+    ClassT<int>::ConstType constVal = 20;  
 }
 
 TEST(TestClassicCpp, TypeLimit) {

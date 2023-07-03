@@ -4,33 +4,39 @@ namespace {
     // ----
     // 전방 선언
     // ----
-    class YourClass; // 전방 선언
+    // 1. YourClass 전방 선언
+    class YourClass; 
+
+    // 2. MyClass 선언
     class MyClass {
         // (O) 전방 선언을 통해 YourClass가 대충 클래스라는 걸 압니다. 
         // 반드시 포인터나 참조자와 같은 참조 형식이어야 합니다.
-        // 구체 정의를 사용하려면, 헤더 파일과 cpp 파일을 분리하고, cpp 부분에서 구체 정의를 사용하세요.
-        YourClass* m_Your;
-        
-        void f(); // 선언만 하고, cpp에서 yourClass를 사용할 겁니다.
+        YourClass* m_Your; 
+
+        // YourClass의 구체 정의가 필요하여 선언만 합니다.
+        void f(); 
     };
+
+    // 3. YourClass 선언
     class YourClass {
-        MyClass m_My; // MyClass는 상위에 정의되어 사용할 수 있습니다.
-        
+        // MyClass는 상위에 정의되어 사용할 수 있습니다.
+        MyClass m_My; 
+
     public:
         void g() {}
     }; 
 
-    // cpp 파일에서 YourClass의 구체 정의 사용
+    // 4. MyClass 정의 - YourClass의 정의를 사용하고 있습니다.
     void MyClass::f() {
         m_Your->g(); 
-    } 
+    }
 
     // ----
     // 멤버 사양
     // ----
     class T {
         int m_D1; // 멤버 변수
-        static const int s_D2 = 1; // 정적 멤버 변수. 단 nested 클래스에서는 사용 못함
+        static const int s_D2 = 1; // 정적 멤버 변수. 단 중첩 클래스, 함수 내부 로컬 클래스에서는 사용 못함
     
         virtual void f1(int) = 0; // 순가상 함수
         virtual void f2(int) {} // 가상 함수    
@@ -56,7 +62,7 @@ TEST(TestClassicCpp, StructClassUnion) {
             int y;
         };
 
-        S s = {10, 20}; // 중괄호 초기화 지원
+        S s = {10, 20}; // 구조체는 중괄호 초기화 지원
 
         class C {
             int m_X; // 기본적으로 private
@@ -64,7 +70,7 @@ TEST(TestClassicCpp, StructClassUnion) {
         public:
             C(int x, int y) {} // 값 생성자 정의
         };
-        C c(10, 20); // 값 생성자를 사용       
+        C c(10, 20); // 클래스는 값 생성자만 가능. 중괄호 초기화 미지원      
     }
     // ----
     // using 선언

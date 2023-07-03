@@ -22,9 +22,15 @@ namespace Parser {
 namespace C {
     int f() {return 30;} // 정의
     int g(); // 선언
+    int h(); // 선언
 }
-int C::g() { // C::명시해서 정의할 수 있음
-    return f(); // 같은 네임스페이스이면 C::f() 와 같이 명시하지 않아도 됨
+namespace C {
+    int g() { // 네임스페이스에서 정의
+        return f(); // 같은 네임스페이스이면 C::f() 와 같이 명시하지 않아도 됨
+    }
+}
+int C::h() { // C::로 명시해서 정의할 수 있음
+    return f(); 
 }
 // ----
 // 서로 다른 네임스페이스 항목 사용
@@ -75,7 +81,7 @@ namespace MyModule3 {
 // 별칭과 합성
 // ----
 namespace MyTestLibrary {
-    void f() {}
+    int f() {return 40;}
 }
 namespace MTL = MyTestLibrary; // 별칭 정의
 
@@ -83,13 +89,25 @@ namespace MTL = MyTestLibrary; // 별칭 정의
 // void g() {} // (X) 컴파일 오류. 별칭으로 정의한 네임스페이스에 새로운 정의는 추가할 수 없다.
 //}
 
+namespace G {
+    int f() {return 50;}
+}
+namespace H {
+    int g() {return 60;}
+}
 namespace MyModule { // 여러개의 네임스페이스를 합성할 수 있음
-   using namespace A;
-   using namespace B;
+   using namespace G;
+   using namespace H;
 }
 TEST(TestClassicCpp, Namespace) {
     EXPECT_TRUE(A::f() == 10); // 네임스페이스 A의 f() 호출
     EXPECT_TRUE(B::f() == 20); // 네임스페이스 B의 f() 호출
 
-    EXPECT_TRUE(C::g() == 30); // 네임스페이스 C의 f()를 호출
+    EXPECT_TRUE(C::g() == 30); 
+    EXPECT_TRUE(C::h() == 30);
+
+    EXPECT_TRUE(MTL::f() == 40);
+
+    EXPECT_TRUE(MyModule::f() == 50);
+    EXPECT_TRUE(MyModule::g() == 60);
 }
