@@ -36,6 +36,22 @@ namespace {
         T result(left + right.GetVal());
         return result;
     }
+
+    // ----
+    // 열거형 연산자 오버로딩
+    // ----
+    class Week {
+    public:
+        // 클래스내에 정의. 사용시 클래스명을 기재해야 함
+        enum Val {
+            Sunday, Monday, Tuesday, Wednesday, 
+            Thursday, Friday, Saturday
+        };
+    };
+    // 전위 증가. 
+    Week::Val& operator ++(Week::Val& d) { 
+        return d = (Week::Saturday == d) ? Week::Sunday : static_cast<Week::Val>(d + 1);
+    }    
 }
 TEST(TestClassicCpp, Operators) {
     // ----
@@ -106,6 +122,30 @@ TEST(TestClassicCpp, Operators) {
         T t;
         EXPECT_TRUE(t(10, 20) == 30); // operator() 호출
         EXPECT_TRUE(t.operator ()(10, 20) == 30); // t(10, 20) 호출과 동일. operator()를 명시적으로 호출        
+    }
+    {
+        class Add {
+        public: 
+            int m_Val;
+            explicit Add(int i) : m_Val(i) {} 
+            void operator ()(int val) { // 호출시마다 m_Val에 누적
+                m_Val += val; 
+            }
+        };
+        class Sum {
+        public:
+            static int Run(const int* p, int count) { 
+                Add sum(0); 
+                for (int i = 0; i < count; i++) { 
+                    sum(p[i]); // operator()(int add) 호출
+                }
+                return sum.m_Val;
+            }
+        };
+
+        int arr[] = {1, 2, 3, 4};
+
+        EXPECT_TRUE(Sum::Run(arr, 4) == 10);
     }
     // ----
     // 콤마 연산자
@@ -403,5 +443,14 @@ TEST(TestClassicCpp, Operators) {
             T t2(10); 
             EXPECT_TRUE(t1 >= t2);  
         } 
+    }
+    // ----
+    // 열거형 연산자 오버로딩
+    // ----
+    {
+        Week::Val val = Week::Saturday;
+
+        EXPECT_TRUE(++val == Week::Sunday); // 토요일 에서 1 증가하면, 제일 처음 값인 일요일로 순회됨
+        EXPECT_TRUE(++val == Week::Monday); // 일요일 에서 1 증가하여 월요일
     }
 }

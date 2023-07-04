@@ -221,7 +221,7 @@ TEST(TestClassicCpp, Conversions) {
         int i = t.ToInt(); // (O) 명시적으로 변환 함수 호출
         char c = t.ToChar();
         U u = t.ToU(); 
-        
+
         EXPECT_TRUE(i == 10);
         EXPECT_TRUE(c == 1);
     }
@@ -282,6 +282,38 @@ TEST(TestClassicCpp, Conversions) {
         U u4 = static_cast<U>(t); // (O) static_cast 변환
         U u5; // 기본 생성자로 생성
         // u5 = t; // (X) 컴파일 오류
+    }
+    // ----
+    // 코딩 계약을 무시하는 암시적 형변환
+    // ----
+    {
+        class Year {
+        public:
+            Year(int val) {} // (△) 비권장. int가 암시적 형변환 됩니다.
+        };
+
+        class Month {
+        public:
+            enum Val {
+                Jan, Feb, Mar, Apr, 
+                May, Jun, Jul, Aug, 
+                Sep, Oct, Nov, Dec
+            };
+        };
+
+        class Day {
+        public:
+            Day(int val) {} // (△) 비권장. int가 암시적 형변환 됩니다.
+        };
+
+        class Date {
+        public: 
+            Date(Year year, Month::Val month, Day day) {} // (O) Year, Month, Day를 입력하여야만 생성됩니다.
+        };
+
+        Date d1(Year(2023), Month::Jan, Day(10)); // (O) 코딩 계약 준수.
+        Date d2(2023, Month::Jan, 10); // (△) 비권장. 컴파일이 되요.
+        Date d3(31, Month::Jan, 13); // (△) 비권장. 31년 1월 13일로 의도하고 입력한게 맞을까요?
     }
    
 }
