@@ -42,7 +42,6 @@ namespace {
     // ----
     class Week {
     public:
-        // 클래스내에 정의. 사용시 클래스명을 기재해야 함
         enum Val {
             Sunday, Monday, Tuesday, Wednesday, 
             Thursday, Friday, Saturday
@@ -122,30 +121,6 @@ TEST(TestClassicCpp, Operators) {
         T t;
         EXPECT_TRUE(t(10, 20) == 30); // operator() 호출
         EXPECT_TRUE(t.operator ()(10, 20) == 30); // t(10, 20) 호출과 동일. operator()를 명시적으로 호출        
-    }
-    {
-        class Add {
-        public: 
-            int m_Val;
-            explicit Add(int i) : m_Val(i) {} 
-            void operator ()(int val) { // 호출시마다 m_Val에 누적
-                m_Val += val; 
-            }
-        };
-        class Sum {
-        public:
-            static int Run(const int* p, int count) { 
-                Add sum(0); 
-                for (int i = 0; i < count; i++) { 
-                    sum(p[i]); // operator()(int add) 호출
-                }
-                return sum.m_Val;
-            }
-        };
-
-        int arr[] = {1, 2, 3, 4};
-
-        EXPECT_TRUE(Sum::Run(arr, 4) == 10);
     }
     // ----
     // 콤마 연산자
