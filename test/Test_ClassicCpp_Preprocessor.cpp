@@ -74,11 +74,11 @@ TEST(TestClassicCpp, Preprocessor) {
         #define SQUARE(x) x * x // (△) 비권장. 인자와 코딩 계약이 안됩니다.
 
         EXPECT_TRUE(SQUARE(2) == 4); // 2 * 2
-        EXPECT_TRUE(SQUARE(1 + 1) == 3); // 1 + 1 * 1 + 1
+        EXPECT_TRUE(SQUARE(1 + 1) == 3); // (X) 오동작. 연산자 우선 순위가 꼬였습니다. 1 + 1 * 1 + 1
     }
     {
         #undef SQUARE
-        #define SQUARE(x) (x) * (x) // (△) 비권장. 인자와 코딩 계약이 안됩니다.
+        #define SQUARE(x) (x) * (x) // (△) 비권장. 연산 우선 순위는 해결됐지만, 여전히 인자와 코딩 계약이 안됩니다.
         EXPECT_TRUE(SQUARE(1 + 1) == 4); // (1 + 1) * (1 + 1)
     }
     // ----

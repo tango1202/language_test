@@ -42,7 +42,6 @@ namespace {
     // ----
     class Week {
     public:
-        // 클래스내에 정의. 사용시 클래스명을 기재해야 함
         enum Val {
             Sunday, Monday, Tuesday, Wednesday, 
             Thursday, Friday, Saturday
