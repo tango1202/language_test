@@ -139,7 +139,7 @@ TEST(TestClassicCpp, Preprocessor) {
 
         EXPECT_TRUE(sizeof(T) == 8); // char가 패딩됨
     } 
-#pragma pack(push, 1) // 데이터 버스 크기를 1 바이트 단위로 설정      
+#pragma pack(push, 1) // 데이터 버스 크기를 1바이트 단위로 설정      
     {
         class T {
             char m_Char; // 1byte 
