@@ -84,8 +84,7 @@ TEST(TestClassicCpp, Constructor) {
         public:
             T(int x, int y) :
                 m_X(x),
-                m_Y(y) {
-            }
+                m_Y(y) {}
         };
         T t(10, 20); // (O) 개체 정의
     }
