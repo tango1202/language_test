@@ -174,7 +174,18 @@ TEST(TestClassicCpp, Destructor) {
         // 모든 자식 개체들이 타입명만 다릅니다.
         class FileError : public Error {};
         class NetworkError : public Error {};
-        class PrintError : public Error {};        
+        class PrintError : public Error {};
+
+        std::vector<Error*> errors;
+        errors.push_back(new FileError());
+        errors.push_back(new NetworkError());
+        errors.push_back(new PrintError());
+
+        // 다형 소멸
+        for(std::vector<Error*>::iterator itr = errors.begin(); itr != errors.end(); ++itr) {
+            delete *itr;
+        }
+        errors.clear();        
     }
     // ----
     // 순가상 소멸자
@@ -184,7 +195,6 @@ TEST(TestClassicCpp, Destructor) {
         // T t; // (X) 컴파일 오류. 순가상 소멸자가 있어 개체 정의(인스턴스화) 안됨
         U u; // 상속하면 개체 정의(인스턴스화) 가능
     }
-
     // ----
     // 소멸자에서 가상 함수 호출 금지
     // ----
