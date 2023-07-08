@@ -1,8 +1,5 @@
 #include "gtest/gtest.h" 
 
-namespace {
-}
-
 TEST(TestClassicCpp, Constructor) {
  
     // ----
@@ -13,7 +10,7 @@ TEST(TestClassicCpp, Constructor) {
         public:
             T() {}
         };
-        T t; // (O) 개체 정의
+        T t; // (O) 개체 정의(인스턴스화)
         // T t(); // (X) T를 리턴하는 함수 선언
     }
     {
@@ -87,7 +84,7 @@ TEST(TestClassicCpp, Constructor) {
                 m_Y(y) {
             }
         };
-        T t(10, 20); // (O) 개체 정의
+        T t(10, 20); // (O) 개체 정의(인스턴스화)
     }
     {
         class T {
@@ -384,7 +381,7 @@ TEST(TestClassicCpp, Constructor) {
     // ----
     {
         class Base {
-        protected: // 개체 정의에서는 사용할 수 없고, 상속해서만 사용할 수 있습니다.
+        protected: // 개체 정의(인스턴스화)에서는 사용할 수 없고, 상속해서만 사용할 수 있습니다.
             Base() {} 
         public:
             virtual void f() {}
