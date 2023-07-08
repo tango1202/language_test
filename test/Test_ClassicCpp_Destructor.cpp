@@ -90,8 +90,7 @@ TEST(TestClassicCpp, Destructor) {
 
         class Dog :
             public IEatable,
-            public IWalkable
-        {
+            public IWalkable {
         public:        
             virtual void Eat() {}
             virtual void Walk() {}
