@@ -159,9 +159,9 @@ TEST(TestClassicCpp, Constructor) {
             int m_C;
         public:
             T(int a, int b, int c) :
-                m_C(c + m_B), // 3
-                m_B(b + m_A), // 2
-                m_A(a) {} // 1
+                m_C(c + m_B), // (△) 비권장. 3
+                m_B(b + m_A), // (△) 비권장. 2
+                m_A(a) {} // (△) 비권장. 1
             int GetA() const {return m_A;}
             int GetB() const {return m_B;}
             int GetC() const {return m_C;}
