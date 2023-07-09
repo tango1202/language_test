@@ -263,27 +263,13 @@ TEST(TestClassicCpp, Constructor) {
                 }
             }
 
-            // (O) NULL 포인터가 아니라면 복제합니다.     
-            Handler& operator =(const Handler& other) {
-                // 기존에 관리하는 포인터는 삭제합니다. 사실 미리 삭제하는 건 예외 안정에 좋지 않습니다. 예외 안정 swap 참고
-                delete m_Ptr;  
-
-                if (other.m_Ptr != NULL) {
-                    m_Ptr = new int(*other.m_Ptr);
-                }
-                else {
-                    m_Ptr = NULL;
-                }
-                return *this;
-            }
-
             // 힙 개체를 메모리에서 제거 합니다.
             ~Handler() {delete m_Ptr;}
         };
 
         class T {
-            // (O) Handler를 이용하여 복사 생성과 대입시 포인터의 복제본을 만들고, 소멸시 Handler에서 delete 합니다.
-            // 암시적 복사 생성자, 암시적 대입 연산자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
+            // (O) Handler를 이용하여 복사 생성시 포인터의 복제본을 만들고, 소멸시 Handler에서 delete 합니다.
+            // 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
             Handler m_Val;
         public:
             // val : new 로 생성된 것을 전달하세요.
@@ -307,36 +293,6 @@ TEST(TestClassicCpp, Constructor) {
 
         T t1;
         // T t2(t1); // (X) 컴파일 오류. 복사 생성자를 사용할 수 없게 private로 하여 단단히 코딩 계약을 했습니다.        
-    }
-    // ----
-    // 대입 연산자
-    // ----
-    {
-        class T {
-            int m_X;
-            int m_Y;
-        public:
-            T(int x, int y) : 
-                m_X(x), 
-                m_Y(y) {} 
-            // 암시적 복사 생성자의 기본 동작은 멤버별 복사입니다.    
-            // T(const T& other) :
-            //     m_X(other.m_X),
-            //     m_Y(other.m_Y) {}
-            // 암시적 대입 연산자의 기본 동작은 멤버별 대입입니다.    
-            // T& operator =(const T& other) {
-            //     m_X = other.m_X;
-            //     m_Y = other.m_Y;
-            // }
-
-            int GetX() const {return m_X;}
-            int GetY() const {return m_Y;}
-        };
-        T t1(10, 20);
-        T t2(1, 2); 
-        t2 = t1; // (O) 암시적 대입 연산자 호출
-
-        EXPECT_TRUE(t2.GetX() == 10 && t2.GetY() == 20);
     }
     // ----
     // 생성자에서 가상 함수 호출 금지

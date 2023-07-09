@@ -52,6 +52,7 @@ set(TestFiles
    test/Test_ClassicCpp_Function.cpp
    test/Test_ClassicCpp_Preprocessor.cpp
    test/Test_ClassicCpp_Constructor.cpp
+   test/Test_ClassicCpp_Assignment_Operator.cpp
    test/Test_ClassicCpp_Destructor.cpp
 
    test/Test_CppPattern_IncludeGuard.cpp
