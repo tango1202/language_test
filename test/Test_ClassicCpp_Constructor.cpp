@@ -180,7 +180,7 @@ TEST(TestClassicCpp, Constructor) {
             T(int x, int y) : 
                 m_X(x), 
                 m_Y(y) {} 
-            // 암시적 복사 생성자의 기본 동작은 멤버별 복사입니다.    
+            // 암시적 복사 생성자의 기본 동작은 멤버별 복사 생성자 호출입니다.    
             // T(const T& other) :
             //     m_X(other.m_X),
             //     m_Y(other.m_Y) {}
@@ -203,7 +203,7 @@ TEST(TestClassicCpp, Constructor) {
             explicit T(int* val) :
                 m_Val(val) {}
 
-            // 암시적 복사 생성자의 기본 동작은 멤버별 복사입니다.    
+            // 암시적 복사 생성자의 기본 동작은 멤버별 복사 생성자 호출입니다.    
             // T(const T& other) : 
             //     m_Val(other.m_Val) {} // !!동일한 힙 개체를 참조합니다.
 
