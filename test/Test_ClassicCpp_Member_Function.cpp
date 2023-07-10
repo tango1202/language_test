@@ -75,12 +75,6 @@ TEST(TestClassicCpp, MemberFunction) {
         };
     }
     // ----
-    // 논리적 상수성
-    // ----
-    {
-
-    }
-    // ----
     // 가상 함수
     // ----
     {
@@ -187,7 +181,7 @@ TEST(TestClassicCpp, MemberFunction) {
             // void SetVal1(const int& val) {m_Val = *val;} // (△) 비권장. 기본 자료형의 경우 값 복사가 좋음
 
             // void SetVal2(T val) {m_Val2 = val;} // (△) 비권장. 값 복사 보다는 참조가 적절
-            //     void SetVal2(const T val) {m_Val2 = val;} // (△) 비권장. 인자에 복사되므로 T와 const T는 동일 취급됨
+            // void SetVal2(const T val) {m_Val2 = val;} // (△) 비권장. 인자에 복사되므로 T와 const T는 동일 취급됨
 
             // void SetVal2(T* val) {m_Val2 = *val;} // (△) 비권장. 인자는 상수 타입이어야 함
             // void SetVal2(const T* val) {m_Val2 = *val;} // (△) 비권장. 포인터보다는 참조자가 좋음

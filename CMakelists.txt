@@ -56,6 +56,7 @@ set(TestFiles
    test/Test_ClassicCpp_Destructor.cpp
    test/Test_ClassicCpp_Member_Function.cpp
    test/Test_CppPattern_IncludeGuard.cpp
+   test/Test_CppPattern_LogicalConst.cpp
 )
 
 # 실행파일 구성
