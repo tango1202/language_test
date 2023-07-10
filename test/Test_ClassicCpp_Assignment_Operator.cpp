@@ -54,9 +54,11 @@ TEST(TestClassicCpp, AssignmentOperator) {
                 }
             }
 
+            // (O) NULL 포인터가 아니라면 복제합니다.
             T& operator =(const T& other) {
-
-                // (△) 비권장. 기존에 관리하는 포인터는 삭제합니다. 사실 미리 삭제하는 건 예외 안정에 좋지 않습니다. `swap`을 이용한 대입 연산자 구현 참고
+                // (△) 비권장. 기존에 관리하는 포인터는 삭제합니다. 
+                // 사실 미리 삭제하는 건 예외 안정에 좋지 않습니다. 
+                // swap을 이용한 예외 안정 대입 연산자 구현 참고
                 delete m_Val; 
 
                 if (other.m_Val != NULL) { 
@@ -101,7 +103,9 @@ TEST(TestClassicCpp, AssignmentOperator) {
 
             // (O) NULL 포인터가 아니라면 복제합니다.     
             Handler& operator =(const Handler& other) {
-                // (△) 비권장. 기존에 관리하는 포인터는 삭제합니다. 사실 미리 삭제하는 건 예외 안정에 좋지 않습니다. `swap`을 이용한 대입 연산자 구현 참고
+                // (△) 비권장. 기존에 관리하는 포인터는 삭제합니다. 
+                // 사실 미리 삭제하는 건 예외 안정에 좋지 않습니다. 
+                // swap을 이용한 예외 안정 대입 연산자 구현 참고
                 delete m_Ptr;  
 
                 if (other.m_Ptr != NULL) {
@@ -118,8 +122,10 @@ TEST(TestClassicCpp, AssignmentOperator) {
         };
 
         class T {
-            // (O) Handler를 이용하여 복사 생성과 대입시 포인터의 복제본을 만들고, 소멸시 Handler에서 delete 합니다.
-            // 암시적 복사 생성자와 암시적 대입 연산자에서 정상 동작하므로, 명시적으로 복사 생성자와 대입 연산자를 구현할 필요가 없습니다.
+            // (O) Handler를 이용하여 복사 생성과 대입시 포인터의 복제본을 만들고, 
+            // 소멸시 Handler에서 delete 합니다.
+            // 암시적 복사 생성자와 암시적 대입 연산자에서 정상 동작하므로, 
+            // 명시적으로 복사 생성자와 대입 연산자를 구현할 필요가 없습니다.
             Handler m_Val;
         public:
             // val : new 로 생성된 것을 전달하세요.
@@ -162,7 +168,6 @@ TEST(TestClassicCpp, AssignmentOperator) {
 
             // (O) 예외에 안정적이도록 swap을 이용하여 대입합니다.   
             Handler& operator =(const Handler& other) {
-
                 // other의 힙 개체를 복제한 임시 개체를 만듭니다.
                 Handler temp(other); // (O) 생성시 예외가 발생하더라도 this는 그대로 입니다.
 
@@ -175,34 +180,51 @@ TEST(TestClassicCpp, AssignmentOperator) {
                 // 소멸되면서 this가 이전에 가졌던 힙 개체를 소멸합니다.
             }
 
-            // 힙 개체를 메모리에서 제거 합니다.
-            ~Handler() {delete m_Ptr;}
-
             // 멤버 변수들의 값을 바꿔치기 합니다.
             void Swap(Handler& other) {
                 std::swap(this->m_Ptr, other.m_Ptr); // (O) 포인터 끼리의 값 변경이므로 예외가 발생하지 않습니다.   
             }
+
+            // 힙 개체를 메모리에서 제거 합니다.
+            ~Handler() {delete m_Ptr;}
         };
 
         class T {
-            // (O) Handler를 이용하여 복사 생성과 대입시 포인터의 복제본을 만들고, 소멸시 Handler에서 delete 합니다.
-            // 암시적 복사 생성자와 암시적 대입 연산자에서 정상 동작하므로, 명시적으로 복사 생성자와 대입 연산자를 구현할 필요가 없습니다.
-            Handler m_Val;
+            // (O) Handler를 이용하여 복사 생성과 대입시 포인터의 복제본을 만들고, 
+            // 소멸시 Handler에서 delete 합니다.
+            // 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
+            Handler m_Val1;
+            Handler m_Val2;
         public:
-            // val : new 로 생성된 것을 전달하세요.
-            explicit T(int* val) :
-                m_Val(val) {}
+            // val1, val2 : new 로 생성된 것을 전달하세요.
+            T(int* val1, int* val2) :
+                m_Val1(val1),
+                m_Val2(val2) {} 
+
+            // (O) 예외에 안정적이도록 swap으로 대입 연산자를 구현합니다. 
+            T& operator =(const T& other) {
+                T temp(other); // 임시 개체 생성
+                Swap(temp); // 바꿔치기
+                return *this; 
+            } // 임시 개체가 소멸되면서, this가 이전에 가졌던 힙 개체 소멸
+
+            // (O) 멤버 변수들의 값을 바꿔치기 합니다.
+            void Swap(T& other) {
+                m_Val1.Swap(other.m_Val1); 
+                m_Val2.Swap(other.m_Val2);                  
+            }                
         };
+
         // (O) 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
         {
-            T t1(new int(10));
+            T t1(new int(10), new int(10));
             T t2(t1); // 새로운 int형 개체를 만들고 10을 복제합니다.
         } 
         // (O) 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
         {
-            T t1(new int(10));
-            T t2(new int(20)); 
+            T t1(new int(10), new int(10));
+            T t2(new int(20), new int(20)); 
             t2 = t1; // t1의 힙 개체를 복제후 대입하고, t2의 이전 힙 개체를 delete 합니다.
-        }        
+        } 
     }
 }

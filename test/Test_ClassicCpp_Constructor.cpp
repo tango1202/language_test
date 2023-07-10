@@ -11,7 +11,7 @@ TEST(TestClassicCpp, Constructor) {
             T() {}
         };
         T t; // (O) 개체 정의(인스턴스화)
-        // T t(); // (X) T를 리턴하는 함수 선언
+        // T t(); // (X) T를 리턴하는 함수 f() 선언
     }
     {
         class T1 {
