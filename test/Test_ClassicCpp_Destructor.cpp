@@ -98,6 +98,9 @@ TEST(TestClassicCpp, Destructor) {
         // IEatable eatable; // (X) 컴파일 오류. 소멸자가 protected
         // IWalkable walkable; // (X) 컴파일 오류. 소멸자가 protected
         Dog dog; // (O)
+        
+        // IEatable* p = &dog:
+        // delete* p; // (△) 비권장. 단위 전략 인터페이스를 이용하여 다형 소멸 하지 마세요. 메모리 릭이 발생합니다. 다형 소멸 참고.
     }
     {
         class ResizeableImpl {
