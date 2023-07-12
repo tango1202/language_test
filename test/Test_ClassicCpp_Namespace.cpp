@@ -44,12 +44,12 @@ namespace D {
 }
 namespace E {
     void e() {
-        D::d(); // 다른 네임스페이스의 것은 명시적으로 네임스페이스명 지정 
+        D::d(); // 다른 네임스페이스의 것은 명시적으로 네임스페이스 명 지정 
     }
     void f() {
         using D::d; // using 선언으로 d를 가져옴
-        d(); // d는 네임스페이스명 없이 사용
-        D::Func(); // Func은 네임스페이스명 지정
+        d(); // d는 네임스페이스 명 없이 사용
+        D::Func(); // Func은 네임스페이스 명 지정
     }
 }
 namespace F {

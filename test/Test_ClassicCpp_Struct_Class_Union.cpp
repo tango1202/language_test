@@ -26,7 +26,7 @@ namespace {
         void g() {}
     }; 
 
-    // 4. MyClass 정의 - YourClass의 정의를 사용하고 있습니다.
+    // 4. MyClass 정의 - YourClass를 사용하고 있어 YourClass 선언 후 작성합니다.
     void MyClass::f() {
         m_Your->g(); 
     }
@@ -35,20 +35,41 @@ namespace {
     // 멤버 사양
     // ----
     class T {
-        int m_D1; // 멤버 변수
-        static const int s_D2 = 1; // 정적 멤버 변수. 단 중첩 클래스, 함수 내부 로컬 클래스에서는 사용 못함
+        // 멤버 변수
+        int m_D1; 
+
+        // 정적 멤버 변수. 단 중첩 클래스, 함수 내부 로컬 클래스에서는 사용 못함
+        static const int s_D2 = 1; 
+
+        // ----
+        // 멤버 함수
+        // ----
+        T() {} // 기본 생성자
+        T(const T& other) {} // 복사 생성자
+        ~T() {} // 소멸자
+        T& operator =(const T& other) {return *this;} // 대입 연산자
+        
+        operator int() const {return 0;} // 형변환 연산자
+
+        void f1(int) {} // 멤버 함수
+        void f2(int) {} // 상수 멤버 함수
+
+        virtual void f3(int) {} // 가상 함수    
+        virtual void f4(int) = 0; // 순가상 함수
+
+        static void f5(int) {} // 정적 멤버 함수
+        // ----
+
+        // 열거형 상수
+        enum {Left, Top, Right, Bottom}; 
     
-        virtual void f1(int) = 0; // 순가상 함수
-        virtual void f2(int) {} // 가상 함수    
-        void f3(int) {} // 멤버 함수
-        static void f4(int) {} // 정적 멤버 함수
-    
-        enum {Left, Top, Right, Bottom}; // 열거형 상수
-    
-        class NestedClass { // 중첩 클래스(구조체)
+        // 중첩 클래스(구조체)
+        class NestedClass { 
             int m_D3;
         };
-        typedef NestedClass Inner; // 형식 재정의
+        
+        // 타입 재정의
+        typedef NestedClass Inner; 
     }; 
 }
 

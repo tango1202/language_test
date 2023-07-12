@@ -156,7 +156,48 @@ TEST(TestClassicCpp, Function) {
 
         EXPECT_TRUE(button.Click(&Data::Print) == 1); // data 개체로 부터 Print 함수 실행
         EXPECT_TRUE(button.Click(&Data::Preview) == 2); // data 개체로 부터 Preview 함수 실행
-    }    
+    } 
+    // ----
+    // 리턴
+    // ----  
+    {
+        class T {
+            int m_Val;
+
+            void f() {} // 아무것도 리턴 안함
+            int g() {return 0;} // 정수값을 리턴함
+            const int& h() const {return m_Val;} // 멤버 변수의 참조자를 리턴함
+        };        
+    }
+    // ----
+    // RVO
+    // ----
+    {
+        class T {
+            int m_X;
+            int m_Y;
+        public:
+            // 값 생성자
+            T(int x, int y) :
+                m_X(x),
+                m_Y(y) {
+                std::cout<<"RVO -> T::T()"<<std::endl;
+            }
+
+            // 복사 생성자
+            T(const T& other) {
+                std::cout<<"RVO -> T(const T& other)"<<std::endl;    
+            }
+            
+            T f() {
+                T result(0, 0);
+                return result;
+            }
+        };
+
+        T t1(0, 0);
+        T t2(t1.f()); // T t2 = t1.f(); 와 동일
+    } 
     // ----
     // 가변 인자
     // ----

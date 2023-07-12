@@ -7,7 +7,7 @@ namespace {
     // 포인터를 인자로 사용하면, 널검사가 필요합니다.
     void f(int* p) {
         if (p == NULL) {
-            // p가 NULL이면 뭘 해야 할까요?
+            // (△) 비권장. p가 NULL이면 뭘 해야 할까요?
         }
         *p = 20;
     }
@@ -79,7 +79,11 @@ TEST(TestClassicCpp, PointerReference) {
     // Dangling 참조자
     // ----
     {
-        // int result = GetX(); // (X) 예외 발생. 이미 소멸된 지역 변수를 참조함
+        // (X) 예외 발생. 이미 소멸된 지역 변수를 참조함
+        // int& result = GetX(); 
+
+        // (△) 비권장. 사용할 수는 있으나 GetX()에서 지역 변수 참조 리턴 warning 발생
+        // const int& result = GetX(); 
 
         int* p = NULL;
         // int& r = *p; // (X) 오동작. *p로 NULL 의 개체를 구하는 건 오동작 할 수 있습니다. 
@@ -142,7 +146,7 @@ TEST(TestClassicCpp, PointerReference) {
     // 포인터 사용법 - 멤버 변수 포인터 - 라이브러리 개발시 사용할 수도 있음
     // ----
     {
-        int Base::* p10 = &Base::m_Value; // Base 클래스 멤버 변수 m을 가리킴
+        int Base::* p10 = &Base::m_Value; // Base 클래스 멤버 변수 m_Value를 가리킴
         Base b;
         b.*p10 = 10;
         EXPECT_TRUE(b.m_Value == 10);

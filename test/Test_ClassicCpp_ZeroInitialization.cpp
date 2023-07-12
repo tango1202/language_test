@@ -43,4 +43,5 @@ TEST(TestClassicCpp, ZeroInitialization) {
         EXPECT_TRUE(t.f1() == 0); // 정적 지역 변수는 0으로 자동 초기화
         // EXPECT_TRUE(t.f2() != 0); // 지역 변수는 쓰레기값이 될 수도 있음
     }
+
 }
