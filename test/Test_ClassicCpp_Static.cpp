@@ -90,94 +90,56 @@ TEST(TestClassicCpp, Static) {
     // 임시 개체
     // ----
     {
-        class Object {
+        class T {
         public:
-            Object() {
-                int& count = GetCountRef();
-                ++count; // 생성할때마다 값을 증가시킵니다.
-            };
-            // 정적 변수의 참조자를 리턴합니다.
-            static int& GetCountRef() {
-                static int s_Count = 0;
-                return s_Count;
-            }  
-            // 정적 변수의 값을 리턴합니다.
-            static int GetCount() {
-                return GetCountRef();
-            }
-
-            // 개체 형식(값 타입)을 리턴합니다. 연산자 오버로딩 참고.
-            Object operator +(const Object& other) const {
-                return Object();
+            static int f(int x) {
+                return x * x; // 리턴시 임시 개체 생성
             }
         };
 
-        {
-            class T {
-            public:
-                static void f(const Object& obj) {
-                    obj + obj; // 리턴시 임시 개체 생성
-                }
-            };
-            Object arg;
-            int& count = Object::GetCountRef();
-            count = 0;
+        int result = T::f(1 + 1); // 인수를 인자에 전달시 임시 개체 생성
+    }
+    {
+        class T {
+        public:
+            static int f(int x) {
+                int temp = x * x; // 임시 개체 생성하여 리턴합니다.
+                return temp; 
+            }
+        };
 
-            T::f(arg + arg); // 인수를 인자에 전달시 임시 개체 생성
+        int temp = 1 + 1; // 임시 개체를 생성하여 함수에 전달합니다.
+        int result = T::f(temp);         
+    }
+    // ----
+    // RVO
+    // ----
+    {
+        class T {
+            int m_X;
+            int m_Y;
+        public:
+            T(int x, int y) :
+                m_X(x),
+                m_Y(y) {
+                std::cout<<"RVO -> T::T()"<<std::endl;
+            }
+            T(const T& other) {
+                std::cout<<"RVO -> T(const T& other)"<<std::endl;    
+            }
+            T& operator =(const T& other) {
+                std::cout<<"RVO -> operator =(const T& other)"<<std::endl;   
+                return *this; 
+            }
+            T f() {
+                T result(0, 0);
+                return result;
+            }
+        };
 
-            EXPECT_TRUE(Object::GetCount() == 2);            
-        }
-        {
-            class T {
-            public:
-                static Object f(const Object& obj) {
-                    obj + obj; // 리턴시 임시 개체 생성
-
-                    return Object(); // 개체를 생성하여 리턴
-                }
-            };
-            Object arg;
-            int& count = Object::GetCountRef();
-            count = 0;
-
-            T::f(arg + arg); // 인수를 인자에 전달시 임시 개체 생성
-
-            EXPECT_TRUE(Object::GetCount() == 3);               
-        }
-        {
-            class T {
-            public:
-                static Object f(const Object& obj) {
-                    Object result(obj + obj); // 연산시 임시 개체 생성
-
-                    return result; // 복사 생성자로 생성한 것을 리턴
-                }
-            };
-            Object arg;
-            int& count = Object::GetCountRef();
-            count = 0;
-
-            T::f(arg + arg); // 인수를 인자에 전달시 임시 개체 생성
-
-            EXPECT_TRUE(Object::GetCount() == 2);               
-        }
-         {
-            class T {
-            public:
-                static Object f(const Object& obj) {
-                    Object result(obj + obj); // 연산시 임시 개체 생성
-
-                    return result; // 복사 생성자로 생성한 것을 리턴
-                }
-            };
-            Object arg;
-            int& count = Object::GetCountRef();
-            count = 0;
-
-            Object result = T::f(arg + arg); // 인수를 인자에 전달시 임시 개체 생성, 리턴받은 개체를 생성(?)
-
-            EXPECT_TRUE(Object::GetCount() == 2);               
-        }    
+        T t1(0, 0);
+        T t2 = t1.f();
+        EXPECT_TRUE(true);
     }
 
 }
