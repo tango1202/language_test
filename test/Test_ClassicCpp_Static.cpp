@@ -127,10 +127,7 @@ TEST(TestClassicCpp, Static) {
             T(const T& other) {
                 std::cout<<"RVO -> T(const T& other)"<<std::endl;    
             }
-            T& operator =(const T& other) {
-                std::cout<<"RVO -> operator =(const T& other)"<<std::endl;   
-                return *this; 
-            }
+            
             T f() {
                 T result(0, 0);
                 return result;
@@ -138,8 +135,6 @@ TEST(TestClassicCpp, Static) {
         };
 
         T t1(0, 0);
-        T t2 = t1.f();
-        EXPECT_TRUE(true);
+        T t2(t1.f()); // T t2 = t1.f(); 와 동일
     }
-
 }
