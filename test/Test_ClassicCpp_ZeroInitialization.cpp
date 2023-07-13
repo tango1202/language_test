@@ -42,6 +42,9 @@ TEST(TestClassicCpp, ZeroInitialization) {
         // EXPECT_TRUE(t.m_Val == 0); // (X) 오동작. 생성자가 없는 개체의 멤버 변수는 0으로 자동 초기화 된다고 하는데 GCC 디버그 모드는 0이 아닙니다.
         EXPECT_TRUE(t.f1() == 0); // 정적 지역 변수는 0으로 자동 초기화
         // EXPECT_TRUE(t.f2() != 0); // 지역 변수는 쓰레기값이 될 수도 있음
+       
+        int arr[3] = {1, }; 
+        EXPECT_TRUE(arr[0] == 1 && arr[1] == 0 && arr[2] == 0); // 배열 갯수 보다 초기화 갯수가 적을때 나머지 요소는 0으로 자동 초기화
     }
 
 }
