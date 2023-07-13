@@ -85,6 +85,9 @@ TEST(TestClassicCpp, Constructor) {
         };
         T t(10, 20); // (O) 개체 정의(인스턴스화)
     }
+    // ----
+    // 초기화 리스트
+    // ----
     {
         class T {
         public:
@@ -151,6 +154,46 @@ TEST(TestClassicCpp, Constructor) {
         // 필요한 요소가 뭔지 생성자만 봐도 알 수 있습니다. 
         T t(10, 20); 
     }
+    // 멤버 변수 정의 순서와 초기화 리스트 순서
+    {
+        class T {
+            int m_A;
+            int m_B;
+            int m_C;
+        public:
+            T(int a, int b, int c) :
+                m_C(c + m_B), // (△) 비권장. 3
+                m_B(b + m_A), // (△) 비권장. 2
+                m_A(a) {} // (△) 비권장. 1
+            int GetA() const {return m_A;}
+            int GetB() const {return m_B;}
+            int GetC() const {return m_C;}
+        };
+        T t(10, 20, 30);
+        EXPECT_TRUE(t.GetA() == 10 && t.GetB() == 30 && t.GetC() == 60);        
+    }
+    // 멤버 변수명과 인자명이 같은 경우
+    {
+        class T {
+        public:
+            int a;
+            int b;
+            int c;
+            T(int a, int b, int c) : // 멤버 변수명과 인자명이 같더라도 초기화 리스트에서 사용 가능합니다.
+                a(a), 
+                b(b),
+                c(c) {
+                // 함수 본문에서 멤버 변수명과 인자명이 같으면, 멤버 변수는 this를 써서 접근합니다.
+                this->a += 1; // 멤버 변수 a를 수정함
+                a += 2; // 인자 a를 수정함       
+            }
+        };
+        T t(10, 20, 30); 
+        EXPECT_TRUE(t.a == 11 && t.b == 20 && t.c == 30);
+    }
+
+
+
     // ----
     // 복사 생성자
     // ----
