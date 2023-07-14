@@ -23,7 +23,7 @@ namespace {
     // ----
     // 기본값 인자
     // ----  
-    int f1(int a = 10) { 
+    int f1(int a = 10) { // 인수를 전달하지 않으면 기본값 10
         return a;
     } 
     // 선언부
@@ -74,10 +74,9 @@ namespace D {
     int MyFunc(const C::Date&, double) {return 2;}
     int g() {
         C::Date d;
-        // (△) 비권장. Koenig 검색이 활용됨. 
+        // Koenig 검색이 활용됨. 
         // 인자로 전달한 d 가 네임스페이스 C에 있기 때문에, C의 함수들중 MyFunc(const Date&, int)를 찾아냄
         // MyFunc(const Date&, int) 과 MyFunc(const C::Date&, double) 중 타입이 일치하는 MyFunc(const Date&, int)이 채택됨
-        // 명시적으로 C::MyFunc 을 호출하는게 분석에 좋을 수도 있음
         return MyFunc(d, 1); 
     }
 }

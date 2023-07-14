@@ -38,10 +38,10 @@ TEST(TestClassicCpp, Type) {
     EXPECT_TRUE(sizeof(BOOL) == 4);
 
     BOOL b = TRUE;
-    EXPECT_TRUE(!b == FALSE); // !b == false이고 false를 int로 캐스팅하면 FALSE(0)
+    EXPECT_TRUE(!b == FALSE); // !b == false이고 false를 int로 형변환하면 FALSE(0)
 
     b = FALSE;
-    EXPECT_TRUE(!b == TRUE); // !b == true이고 true를 int로 캐스팅하면 TRUE(1)
+    EXPECT_TRUE(!b == TRUE); // !b == true이고 true를 int로 형변환하면 TRUE(1)
     
     // b = FALSE;
     // EXPECT_TRUE(~b == FALSE); // (X) ~b 는 0xfffffffe 입니다.

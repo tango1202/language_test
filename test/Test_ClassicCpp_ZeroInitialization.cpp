@@ -11,7 +11,7 @@ namespace {
     class T {
     public:
         static int s_m_Val; // 정적 멤버 변수. 명시적 초기화 불가능. 선언과 정의 분리. 단 const 형은 선언에서 초기화 가능
-        static const int s_c_m_Val = 0; // 상수형 정적 멤버 변수. 선언과 정의를 같이 해야 하며, 명시적으로 초기화 해야 함
+        static const int s_c_m_Val; // 정적 상수 멤버 변수. 명시적 초기화 가능
         int m_Val; // 멤버 변수. 명시적 초기화 불가능
 
         int f1() const {
@@ -25,6 +25,7 @@ namespace {
         }
     };
     int T::s_m_Val; // 선언과 정의 분리
+    const int T::s_c_m_Val = 0; // 선언과 정의 분리 
 }
 
 TEST(TestClassicCpp, ZeroInitialization) {
@@ -38,7 +39,7 @@ TEST(TestClassicCpp, ZeroInitialization) {
         EXPECT_TRUE(g_Val == 0); // 전역 변수는 0으로 자동 초기화
         EXPECT_TRUE(s_Val == 0); // 정적 전역 변수는 0으로 자동 초기화
         EXPECT_TRUE(T::s_m_Val == 0); // 정적 멤버 변수는 0으로 자동 초기화
-        EXPECT_TRUE(T::s_c_m_Val == 0); // 상수형 정적 멤버 변수는 명시적 초기화
+        EXPECT_TRUE(T::s_c_m_Val == 0); // 정적 상수 멤버 변수는 명시적 초기화
         // EXPECT_TRUE(t.m_Val == 0); // (X) 오동작. 생성자가 없는 개체의 멤버 변수는 0으로 자동 초기화 된다고 하는데 GCC 디버그 모드는 0이 아닙니다.
         EXPECT_TRUE(t.f1() == 0); // 정적 지역 변수는 0으로 자동 초기화
         // EXPECT_TRUE(t.f2() != 0); // 지역 변수는 쓰레기값이 될 수도 있음

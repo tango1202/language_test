@@ -12,7 +12,17 @@ namespace {
 }
 
 TEST(TestClassicCpp, Destructor) {
-
+    // ----
+    // 개요
+    // ----
+    {
+        class T {
+            int* m_Ptr;
+        public:
+            T() : m_Ptr(new int) {}
+            ~T() {delete m_Ptr;}
+        };
+    }
     // ---- 
     // 소멸자 호출 순서
     // ----

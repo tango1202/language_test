@@ -2,36 +2,6 @@
 
 namespace {
     // ----
-    // 전방 선언
-    // ----
-    // 1. YourClass 전방 선언
-    class YourClass; 
-
-    // 2. MyClass 선언
-    class MyClass {
-        // (O) 전방 선언을 통해 YourClass가 대충 클래스라는 걸 압니다. 
-        // 반드시 포인터나 참조자와 같은 참조 형식이어야 합니다.
-        YourClass* m_Your; 
-
-        // YourClass의 구체 정의가 필요하여 선언만 합니다.
-        void f(); 
-    };
-
-    // 3. YourClass 선언
-    class YourClass {
-        // MyClass는 상위에 정의되어 사용할 수 있습니다.
-        MyClass m_My; 
-
-    public:
-        void g() {}
-    }; 
-
-    // 4. MyClass 정의 - YourClass를 사용하고 있어 YourClass 선언 후 작성합니다.
-    void MyClass::f() {
-        m_Your->g(); 
-    }
-
-    // ----
     // 멤버 사양
     // ----
     class T {
@@ -71,6 +41,119 @@ namespace {
         // 타입 재정의
         typedef NestedClass Inner; 
     }; 
+    // ----
+    // 전방 선언
+    // ----
+    // 1. YourClass 전방 선언
+    class YourClass; 
+
+    // 2. MyClass 선언
+    class MyClass {
+        // (O) 전방 선언을 통해 YourClass가 대충 클래스라는 걸 압니다. 
+        // 반드시 포인터나 참조자와 같은 참조 형식이어야 합니다.
+        YourClass* m_Your; 
+
+        // YourClass의 구체 정의가 필요하여 선언만 합니다.
+        void f(); 
+    };
+
+    // 3. YourClass 선언
+    class YourClass {
+        // MyClass는 상위에 정의되어 사용할 수 있습니다.
+        MyClass m_My; 
+
+    public:
+        void g() {}
+    }; 
+
+    // 4. MyClass 정의 - YourClass를 사용하고 있어 YourClass 선언 후 작성합니다.
+    void MyClass::f() {
+        m_Your->g(); 
+    }
+    // ----
+    // friend
+    // ----
+    class FriendT {
+        friend class U; // U 의 전방 선언이 없어도 됨
+        friend void Func(); // Func의 전방 선언이 없어도 됨
+    private:
+        int m_Val1;
+        void f() {}
+    protected:
+        int m_Val2;
+        void g() {}
+    
+    };
+    void Func() {
+        FriendT t;
+        t.m_Val1; // (△) 비권장. private 접근
+        t.f();
+        t.m_Val2; // (△) 비권장. protected 접근
+        t.g();
+    }
+    class U {
+        friend class W;
+        void f() {
+            FriendT t;
+            t.m_Val1; // (△) 비권장. private 접근
+            t.f();
+            t.m_Val2; // (△) 비권장. protected 접근
+            t.g();            
+        }
+    };
+    class V : public U {
+        void f() {
+            FriendT t;
+            // t.m_Val1; // (X) 컴파일 오류. 상속받은 클래스에서는 접근 불가
+            // t.f();
+            // t.m_Val2; // (X) 컴파일 오류. 상속받은 클래스에서는 접근 불가
+            // t.g();            
+        }
+    };
+    class W { // T의 friend인 U 의 friend
+        void f() {
+            FriendT t;
+            // t.m_Val1; // (X) 컴파일 오류. friend의 friend는 접근 불가
+            // t.f();
+            // t.m_Val2; // (X) 컴파일 오류. friend의 friend는 접근 불가
+            // t.g();            
+        }
+    }; 
+    // ----
+    // 함수 내부의 로컬 클래스
+    // ----   
+    void OuterFunc() {
+        class InnerClass {
+        public:
+            int m_X;
+        };
+        struct InnerStruct {}; // 구조체 가능
+        union InnerUnion {}; // 공용체 가능
+
+        InnerClass t; // 함수내에서만 사용 가능
+        t.m_X = 10; 
+        EXPECT_TRUE(t.m_X == 10);
+    }
+    // ----
+    // 중첩 클래스
+    // ----  
+    class Outer {
+    private:
+        int m_Val;
+        static int s_Val;
+    public:
+        class Nested {
+        public:
+            void f(Outer *outer) {
+                s_Val; // (O) Outer의 private 정적 멤버 변수 접근 가능
+                outer->m_Val; // (O) outer 개체 참조로 private 접근 가능
+            }
+        };
+        void g() {
+            Nested nested;
+            nested.f(this); // (O) 개체를 인스턴스화 하여 접근 가능
+        }
+    };       
 }
 
 TEST(TestClassicCpp, StructClassUnion) {
@@ -109,18 +192,6 @@ TEST(TestClassicCpp, StructClassUnion) {
         Derived d;
         d.m_Val = 10;
         EXPECT_TRUE(d.m_Val == 10); // 이제 public이라 접근 가능합니다.
-    }
-    // ----
-    // 함수 내부의 로컬 클래스
-    // ----   
-    {
-        class T {
-        public:
-            int m_X;
-        };
-        T t; // 함수내에서만 사용 가능
-        t.m_X = 10; 
-        EXPECT_TRUE(t.m_X == 10);
     }
     // ----
     // 공용체
@@ -167,4 +238,87 @@ TEST(TestClassicCpp, StructClassUnion) {
         EXPECT_TRUE(u.s1.x == 20);
         EXPECT_TRUE(u.s2.x == 20);
     }
+    // ----
+    // 중첩 클래스
+    // ----
+    {
+        // 클래스에서 가능
+        class Class {
+            class NestedClass {}; // 클래스 가능
+            struct NestedStruct {}; // 구조체 가능
+            union NestedUnion {}; // 공용체 가능
+        };
+        // 구조체에서 가능
+        struct Struct {
+            class NestedClass {};
+            struct NestedStruct {};
+            union NestedUnion {};
+        };
+        // 공용체에서 가능
+        union Union {
+            class NestedClass {}; 
+            struct NestedStruct {}; 
+            union NestedUnion {}; 
+        };
+    }
+    {
+        Outer::Nested nested; // (O) 외부에서 접근할 경우 :: 사용
+    }
+
+    // ----
+    // this
+    // ---- 
+    {
+        class Outer {
+            int m_OuterVal;
+            void f() {
+                class Inner {
+                    int m_InnerVal;
+                    void f() {
+                        this->m_InnerVal; // Inner 클래스의 this
+                    }
+                };
+                this->m_OuterVal; // Outer 클래스의 this
+            }
+            class Nested {
+                int m_NestedVal;
+                void f() {
+                    this->m_NestedVal; // Nested 클래스의 this
+                }
+            }; 
+            static void Func() {
+                // this->m_OuterVal; // (X) 컴파일 오류. 정적 멤버 함수에서는 접근 불가
+            }
+        };
+    }
+    {
+        class T {
+            int m_X;
+            int m_Y;
+        public:
+            T(int x, int y) :
+                // this->m_X(x), // (X) 컴파일 오류. 초기화 리스트에서 사용 불가능
+                m_Y(this->m_X) { // (O) 초기화 리스트에서 대입값으로는 사용 가능 
+                this->m_X; // (O) 생성자 본문에서 사용 가능
+            }
+        };        
+    }
+    {
+        class T {
+        public:
+            ~T() {
+                std::cout<<"T::~T();"<<std::endl;
+            }
+            void Release() {
+                delete this; // (O) 자기 자신을 소멸 시킴(소멸자가 호출됨)
+            }
+        };
+
+        T t1; // 스택에 생성된 변수
+        // t1.Release(); // (X) 예외 발생. 스택에 생성된 개체인데 delete 함
+
+        T* t2 = new T; // 힙에 생성된 변수
+        t2->Release(); // (O)      
+    }
 }
+

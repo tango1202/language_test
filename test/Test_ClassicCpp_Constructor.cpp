@@ -79,121 +79,12 @@ TEST(TestClassicCpp, Constructor) {
             int m_X;
             int m_Y;
         public:
-            T(int x, int y) :
-                m_X(x),
+            T(int x, int y) : // 필요한 모든 인자를 나열
+                m_X(x), // 초기화 리스트를 이용하여 초기화
                 m_Y(y) {}
         };
         T t(10, 20); // (O) 개체 정의(인스턴스화)
     }
-    // ----
-    // 초기화 리스트
-    // ----
-    {
-        class T {
-        public:
-            T() {} // 기본 생성자
-            explicit T(int val) {} // 값 생성자
-        };
-
-        class U {
-            T m_X;
-            T m_Y;
-        public:
-            U(int x, int y) { // (△) 비권장. 멤버 변수를 기본 생성자로 생성 합니다.
-                m_X = T(x); // (△) 비권장. 값 생성자로 임시 개체를 생성 후, 대입 연산자로 대입합니다.
-                m_Y = T(y);
-            }
-        };        
-    }
-    {
-        class T {
-        public:
-            T() {} // 기본 생성자
-            explicit T(int val) {} // 값 생성자
-        };
-
-        class U {
-            T m_X;
-            T m_Y;
-        public:
-            U(int x, int y) : 
-                m_X(x), 
-                m_Y(y) {} // (O) 값 생성자로 멤버 변수를 초기화 합니다. 
-        };        
-    }
-    // 필요한 인자를 모두 나열하고 초기화
-    {
-        class T {
-            int m_X;
-            int m_Y;
-        public:
-            explicit T(int x) : 
-                m_X(x) {} // (△) 비권장. 멤버 변수 중 m_Y는 초기화하지 않았습니다.
-            void SetX(int x) {m_X = x;}
-            void SetY(int y) {m_Y = y;}
-        };
-
-        // (△) 비권장. 멤버 변수 중 m_Y는 초기화하지 않았습니다. 
-        // 초기화를 위해 추가로 필요한 요소가 뭔지 T 클래스를 파악해 봐야 합니다.
-        T t(10); 
-
-        // (△) 비권장. m_Y를 함수를 별도로 호출해야 합니다.
-        t.SetY(20);        
-    }
-    {
-        class T {
-            int m_X;
-            int m_Y;
-        public:
-            T(int x, int y) : 
-                m_X(x), // (O) 생성자에서 모든 멤버 변수를 초기화 합니다.
-                m_Y(y) {} 
-        };
-
-        // (O) 생성자에서 모든 멤버 변수를 초기화 합니다.
-        // 필요한 요소가 뭔지 생성자만 봐도 알 수 있습니다. 
-        T t(10, 20); 
-    }
-    // 멤버 변수 정의 순서와 초기화 리스트 순서
-    {
-        class T {
-            int m_A;
-            int m_B;
-            int m_C;
-        public:
-            T(int a, int b, int c) :
-                m_C(c + m_B), // (△) 비권장. 3
-                m_B(b + m_A), // (△) 비권장. 2
-                m_A(a) {} // (△) 비권장. 1
-            int GetA() const {return m_A;}
-            int GetB() const {return m_B;}
-            int GetC() const {return m_C;}
-        };
-        T t(10, 20, 30);
-        EXPECT_TRUE(t.GetA() == 10 && t.GetB() == 30 && t.GetC() == 60);        
-    }
-    // 멤버 변수명과 인자명이 같은 경우
-    {
-        class T {
-        public:
-            int a;
-            int b;
-            int c;
-            T(int a, int b, int c) : // 멤버 변수명과 인자명이 같더라도 초기화 리스트에서 사용 가능합니다.
-                a(a), 
-                b(b),
-                c(c) {
-                // 함수 본문에서 멤버 변수명과 인자명이 같으면, 멤버 변수는 this를 써서 접근합니다.
-                this->a += 1; // 멤버 변수 a를 수정함
-                a += 2; // 인자 a를 수정함       
-            }
-        };
-        T t(10, 20, 30); 
-        EXPECT_TRUE(t.a == 11 && t.b == 20 && t.c == 30);
-    }
-
-
-
     // ----
     // 복사 생성자
     // ----

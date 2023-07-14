@@ -131,7 +131,7 @@ TEST(TestClassicCpp, Conversions) {
         Derived* downCasting = dynamic_cast<Derived*>(b);      
         EXPECT_TRUE(downCasting != NULL);
 
-        // (O) 상속관계가 아니어서 캐스팅이 안되면 포인터의 경우 NULL을 리턴하고, 참조유형은 bad_cast 예외를 발생시킵니다.
+        // (O) 상속관계가 아니어서 형변환이 안되면 포인터의 경우 NULL을 리턴하고, 참조유형은 bad_cast 예외를 발생시킵니다.
         Other* other = dynamic_cast<Other*>(b);
         EXPECT_TRUE(other == NULL);
     }
