@@ -56,8 +56,8 @@ TEST(TestClassicCpp, AssignmentOperator) {
 
             // (O) NULL 포인터가 아니라면 복제합니다.
             T& operator =(const T& other) {
-                // (△) 비권장. 기존에 관리하는 포인터는 삭제합니다. 
-                // 사실 미리 삭제하는 건 예외 안정에 좋지 않습니다. 
+                // (△) 비권장. 기존에 관리하는 포인터는 소멸시킵니다. 
+                // 사실 미리 소멸시키는 건 예외 안정에 좋지 않습니다. 
                 // swap을 이용한 예외 안정 대입 연산자 구현 참고
                 delete m_Val; 
 
@@ -103,8 +103,8 @@ TEST(TestClassicCpp, AssignmentOperator) {
 
             // (O) NULL 포인터가 아니라면 복제합니다.     
             Handler& operator =(const Handler& other) {
-                // (△) 비권장. 기존에 관리하는 포인터는 삭제합니다. 
-                // 사실 미리 삭제하는 건 예외 안정에 좋지 않습니다. 
+                // (△) 비권장. 기존에 관리하는 포인터는 소멸시킵니다. 
+                // 사실 미리 소멸시키는 건 예외 안정에 좋지 않습니다. 
                 // swap을 이용한 예외 안정 대입 연산자 구현 참고
                 delete m_Ptr;  
 

@@ -78,7 +78,7 @@ TEST(TestClassicCpp, NewDelete) {
             }
 
             // 할당 취소할 바이트 수
-            // 두 번째 양식은 기본 클래스의 함수를 operator delete 사용하여 파생 클래스의 개체를 삭제하는 경우에 유용합니다.                       
+            // 두 번째 양식은 기본 클래스의 함수를 operator delete 사용하여 파생 클래스의 개체를 소멸시키는 경우에 유용합니다.                       
             void operator delete(void* ptr, std::size_t size) {
                 free(ptr);
             }

@@ -116,7 +116,7 @@ namespace {
             // t.m_Val1; // (X) 컴파일 오류. friend의 friend는 접근 불가
             // t.f();
             // t.m_Val2; // (X) 컴파일 오류. friend의 friend는 접근 불가
-            // t.g();            
+            // t.g();   
         }
     }; 
     // ----
@@ -153,7 +153,7 @@ namespace {
             Nested nested;
             nested.f(this); // (O) 개체를 인스턴스화 하여 접근 가능
         }
-    };       
+    };    
 }
 
 TEST(TestClassicCpp, StructClassUnion) {
