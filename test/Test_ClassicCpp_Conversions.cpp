@@ -36,10 +36,10 @@ TEST(TestClassicCpp, Conversions) {
         double a = (float)1.0F;
     }
     {
-        // none-const는 const로 변환. 반대는 컴파일 오류
+        // non-const는 const로 변환. 반대는 컴파일 오류
         int a = 10;
         const int* b = &a;
-        // int* c = b; // (X) 컴파일 오류. const는 none-const로 변환 안됨
+        // int* c = b; // (X) 컴파일 오류. const는 non-const로 변환 안됨
     }
     {
         // 모든 포인터는 void*로 변환. NULL은 모든 포인터로 변환

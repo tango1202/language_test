@@ -1,6 +1,21 @@
 #include "gtest/gtest.h" 
 
 TEST(TestClassicCpp, Array) {
+    // ---- 
+    // 개요
+    // ----
+    {
+        // int arr1[]; // (X) 컴파일 오류. 갯수가 지정되지 않음. 오류
+        int arr1[3]; // (△) 비권장. int 형 3개 정의. 초기화 되지 않아 비권장 
+        int arr2[] = {0, 1, 2}; // (O) 갯수만큼 초기화
+        int arr3[3] = {}; // (O) 3개 모두 0으로 초기화
+        int arr4[3] = {1, }; // (O) 갯수가 적거나 같아야 함. 모자라면 0
+
+        EXPECT_TRUE(sizeof(arr1) == sizeof(int) * 3); // 배열 항목의 갯수와 같음
+        EXPECT_TRUE(arr2[2] == 2);
+        EXPECT_TRUE(arr3[0] == 0 && arr3[1] == 0 && arr3[2] == 0);
+        EXPECT_TRUE(arr4[0] == 1 && arr4[1] == 0 && arr4[2] == 0);        
+    }
     // ----
     // typedef로 타입 재정의
     // ----
@@ -16,6 +31,6 @@ TEST(TestClassicCpp, Array) {
     // ----
     {
         int* p = new int[5]; // int[5] 배열 생성
-        delete[] p; // 삭제. delete가 아님에 유의. delete p;를 하면 int[0] 만 소멸됨
+        delete[] p; // 삭제. delete가 아님에 유의. delete p;를 하면 배열 요소 갯수만큼 소멸자를 호출하지 않고 한번만 호출합니다.
     }
 }

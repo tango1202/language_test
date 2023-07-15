@@ -37,7 +37,7 @@ TEST(TestClassicCpp, Enum) {
     // 개요
     // ----
     {
-        Week::Val val = Week::Sunday; // 클래스명 사용
+        Week::Val val = Week::Sunday; // 범위 확인 연사자를 이용하여 클래스명 사용
         EXPECT_TRUE(val == Week::Sunday);
     }
     // ----

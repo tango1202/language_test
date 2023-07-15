@@ -123,7 +123,7 @@ namespace {
     // 함수 내부의 로컬 클래스
     // ----   
     void OuterFunc() {
-        class InnerClass {
+        class InnerClass { // 클래스 가능
         public:
             int m_X;
         };

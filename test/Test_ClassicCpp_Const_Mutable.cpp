@@ -44,7 +44,7 @@ TEST(TestClassicCpp, Const) {
             // (△) 비권장. 멤버 변수의 값을 몰래 수정할 수 있는 const 함수
             int* GetX4() const {return const_cast<int*>(&m_X);}
 
-            // (O) 맴버 변수의 값을 수정하는 none-const 함수      
+            // (O) 맴버 변수의 값을 수정하는 non-const 함수      
             int* GetX5() {return &m_X;} 	 
 
         };
@@ -87,7 +87,9 @@ TEST(TestClassicCpp, Mutable) {
         // 개념적으로 내부 String을 리턴하므로 const 함수
         // 하지만 내부에서 m_Lazy를 세팅하기 때문에 mutable을 사용합니다.
         const std::wstring& GetString() const {
-            m_Lazy = L"Lazy String";
+            if (m_Lazy.empty()) {
+                m_Lazy = L"Lazy String";
+            }
             return m_Lazy;
         }
     };
