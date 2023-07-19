@@ -34,7 +34,7 @@ TEST(TestClassicCpp, NewDelete) {
         // delete p; // (X) 예외 발생. 두번 죽일 순 없습니다.
     }
     {
-        class T{};
+        class T {};
         T* t = new(std::nothrow) T; // (△) 비권장. 메모리 할당에 실패하면 널을 리턴하지만, 생성자에서 예외를 발생하면 전파됩니다.
         if (t == NULL) {
             // 할당 실패시 처리할 코드
@@ -350,23 +350,6 @@ TEST(TestClassicCpp, NewDelete) {
         // T* p = new T; // (X) 컴파일 오류
         // delete p;           
     }
-    // ----
-    //
-    // ----
-    {
-        class T {
-        private:
-            T() {} // 외부에서는 접근 불가
-        public:
-            static T Create() {return T();}
-        };
-
-        // T t; // (X) 컴파일 오류
-        // T* p = new T; // (X) 컴파일 오류
-        // delete p;
-
-        T t(T::Create()); // (O) T를 복사 생성          
-    }
 }
 TEST(TestClassicCpp, NewHandler) {    
     // ----
@@ -537,7 +520,6 @@ TEST(TestClassicCpp, NewHandler) {
                 Recursive();
             }
         };
-
         {
             try {
                 // new 실패시 UsingReserved -> Another -> BadAlloc 순으로 Handler를 변경합니다.
@@ -560,8 +542,8 @@ TEST(TestClassicCpp, NewHandler) {
         }
         {
             // 프로그램을 종료합니다.
-            T::SetNewHandlerMode(T::Abort);  
-            Tester::Recursive();
+            // T::SetNewHandlerMode(T::Abort);  
+            // Tester::Recursive();
         }
     }
 }

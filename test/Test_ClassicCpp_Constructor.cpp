@@ -264,4 +264,21 @@ TEST(TestClassicCpp, Constructor) {
         // Base b; // (X) 컴파일 오류
         Derived d;
     }
+    // ----
+    // 외부에서 생성할 수 없는 개체
+    // ----
+    {
+        class T {
+        private:
+            T() {} // 외부에서는 접근 불가
+        public:
+            static T Create() {return T();}
+        };
+
+        // T t; // (X) 컴파일 오류
+        // T* p = new T; // (X) 컴파일 오류
+        // delete p;
+
+        T t(T::Create()); // (O) T를 복사 생성          
+    }
 }
