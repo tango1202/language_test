@@ -132,12 +132,12 @@ TEST(TestClassicCpp, AssignmentOperator) {
             explicit T(int* val) :
                 m_Val(val) {}
         };
-        // (O) 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
+        // (O) 복사 생성시 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
         {
             T t1(new int(10));
             T t2(t1); // 새로운 int형 개체를 만들고 10을 복제합니다.
         } 
-        // (O) 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
+        // (O) 대입 연산시 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
         {
             T t1(new int(10));
             T t2(new int(20)); 
@@ -203,7 +203,7 @@ TEST(TestClassicCpp, AssignmentOperator) {
 
             // (O) 예외에 안정적이도록 swap으로 대입 연산자를 구현합니다. 
             T& operator =(const T& other) {
-                T temp(other); // 임시 개체 생성
+                T temp(other); // (O) 생성시 예외가 발생하더라도 this는 그대로 입니다.
                 Swap(temp); // 바꿔치기
                 return *this; 
             } // 임시 개체가 소멸되면서, this가 이전에 가졌던 힙 개체 소멸
@@ -215,16 +215,11 @@ TEST(TestClassicCpp, AssignmentOperator) {
             }                
         };
 
-        // (O) 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
-        {
-            T t1(new int(10), new int(10));
-            T t2(t1); // 새로운 int형 개체를 만들고 10을 복제합니다.
-        } 
-        // (O) 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
-        {
-            T t1(new int(10), new int(10));
-            T t2(new int(20), new int(20)); 
-            t2 = t1; // t1의 힙 개체를 복제후 대입하고, t2의 이전 힙 개체를 delete 합니다.
-        } 
+        // (O) 대입 연산시 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
+        // 대입 연산시 임시 개체를 만든뒤 Swap 하므로 예외가 발생하더라도 안정적입니다.
+        T t1(new int(10), new int(10));
+        T t2(new int(20), new int(20)); 
+        t2 = t1; // t1의 힙 개체를 복제후 대입하고, t2의 이전 힙 개체를 delete 합니다.
+
     }
 }

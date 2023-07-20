@@ -19,7 +19,7 @@ TEST(TestClassicCpp, Destructor) {
         class T {
             int* m_Ptr;
         public:
-            T() : m_Ptr(new int) {}
+            T() : m_Ptr(new int(10)) {}
             ~T() {delete m_Ptr;}
         };
     }
@@ -221,7 +221,7 @@ TEST(TestClassicCpp, Destructor) {
             virtual ~Base() {
                 std::cout<<"3. Base::~Base()"<<std::endl;
 
-                f(); // (△) 비권장. 소멸자에서 가상 함수 호출. Derived는 이미 소멸되었고, Base::f()가 호출됨
+                f(); // (X) 오동작. 가상 함수를 소멸자에서 호출합니다. Derived는 이미 소멸되었고, Base::f()가 호출됩니다.
             }
             virtual void f() {std::cout<<"*** Base::f() ***"<<std::endl;}
         };
@@ -237,7 +237,7 @@ TEST(TestClassicCpp, Destructor) {
             virtual void f() {std::cout<<"*** Derived::f() ***"<<std::endl;}
         };
 
-        Derived d; // 소멸자에서 가상 함수 호출
+        Derived d; // (X) 오동작. 소멸자에서 가상 함수 호출
     }
     // ----
     // 소멸자에서 예외 발생 금지

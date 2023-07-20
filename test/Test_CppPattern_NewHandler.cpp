@@ -142,7 +142,7 @@ namespace {
             // [Todo] 다른 처리 방법이 있다면 시도합니다.
             std::set_new_handler(&BadAllocHandler);
         }
-        // new 처리자의 설치 제거합니다. 아마도 std::bad_alloc이 방출됩니다.
+        // new 처리자의 설치 제거합니다. 아마도 std::bad_alloc이 발생됩니다.
         static void RemoveHandler() {
             std::set_new_handler(NULL);
         }
@@ -205,7 +205,7 @@ TEST(TestCppPattern, NewHandler) {
             }
         }
         {
-            // Handler 를 제거합니다. std::bad_alloc을 방출합니다.
+            // Handler 를 제거합니다. std::bad_alloc을 발생시킵니다.
             try {
                 NewHandler::GetInstanceRef().SetMode(NewHandler::Remove); 
                 Tester::Recursive();

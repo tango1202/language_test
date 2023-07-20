@@ -49,6 +49,33 @@ TEST(TestClassicCpp, Initialization) {
         obj = other; // (△) 비권장. 생성하고 대입하지 말고, 완전하게 생성하세요. T obj(other); 가 낫습니다.
     } 
     // ----
+    // 배열 초기화
+    // ----
+    {
+        int arr1[3]; // (△) 비권장. int 형 3개 정의. 초기화 되지 않아 비권장 
+        // int arr1[]; // (X) 컴파일 오류. 갯수가 지정되지 않음. 오류
+        // int arr1[] = {}; // (X) 컴파일 오류. 갯수가 지정되지 않음. 오류
+        int arr2[] = {0, 1, 2}; // (O) 갯수만큼 초기화
+        int arr3[3] = {}; // (O) 3개 모두 0으로 초기화
+        int arr4[3] = {0, 1, }; // (O) 갯수가 적거나 같아야 함. 모자라면 0
+
+        EXPECT_TRUE(arr2[2] == 2);
+        EXPECT_TRUE(arr3[0] == 0 && arr3[1] == 0 && arr3[2] == 0);
+        EXPECT_TRUE(arr4[2] == 0);
+
+        char str1[] = "abc"; // (O) {'a', `b`, 'c', '\0'};
+        EXPECT_TRUE(str1[0] == 'a');
+        EXPECT_TRUE(str1[1] == 'b');
+        EXPECT_TRUE(str1[2] == 'c');
+        EXPECT_TRUE(str1[3] == '\0'); // 널문자가 추가됨
+
+        wchar_t str2[] = L"abc"; // (O) {L'a', L`b`, L'c', L'\0'};
+        EXPECT_TRUE(str2[0] == L'a');
+        EXPECT_TRUE(str2[1] == L'b');
+        EXPECT_TRUE(str2[2] == L'c');
+        EXPECT_TRUE(str2[3] == L'\0'); // 널문자가 추가됨
+    }
+    // ----
     // 구조체 초기화
     // ----     
     {

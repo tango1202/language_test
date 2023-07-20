@@ -80,7 +80,7 @@ TEST(TestClassicCpp, Constructor) {
             int m_Y;
         public:
             T(int x, int y) : // 필요한 모든 인자를 나열
-                m_X(x), // 초기화 리스트를 이용하여 초기화
+                m_X(x), // 초기화 리스트를 이용하여 모든 멤버 변수 초기화
                 m_Y(y) {}
         };
         T t(10, 20); // (O) 개체 정의(인스턴스화)
@@ -271,15 +271,17 @@ TEST(TestClassicCpp, Constructor) {
     {
         class T {
         private:
-            T() {} // 외부에서는 접근 불가
+            T(int a, int b, int c) {} // 외부에서는 접근 불가
         public:
-            static T Create() {return T();}
+            static T CreateFromA(int a) {return T(a, 0, 0);}
+            static T CreateFromB(int b) {return T(0, b, 0);}
+            static T CreateFromC(int c) {return T(0, 0, c);}
         };
 
-        // T t; // (X) 컴파일 오류
-        // T* p = new T; // (X) 컴파일 오류
+        // T t(10, 0, 0); // (X) 컴파일 오류
+        // T* p = new T(10, 0, 0); // (X) 컴파일 오류
         // delete p;
 
-        T t(T::Create()); // (O) T를 복사 생성          
+        T t(T::CreateFromA(10)); // (O) T를 복사 생성            
     }
 }

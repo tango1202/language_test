@@ -107,7 +107,7 @@ TEST(TestClassicCpp, MemberVariable) {
     // 멤버 변수 정의 순서와 초기화 리스트 순서
     {
         class T {
-            int m_A;
+            int m_A; // m_A, m_B, m_C의 순서로 초기화 됩니다.
             int m_B;
             int m_C;
         public:
@@ -141,7 +141,82 @@ TEST(TestClassicCpp, MemberVariable) {
         T t(10, 20, 30); 
         EXPECT_TRUE(t.a == 11 && t.b == 20 && t.c == 30);
     }
-   
+    // ----
+    // 메모리 정렬
+    // ----
+    // {
+    //     class T {
+    //         int m_X;
+    //         int m_Y;
+    //     };
+    //     EXPECT_TRUE(sizeof(T) == sizeof(int) * 2); // 8
+    //     std::cout<<sizeof(T)<<std::endl;
+
+    //     class U {
+    //         char m_A; // 패딩 3
+    //         int m_B;
+    //         char m_C; // 패딩 3
+    //         int m_D;
+    //     };
+    //     EXPECT_TRUE(sizeof(U) == sizeof(int) * 4); // 16
+    //     std::cout<<sizeof(U)<<std::endl;
+
+    //     class V {
+    //         T m_A;
+    //         U m_B;
+    //     };
+    //     // 최대 4의 배수
+    //     EXPECT_TRUE(sizeof(V) == 8 + 16); // T(8) + U(16) = 24
+    //     std::cout<<sizeof(V)<<std::endl;
+
+    //     class W {
+    //         char m_A;
+    //         T m_B;
+    //     };
+    //     EXPECT_TRUE(sizeof(W) == 4 + sizeof(T)); // 12
+    //     std::cout<<sizeof(W)<<std::endl;
+
+    //     class W2 {
+    //         int m_A;
+    //         T m_B;
+    //     };
+    //     EXPECT_TRUE(sizeof(W2) == 4 + sizeof(T)); // 12
+    //     std::cout<<sizeof(W2)<<std::endl;
+
+    //     class W3 {
+    //         int m_A;
+    //         double m_B;
+    //     };
+    //     EXPECT_TRUE(sizeof(W3) == sizeof(double) * 2); // 16
+    //     std::cout<<sizeof(W3)<<std::endl;
+
+    //     class X {
+    //         char m_A;
+    //         U m_B;
+    //     };
+    //     EXPECT_TRUE(sizeof(X) == 4 + sizeof(U)); // 20
+    //     std::cout<<sizeof(X)<<std::endl;
+        
+    //     class Empty {};
+    //     EXPECT_TRUE(sizeof(Empty) == 1);
+
+    //     class EmptyDerived {
+    //         int m_X;
+    //     };
+    //     EXPECT_TRUE(sizeof(EmptyDerived) == sizeof(int));
+
+    //     class Base {
+    //     public:
+    //         virtual ~Base() {}
+    //     };
+    //     EXPECT_TRUE(sizeof(Base) == 64 / 8); // 64bit 의 vtable
+
+    //     class Derived : public Base {
+    //         int m_X;
+    //     };
+    //     EXPECT_TRUE(sizeof(Derived) == 64 / 8 * 2); // 16. 64bit 의 vtable과 Derived 멤버 변수
+    //     std::cout<<sizeof(Derived)<<std::endl;
+    // }
     // 메모리 접근 편의를 위해 4byte단위로 멤버 변수를 할당. 4byte 단위로 읽을 수 있도록 빈공간 할당(패딩)
     {   
         class T {

@@ -16,7 +16,7 @@ TEST(TestClassicCpp, NewDelete) {
         };
 
         T* t = new T; // (O) 메모리 할당. 생성자 호출
-        delete t; // (O) 소멸자 호출후. 메모리 해제
+        delete t; // (O) 소멸자 호출. 메모리 해제
 
         T* arr = new T[3]; // (O) 메모리 할당(sizeof(T) * 3 + 오버헤드). 생성자 3회 호출
         delete[] arr; // (O) 소멸자 3회 호출. 메모리 해제(sizeof(T) * 3 + 오버헤드)
@@ -71,12 +71,12 @@ TEST(TestClassicCpp, NewDelete) {
             int GetY() const {return m_Y;}
 
             static void* operator new(std::size_t sz) {
-                // 혹시 모르니 검사하여 최소 1byt로 만듬    
+                // 혹시 모르니 검사하여 최소 1byte로 만듬    
                 if (sz == 0) { 
                     ++sz;
                 }
 
-                // hanlder가 예외를 방출하거나 프로그램을 종료할 때까지 반복
+                // 핸들러가 예외를 발생시키거나 프로그램을 종료할 때까지 반복
                 while (true) {
                     void* ptr = malloc(sz);
                     if (ptr != NULL) {
@@ -84,17 +84,10 @@ TEST(TestClassicCpp, NewDelete) {
                     }
 
                     std::new_handler handler = std::set_new_handler(NULL); // 대충 NULL을 세팅하고 핸들러를 구합니다.
-                    // 핸들러가 있다면, 실행하고, 이전 핸들러 복원
+                    std::set_new_handler(handler); // 핸들러 복원
+                    // 핸들러가 있다면 실행
                     if (handler != NULL) {
-                        try {
-                            handler();
-                            std::set_new_handler(handler); // NULL로 바꿨으므로 복원합니다.
-                        } 
-                        // 이전 핸들러를 복원하고, 핸들러가 방출한 예외 전파
-                        catch (...) {
-                            std::set_new_handler(handler); // NULL로 바꿨으므로 복원합니다.
-                            throw; // 예외를 다시 전파
-                        }
+                        handler(); // 핸들러가 발생시킨 예외 전파
                     }
                     // 핸들러가 없다면 std::bad_alloc
                     else {
@@ -213,7 +206,7 @@ TEST(TestClassicCpp, NewDelete) {
         public:
             ~Base() {}
 
-            // (X) 오동작. sizeof(Derived) 크기 : 16byte
+            // sizeof(Derived) 크기 : 16byte
             static void* operator new(std::size_t sz) {
                 return ::operator new(sz);
             }
@@ -328,7 +321,7 @@ TEST(TestClassicCpp, NewDelete) {
             }
         }; 
         {
-            void* buffer = T::operator new(sizeof(T)); // static 함수 호출하듯이 사용합니다.
+            void* buffer = T::operator new(sizeof(T));
             T* t = new(buffer) T; // T 의 기본 생성자를 호출합니다.
             EXPECT_TRUE(t->GetX() == 10 && t->GetY() == 20);
 
@@ -340,7 +333,7 @@ TEST(TestClassicCpp, NewDelete) {
             EXPECT_TRUE(t->GetX() == 100 && t->GetY() == 200);
 
             t->~T(); // Placement New를 사용하면 명시적으로 소멸자를 호출해야 합니다.
-            T::operator delete(buffer); // static 함수 호출하듯이 사용합니다.
+            T::operator delete(buffer); 
         }
 
         {
