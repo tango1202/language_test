@@ -43,40 +43,77 @@ TEST(TestClassicCpp, NewDelete) {
     // ----
     // operator new 기본 재정의 방법
     // ---- 
+    // 전역 operator new
+    {
+        class T {
+        public:
+            static void* operator new(std::size_t sz) {
+                return ::operator new(sz); // 전역 operator new
+            }
+            static void operator delete(void* ptr) {
+                ::operator delete(ptr); // 전역 operator delete
+            }
+        };
+    }
+    // malloc
     {
         class T {
             int m_X;
             int m_Y;
         public:
             T() :
-                m_X(10), 
-                m_Y(20) {} 
-            T(int x, int y) : 
+                m_X(10),
+                m_Y(20) {}
+            T(int x, int y) :
                 m_X(x),
                 m_Y(y) {}
             int GetX() const {return m_X;}
             int GetY() const {return m_Y;}
 
             static void* operator new(std::size_t sz) {
-                void* ptr = malloc(sz);
-                if (ptr == NULL) {
-                    throw std::bad_alloc(); // 할당 실패시 std::bad_alloc 방출
+                // 혹시 모르니 검사하여 최소 1byt로 만듬    
+                if (sz == 0) { 
+                    ++sz;
                 }
-                return ptr;
-                // return ::operator new(sz); // 전역 operator new
+
+                // hanlder가 예외를 방출하거나 프로그램을 종료할 때까지 반복
+                while (true) {
+                    void* ptr = malloc(sz);
+                    if (ptr != NULL) {
+                        return ptr;
+                    }
+
+                    std::new_handler handler = std::set_new_handler(NULL); // 대충 NULL을 세팅하고 핸들러를 구합니다.
+                    // 핸들러가 있다면, 실행하고, 이전 핸들러 복원
+                    if (handler != NULL) {
+                        try {
+                            handler();
+                            std::set_new_handler(handler); // NULL로 바꿨으므로 복원합니다.
+                        } 
+                        // 이전 핸들러를 복원하고, 핸들러가 방출한 예외 전파
+                        catch (...) {
+                            std::set_new_handler(handler); // NULL로 바꿨으므로 복원합니다.
+                            throw; // 예외를 다시 전파
+                        }
+                    }
+                    // 핸들러가 없다면 std::bad_alloc
+                    else {
+                        throw std::bad_alloc();
+                    }
+                }
+                return NULL;
             }
             static void operator delete(void* ptr) {
                 free(ptr); // ptr == NULL 일 경우 아무 작업 안함
-                // ::operator delete(ptr); // 전역 operator delete. ptr == NULL 일 경우 아무 작업 안함
             }
-        }; 
+        };
         T* t = new T; // T::operator new(std::size_t sz), 기본 생성자 호출
         EXPECT_TRUE(t->GetX() == 10 && t->GetY() == 20);
         delete t; // T::operator delete(void* ptr)
 
         t = new T(1, 2); // T::operator new(std::size_t sz), T::T(int, int) 생성자 호출
         EXPECT_TRUE(t->GetX() == 1 && t->GetY() == 2);
-        delete t; // T::operator delete(void* ptr) 
+        delete t; // T::operator delete(void* ptr)
     }  
     // 사용자 정의
     {
@@ -196,29 +233,6 @@ TEST(TestClassicCpp, NewDelete) {
 
         // Base* base = new Derived; // Base::operator new(std::size_t sz) 호출
         // delete base; // (X) 오동작.  Base의 소멸자가 호출되고 Base의 크기가 전달됨. Base::delete(void* ptr, std::size_t sz) 호출        
-    }
-    // 최소 1byte 할당
-    {
-        class T {
-        public:
-            static void* operator new(std::size_t sz) { // 1byte 전달됨
-                if (sz == 0) { // 혹시 모르니 검사하여 최소 1byt로 만듬
-                    ++sz;
-                }
-                void* ptr = malloc(sz);
-                if (ptr == NULL) {
-                    throw std::bad_alloc(); // 할당 실패시 std::bad_alloc 방출
-                }
-                return ptr;
-            }
-            static void operator delete(void* ptr) {
-                free(ptr);  
-            }            
-        };
-
-        EXPECT_TRUE(sizeof(T) == 1); // 빈 클래스도 1byte 할당됨
-        T* t = new T;
-        delete t;
     }
     // ----
     // new[] - delete[]
