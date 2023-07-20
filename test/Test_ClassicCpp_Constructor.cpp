@@ -63,12 +63,12 @@ TEST(TestClassicCpp, Constructor) {
         class T {
             int m_Val;
         public:
-            T() : 
-                m_Val(0) {} // (O) 명시적으로 기본 생성자를 만듭니다.
-            explicit T(int val) : // 값 생성자가 추가됨
+            explicit T(int val = 0) : // 값 생성자 의 기본값을 이용해 디폴트 생성자를 없앴습니다.
                 m_Val(val) {}
         };
-        T t; // (O) 명시적 기본 생성자 호출 
+        T t1; // (O) 기본값으로 값 생성자 호출
+        T t2(0); // (O) 기본값과 동일한 값으로 값 생성자 호출
+        T t3(10); // (O) 임의 값으로 값 생성자 호출
     }
     // ----
     // 값 생성자
@@ -198,18 +198,6 @@ TEST(TestClassicCpp, Constructor) {
             T t2(t1); // 새로운 int형 개체를 만들고 10을 복제합니다.
         } 
     }
-    // 복사 생성자 사용 제한
-    {
-        class T {
-        public:
-            T() {}
-        private:
-            T(const T& other) {}
-        };
-
-        T t1;
-        // T t2(t1); // (X) 컴파일 오류. 복사 생성자를 사용할 수 없게 private로 하여 단단히 코딩 계약을 했습니다.        
-    }
     // ----
     // 생성자에서 가상 함수 호출 금지
     // ----
@@ -247,6 +235,19 @@ TEST(TestClassicCpp, Constructor) {
         // Base::SetVal() 이 호출됨
         EXPECT_TRUE(d.GetVal() == 1); 
     }
+    // 생성자 사용 제한
+    {
+        class T {
+        public:
+            T(int, int) {} // (O) 값 생성자를 정의하면 암시적 기본 생성자를 사용할 수 없습니다.
+        private:
+            T(const T& other) {} // (O) private여서 외부에서 복사 생성자 사용할 수 없습니다.
+        };
+
+        // T t1; // (X) 컴파일 오류. 
+        T t2(0, 0); // (O)
+        // T t3(t1); // (X) 컴파일 오류. 복사 생성자를 사용할 수 없게 private로 하여 단단히 코딩 계약을 했습니다.    
+    }
     // ----
     // 상속 전용 기반 클래스 - `protected` 생성자
     // ----
@@ -265,7 +266,7 @@ TEST(TestClassicCpp, Constructor) {
         Derived d;
     }
     // ----
-    // 외부에서 생성할 수 없는 개체
+    // 생성자 접근 차단 - private 생성자
     // ----
     {
         class T {

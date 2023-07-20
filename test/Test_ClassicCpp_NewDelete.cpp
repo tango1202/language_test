@@ -342,7 +342,7 @@ TEST(TestClassicCpp, NewDelete) {
         class T {
         private:
             static void* operator new(std::size_t sz) {
-                return ::operator new(sz);
+                return NULL;
             }    
         };
 
