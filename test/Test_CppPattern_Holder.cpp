@@ -20,7 +20,7 @@ namespace {
         static void* operator new(std::size_t sz) {return NULL;} // 누군가가 접근하면 private여서 컴파일 오류
     };
 
-    // 유효 범위가 지나면, T 타입의 포인터를 소멸시킴
+    // 유효 범위가 지나면, T 타입의 포인터를 소멸시키는 개체
     template<typename T>
     class Holder : 
         private Uncopyable,
@@ -35,7 +35,7 @@ namespace {
         bool IsValid() const {return m_Ptr != NULL ? true : false;}
     };
 
-    // 유효 범위가 지나면, 설정한 속성을 복원시킴
+    // 유효 범위가 지나면, 설정한 속성을 복원시키는 개체
     template< typename GetterT, typename SetterT, typename ValueT>
     class Restorer : 
         private Uncopyable,
@@ -88,47 +88,44 @@ TEST(TestCppPattern, Holder) {
 }
 
 TEST(TestCppPattern, Restorer) {
+    // 테스트용 속성 관리자
+    class Manager {
+        int m_Val;
+    public:
+        int GetVal() const {return m_Val;}
+        void SetVal(int val) {m_Val = val;} 
+    };
+
+    // 속성값을 리턴하는 함수자
+    class ManagerGetter { 
+        const Manager& m_Manager; 
+    public:
+        explicit ManagerGetter(const Manager& manager) : 
+            m_Manager(manager) {} 
+        int operator ()() const {return m_Manager.GetVal();}
+    };
+
+    // 속성값을 세팅하는 함수자
+    class ManagerSetter { 
+        Manager& m_Manager; 
+    public:
+        explicit ManagerSetter(Manager& manager) : 
+            m_Manager(manager) {} 
+        void operator ()(int val) {m_Manager.SetVal(val);}
+    }; 
+
+    Manager manager;
+    manager.SetVal(10); 
 
     {
-        // 테스트용 속성 관리자
-        class Manager {
-            int m_Val;
-        public:
-            int GetVal() const {return m_Val;}
-            void SetVal(int val) {m_Val = val;} 
-        };
-
-        // 속성값을 리턴하는 함수자
-        class ManagerGetter { 
-            const Manager& m_Manager; 
-        public:
-            explicit ManagerGetter(const Manager& manager) : 
-                m_Manager(manager) {} 
-            int operator ()() const {return m_Manager.GetVal();}
-        };
-
-        // 속성값을 세팅하는 함수자
-        class ManagerSetter { 
-            Manager& m_Manager; 
-        public:
-            explicit ManagerSetter(Manager& manager) : 
-                m_Manager(manager) {} 
-            void operator ()(int val) {m_Manager.SetVal(val);}
-        }; 
-
-        Manager manager;
-        manager.SetVal(10); 
-
-        {
-            ManagerGetter getter(manager);
-            ManagerSetter setter(manager);
-            Restorer<ManagerGetter, ManagerSetter, int> managerRestorer(
-                getter,
-                setter,
-                20
-            );
-            EXPECT_TRUE(manager.GetVal() == 20); // 20 으로 설정함
-        } // Restore가 소멸되면서 원래값 복원  
-        EXPECT_TRUE(manager.GetVal() == 10); // 원래값인 10으로 복원함
-    }
+        ManagerGetter getter(manager);
+        ManagerSetter setter(manager);
+        Restorer<ManagerGetter, ManagerSetter, int> managerRestorer(
+            getter,
+            setter,
+            20
+        );
+        EXPECT_TRUE(manager.GetVal() == 20); // 20 으로 설정함
+    } // Restore가 소멸되면서 원래값 복원  
+    EXPECT_TRUE(manager.GetVal() == 10); // 원래값인 10으로 복원함
 }
