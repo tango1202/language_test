@@ -144,93 +144,67 @@ TEST(TestClassicCpp, MemberVariable) {
     // ----
     // 메모리 정렬
     // ----
-    // {
-    //     class T {
-    //         int m_X;
-    //         int m_Y;
-    //     };
-    //     EXPECT_TRUE(sizeof(T) == sizeof(int) * 2); // 8
-    //     std::cout<<sizeof(T)<<std::endl;
+    {
+        class T1 {
+            int m_X;
+            int m_Y;
+        };
+        EXPECT_TRUE(sizeof(T1) == sizeof(int) * 2); // 8
 
-    //     class U {
-    //         char m_A; // 패딩 3
-    //         int m_B;
-    //         char m_C; // 패딩 3
-    //         int m_D;
-    //     };
-    //     EXPECT_TRUE(sizeof(U) == sizeof(int) * 4); // 16
-    //     std::cout<<sizeof(U)<<std::endl;
-
-    //     class V {
-    //         T m_A;
-    //         U m_B;
-    //     };
-    //     // 최대 4의 배수
-    //     EXPECT_TRUE(sizeof(V) == 8 + 16); // T(8) + U(16) = 24
-    //     std::cout<<sizeof(V)<<std::endl;
-
-    //     class W {
-    //         char m_A;
-    //         T m_B;
-    //     };
-    //     EXPECT_TRUE(sizeof(W) == 4 + sizeof(T)); // 12
-    //     std::cout<<sizeof(W)<<std::endl;
-
-    //     class W2 {
-    //         int m_A;
-    //         T m_B;
-    //     };
-    //     EXPECT_TRUE(sizeof(W2) == 4 + sizeof(T)); // 12
-    //     std::cout<<sizeof(W2)<<std::endl;
-
-    //     class W3 {
-    //         int m_A;
-    //         double m_B;
-    //     };
-    //     EXPECT_TRUE(sizeof(W3) == sizeof(double) * 2); // 16
-    //     std::cout<<sizeof(W3)<<std::endl;
-
-    //     class X {
-    //         char m_A;
-    //         U m_B;
-    //     };
-    //     EXPECT_TRUE(sizeof(X) == 4 + sizeof(U)); // 20
-    //     std::cout<<sizeof(X)<<std::endl;
+        class T2 { // 멤버 변수중 가장 큰 int 에 맞춰 정렬
+            char m_X; // 1byte. 3 byte 패딩
+            int m_Y;
+        };
+        EXPECT_TRUE(sizeof(T2) == sizeof(int) * 2); // 8
         
-    //     class Empty {};
-    //     EXPECT_TRUE(sizeof(Empty) == 1);
+        class T3 { // 멤버 변수중 가장 큰 double에 맞춰 정렬
+            char m_X; // 1byte. 7byte 패딩
+            double m_Y;
+        };
+        EXPECT_TRUE(sizeof(T3) == sizeof(double) * 2); // 16
 
-    //     class EmptyDerived {
-    //         int m_X;
-    //     };
-    //     EXPECT_TRUE(sizeof(EmptyDerived) == sizeof(int));
+        struct T4 { // 멤버 변수중 가장 큰 double에 맞춰 정렬.
+            char m_X; // 1byte. 3byte 패딩
+            int m_Y; // 4byte. 
+            double m_Z;
+        };
+        EXPECT_TRUE(sizeof(T3) == sizeof(double) * 2); // 16
+    }
+    {
+        class Empty {}; // 빈 클래스는 강제로 1byte
+        EXPECT_TRUE(sizeof(Empty) == 1);
 
-    //     class Base {
-    //     public:
-    //         virtual ~Base() {}
-    //     };
-    //     EXPECT_TRUE(sizeof(Base) == 64 / 8); // 64bit 의 vtable
+        class EmptyDerived : public Empty { // 빈 클래스를 상속받으면, 강제 1byte는 빼고 크기가 설정됨
+            int m_X;
+        };
+        EXPECT_TRUE(sizeof(EmptyDerived) == sizeof(int));
 
-    //     class Derived : public Base {
-    //         int m_X;
-    //     };
-    //     EXPECT_TRUE(sizeof(Derived) == 64 / 8 * 2); // 16. 64bit 의 vtable과 Derived 멤버 변수
-    //     std::cout<<sizeof(Derived)<<std::endl;
-    // }
+        class Base { // 멤버 변수는 없지만 virtual 이 있어 가상 함수 테이블이 생성됨
+        public:
+            virtual ~Base() {}
+        };
+        EXPECT_TRUE(sizeof(Base) == 8);
+
+        class Derived : public Base { // 가상 함수 테이블 크기로 정렬됨
+            char m_X;
+        };
+        EXPECT_TRUE(sizeof(Derived) == 8 * 2); 
+        std::cout<<sizeof(Derived)<<std::endl;        
+    }
     // 메모리 접근 편의를 위해 4byte단위로 멤버 변수를 할당. 4byte 단위로 읽을 수 있도록 빈공간 할당(패딩)
     {   
         class T {
-            char m_Char1; // 1byte, 메모리 접근 편의를 위해 32bit(4byte) 단위로 할당(패딩). 3byte 빈공간이 생김 
+            char m_Char1; // 1byte, 3byte 패딩 
             int m_Int1; // 4byte
-            char m_Char2; // 1byte, 메모리 접근 편의를 위해 32bit(4byte) 단위로 할당(패딩). 3byte 빈공간이 생김 
+            char m_Char2; // 1byte, 3byte 패딩
             int m_Int2; // 4byte
         };
         EXPECT_TRUE(sizeof(T) == 16);
     }
     {
-         class T {
+        class T {
             char m_Char1; // 1byte
-            char m_Char2; // 1byte, 패딩을 위해 2byte 빈공간이 생김
+            char m_Char2; // 1byte, 2byte 패딩
             int m_Int1; // 4byte
             int m_Int2; // 4byte
         };
@@ -255,19 +229,5 @@ TEST(TestClassicCpp, MemberVariable) {
         T t2(&val); // (△) 비권장. val은 스택에 생성된 자동 변수 이므로 delete하면 안됩니다.
 
         t2 = t1; // (△) 비권장. 이미 지워버린 ptr을 가진 t1을 t2에 복사했습니다. 이런 실수 많이 하게 됩니다.
-    }
-    // ----
-    // pImpl
-    // ----  
-    {
-        class T {
-        private:    
-            class Impl { // 실제 멤버 변수들의 집합
-            public:
-                int m_X;
-                int m_Y;
-            };
-            Impl* m_Impl; // 멤버 변수는 1개임
-        };
     }
 }

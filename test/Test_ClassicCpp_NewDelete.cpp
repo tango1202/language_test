@@ -157,7 +157,7 @@ TEST(TestClassicCpp, NewDelete) {
                 std::cout<<"T::delete(void* ptr)"<<std::endl;
                 ::operator delete(ptr); 
             }
-            // sz : 해제할 바이트 수
+            // sz : 해제할 byte 수
             static void operator delete(void* ptr, std::size_t sz) {
                 std::cout<<"delete(void* ptr, std::size_t sz)"<<std::endl;
                 ::operator delete(ptr); 
@@ -389,7 +389,7 @@ TEST(TestClassicCpp, NewHandler) {
                 arr[i] = new T;
             }
             catch (MyException& e) {
-                // i 이전까지 모두 삭제합니다.
+                // i 이전까지 생성된 T 개체를 모두 삭제합니다.
                 for (int j = 0; j < i; ++j) {
                     delete arr[j];
                 }

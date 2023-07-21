@@ -133,14 +133,15 @@ TEST(TestClassicCpp, Preprocessor) {
     // ----
     {
         class T {
-            char m_Char; // 1byte, 메모리 접근 편의를 위해 32bit(4byte) 단위로 할당(패딩). 3byte 빈공간이 생김 
+            char m_Char; // 1byte. 3byte 패딩
             int m_Int; // 4byte
         };
 
-        EXPECT_TRUE(sizeof(T) == 8); // char가 패딩됨
+        EXPECT_TRUE(sizeof(T) == 8); 
     } 
-#pragma pack(push, 1) // 데이터 버스 크기를 1바이트 단위로 설정      
+#pragma pack(push, 1) // 메모리 정렬을 1byte 단위로 설정      
     {
+
         class T {
             char m_Char; // 1byte 
             int m_Int; // 4byte
@@ -148,7 +149,7 @@ TEST(TestClassicCpp, Preprocessor) {
 
         EXPECT_TRUE(sizeof(T) == 5); // 1 + 4 = 5byte
     }
-#pragma pack(pop) // 데이터 버스 크기 설정 원복     
+#pragma pack(pop) // 메모리 정렬 설정 원복 
 }
 
 
