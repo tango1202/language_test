@@ -1,5 +1,8 @@
 #include "gtest/gtest.h" 
 
+
+
+
 namespace {
     // ----
     // 개요
@@ -226,7 +229,7 @@ TEST(TestClassicCpp, MemberVariable) {
         T t1(ptr); // (△) 비권장. ptr는 new 한 것이기 때문에 m_Ptr은 delete 되어야 합니다.
         delete ptr; // (△) 비권장. 그냥 밖에서 지워버렸습니다.
 
-        T t2(&val); // (△) 비권장. val은 스택에 생성된 자동 변수 이므로 delete하면 안됩니다.
+        T t2(&val); 
 
         t2 = t1; // (△) 비권장. 이미 지워버린 ptr을 가진 t1을 t2에 복사했습니다. 이런 실수 많이 하게 됩니다.
     }

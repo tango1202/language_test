@@ -159,19 +159,19 @@ TEST(TestClassicCpp, Constructor) {
             T t2(t1); // 새로운 int형 개체를 만들고 10을 복제합니다.
         }      
     }
-    // Handler 사용
+    // 스마트 포인터 사용
     {
-        // 복사 생성이나 대입시 m_Ptr을 복제하고, 소멸시 delete 합니다.
-        class Handler {
+        // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.
+        class IntPtr {
         private:
             int* m_Ptr; // new로 생성된 개체입니다.
         public: 
-            Handler(int* ptr) :
+            explicit IntPtr(int* ptr) :
                 m_Ptr(ptr) {}
 
             // (O) NULL 포인터가 아니라면 복제합니다.    
-            Handler(const Handler& other) {
-                if (other.m_Ptr != NULL) { 
+            IntPtr(const IntPtr& other) {
+                if (other.IsValid()) { 
                     m_Ptr = new int(*other.m_Ptr); 
                 }
                 else {
@@ -180,22 +180,35 @@ TEST(TestClassicCpp, Constructor) {
             }
 
             // 힙 개체를 메모리에서 제거 합니다.
-            ~Handler() {delete m_Ptr;}
+            ~IntPtr() {delete m_Ptr;}
+
+            // 포인터 연산자 호출시 m_Ptr에 접근할 수 있게 합니다.
+            const int* operator ->() const {return m_Ptr;}
+            int* operator ->() {return m_Ptr;}
+
+            const int& operator *() const {return *m_Ptr;}
+            int& operator *() {return *m_Ptr;}
+
+            // 유효한지 검사합니다.
+            bool IsValid() const {return m_Ptr != NULL ? true : false;}    
         };
 
         class T {
-            // (O) Handler를 이용하여 복사 생성시 포인터의 복제본을 만들고, 소멸시 Handler에서 delete 합니다.
+            // (O) IntPtr을 이용하여 복사 생성과 대입시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
             // 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
-            Handler m_Val;
+            IntPtr m_Val;
         public:
             // val : new 로 생성된 것을 전달하세요.
             explicit T(int* val) :
                 m_Val(val) {}
+            int GetVal() const {return *m_Val;}
         };
         // (O) 힙 개체를 복제하여 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
         {
             T t1(new int(10));
             T t2(t1); // 새로운 int형 개체를 만들고 10을 복제합니다.
+
+            EXPECT_TRUE(t2.GetVal() == 10);
         } 
     }
     // ----
