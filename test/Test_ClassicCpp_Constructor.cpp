@@ -63,7 +63,7 @@ TEST(TestClassicCpp, Constructor) {
         class T {
             int m_Val;
         public:
-            explicit T(int val = 0) : // 값 생성자 의 기본값을 이용해 디폴트 생성자를 없앴습니다.
+            explicit T(int val = 0) : // 값 생성자의 기본값을 이용해 암시적 기본 생성자를 없앴습니다.
                 m_Val(val) {}
         };
         T t1; // (O) 기본값으로 값 생성자 호출
@@ -161,7 +161,7 @@ TEST(TestClassicCpp, Constructor) {
     }
     // 스마트 포인터 사용
     {
-        // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.
+        // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.(대입 연산은 지원하지 않습니다.)
         class IntPtr {
         private:
             int* m_Ptr; // new로 생성된 개체입니다.
@@ -170,14 +170,8 @@ TEST(TestClassicCpp, Constructor) {
                 m_Ptr(ptr) {}
 
             // (O) NULL 포인터가 아니라면 복제합니다.    
-            IntPtr(const IntPtr& other) {
-                if (other.IsValid()) { 
-                    m_Ptr = new int(*other.m_Ptr); 
-                }
-                else {
-                    m_Ptr = NULL;
-                }
-            }
+            IntPtr(const IntPtr& other) :
+                m_Ptr(other.IsValid() ? new int(*other.m_Ptr) : NULL) {}
 
             // 힙 개체를 메모리에서 제거 합니다.
             ~IntPtr() {delete m_Ptr;}
@@ -194,7 +188,7 @@ TEST(TestClassicCpp, Constructor) {
         };
 
         class T {
-            // (O) IntPtr을 이용하여 복사 생성과 대입시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
+            // (O) IntPtr을 이용하여 복사 생성시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
             // 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
             IntPtr m_Val;
         public:
@@ -210,6 +204,12 @@ TEST(TestClassicCpp, Constructor) {
 
             EXPECT_TRUE(t2.GetVal() == 10);
         } 
+        // (X) 예외 발생. 2번 delete 합니다. 아직 대입 연산은 지원하지 않습니다.
+        {
+            T t1(new int(10));
+            T t2(new int(20));
+            // t2 = t1; // 아직 대입 연산은 지원하지 않습니다.
+        }
     }
     // ----
     // 생성자에서 가상 함수 호출 금지

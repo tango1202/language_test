@@ -1,4 +1,5 @@
 #include "gtest/gtest.h" 
+#include <typeinfo> 
 
 TEST(TestClassicCpp, MemberFunction) {
     // ----
@@ -99,6 +100,19 @@ TEST(TestClassicCpp, MemberFunction) {
 
         EXPECT_TRUE(b->v() == 20); // (O) 가상 함수여서 Derived::v() 가 호출됨
         EXPECT_TRUE(d.v() == 20); // (O) 가상 함수여서 Derived::v() 가 호출됨
+    }
+    // 리턴값 변경
+    {
+        class Base {
+        public:
+            virtual Base* v() {return this;} // 가상 함수
+        };
+
+        class Derived : public Base {
+        public:
+            virtual Derived* v() {return this;} // (O) Derived 는 Base와 상속관계여서 가능
+            // virtual int* v() {return NULL;} // (X) 컴파일 오류. 밑도 끝도 없는 타입은 안됨
+        };
     }
     // ----
     // 순가상 함수
