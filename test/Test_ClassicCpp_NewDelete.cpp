@@ -35,7 +35,7 @@ TEST(TestClassicCpp, NewDelete) {
     }
     {
         class T {};
-        T* t = new(std::nothrow) T; // (△) 비권장. 메모리 할당에 실패하면 널을 리턴하지만, 생성자에서 예외를 발생하면 전파됩니다.
+        T* t = new(std::nothrow) T; // (△) 비권장. 메모리 할당에 실패하면 널을 리턴하지만, 생성자에서 예외를 발생시키면 전파됩니다.
         if (t == NULL) {
             // 할당 실패시 처리할 코드
         }

@@ -141,14 +141,8 @@ TEST(TestClassicCpp, Constructor) {
                 m_Val(val) {}
 
             // (O) NULL 포인터가 아니라면 복제합니다.
-            T(const T& other) {
-                if (other.m_Val != NULL) { 
-                    m_Val = new int(*other.m_Val);
-                }
-                else {
-                    m_Val = NULL;
-                }
-            }
+            T(const T& other) : 
+                m_Val(other.m_Val != NULL ? new int(*other.m_Val) : NULL) {}
 
             // 힙 개체를 메모리에서 제거 합니다.
             ~T() {delete m_Val;} 
@@ -189,7 +183,7 @@ TEST(TestClassicCpp, Constructor) {
 
         class T {
             // (O) IntPtr을 이용하여 복사 생성시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
-            // 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
+            // (O) 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
             IntPtr m_Val;
         public:
             // val : new 로 생성된 것을 전달하세요.
@@ -286,9 +280,9 @@ TEST(TestClassicCpp, Constructor) {
         private:
             T(int a, int b, int c) {} // 외부에서는 접근 불가
         public:
-            static T CreateFromA(int a) {return T(a, 0, 0);}
-            static T CreateFromB(int b) {return T(0, b, 0);}
-            static T CreateFromC(int c) {return T(0, 0, c);}
+            static T CreateFromA(int a) {return T(a, 0, 0);} // a값만 가지고 생성
+            static T CreateFromB(int b) {return T(0, b, 0);} // b값만 가지고 생성
+            static T CreateFromC(int c) {return T(0, 0, c);} // c값만 가지고 생성
         };
 
         // T t(10, 0, 0); // (X) 컴파일 오류

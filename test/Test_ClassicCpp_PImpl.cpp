@@ -13,6 +13,7 @@ namespace {
     // public:
     //     // val1, val2 : new 로 생성된 것을 전달하세요.
     //     T(int* val1, int* val2);
+    //     // // (△) 비권장 . m_Impl이 포인터 멤버 변수여서, 복사 생성자에서 복제, 소멸자에서 delete, swap을 이용한 대입 연산자를 구현해야 합니다.
     //     T(const T& other);
     //     ~T();
     //     T& operator =(const T& other);
@@ -89,11 +90,18 @@ namespace {
     // int T::GetVal1() const {return *(m_Impl->m_Val1);}
     // int T::GetVal2() const {return *(m_Impl->m_Val2);}
 
-    // ----
+    // --------
     // 선언에서
-    // ----
+    // --------
 
+    // ----
+    // T클래스의 Impl 전방 선언
+    // ----
     class TImpl; // 중첩 클래스는 전방 선언이 안되어 별도 클래스로 선언하고, 전방 선언합니다.
+    
+    // ----    
+    // TImplPtr 선언
+    // ----
     class TImplPtr {
     private:
         TImpl* m_Ptr; 
@@ -114,8 +122,14 @@ namespace {
         bool IsValid() const;  
     };
 
+    // ----    
+    // (O) T 선언 : 복사 생성자, 소멸자, swap을 이용한 대입 연산자, Swap 불필요
+    // ----
     class T {
-        TImplPtr m_Impl; // 중첩 클래스는 전방 선언이 안되어 별도 클래스로 선언하고, 전방 선언합니다.
+        // 중첩 클래스는 전방 선언이 안되어 별도 클래스로 선언하고, 전방 선언합니다.
+        // (O) 스마트 포인터를 사용하여, 복사 생성자, 소멸자를 구현할 필요가 없고, 
+        // (O) 멤버 변수도 1개여서 Swap을 이용하여 대입 연산자를 구현할 필요가 없습니다.
+        TImplPtr m_Impl; 
     public:
         // val1, val2 : new 로 생성된 것을 전달하세요.
         T(int* val1, int* val2);
@@ -124,9 +138,9 @@ namespace {
         int GetVal2() const;
     };
 
-    // ----
+    // --------
     // 정의에서
-    // ----
+    // --------
 
     // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.
     // 대입 연산은 임시 개체 생성 후 swap 합니다.
@@ -137,7 +151,7 @@ namespace {
         explicit IntPtr(int* ptr) :
             m_Ptr(ptr) {}
         IntPtr(const IntPtr& other) :
-            m_Ptr(other.IsValid() ? new int(*other.m_Ptr) : NULL) {}
+            m_Ptr(other.IsValid() ? new int(*other.m_Ptr) : NULL) {} 
         ~IntPtr() {delete m_Ptr;}
 
         IntPtr& operator =(const IntPtr& other) {
@@ -158,7 +172,9 @@ namespace {
         bool IsValid() const {return m_Ptr != NULL ? true : false;}    
     };
 
+    // ----
     // TImpl 정의
+    // ----
     class TImpl {
     public: // T 에서 멤버 변수를 자유롭게 쓰도록 public 입니다.
         // 스마트 포인터를 사용합니다. 암시적 복사 생성자에서 복제본을 만들고, 소멸자에서 잘 소멸합니다.
@@ -172,12 +188,14 @@ namespace {
         TImpl& operator =(const TImpl& other) {return *this;}  
     };
 
+    // ----
     // TImplPtr 정의
+    // ----
     TImplPtr::TImplPtr(TImpl* ptr) :
         m_Ptr(ptr) {}
     TImplPtr::TImplPtr(const TImplPtr& other) :
-        m_Ptr(other.IsValid() ? new TImpl(*other.m_Ptr) : NULL) {}
-    TImplPtr::~TImplPtr() {delete m_Ptr;}
+        m_Ptr(other.IsValid() ? new TImpl(*other.m_Ptr) : NULL) {} // TImpl의 복사 생성자를 호출합니다.
+    TImplPtr::~TImplPtr() {delete m_Ptr;} // TImpl을 소멸시킵니다.
 
     TImplPtr& TImplPtr::operator =(const TImplPtr& other) {
         TImplPtr temp(other); 
@@ -196,7 +214,9 @@ namespace {
 
     bool TImplPtr::IsValid() const {return m_Ptr != NULL ? true : false;}    
 
+    // ----
     // T 정의
+    // ----
     T::T(int* val1, int* val2) :
         m_Impl(new TImpl(val1, val2)) {}
  

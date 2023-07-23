@@ -57,7 +57,7 @@ set(TestFiles
    test/Test_ClassicCpp_MemberFunction.cpp
    test/Test_ClassicCpp_ImplicitDefinition.cpp 
    test/Test_ClassicCpp_MemberVariable.cpp
-   test/Test_ClassicCpp_PImpl.cpp  
+   test/Test_ClassicCpp_PImpl.cpp
    test/Test_ClassicCpp_NewDelete.cpp  
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp

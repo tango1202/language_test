@@ -124,19 +124,9 @@ TEST(TestClassicCpp, AssignmentOperator) {
                 m_X(x), 
                 m_Y(y) {} 
             // NULL 포인터가 아니라면 복제합니다.
-            T(const T& other) {
-                if (other.m_X != NULL) { 
-                    m_X = new Big(*other.m_X);
-                }
-                else {
-                    m_X = NULL;
-                }
-                if (other.m_Y != NULL) { 
-                    m_Y = new Big(*other.m_Y);
-                }
-                else {
-                    m_Y = NULL;
-                }
+            T(const T& other) :
+                m_X(other.m_X != NULL ? new Big(*other.m_X) : NULL),
+                m_Y(other.m_Y != NULL ? new Big(*other.m_Y) : NULL) {
             }
             // 힙 개체를 메모리에서 제거 합니다.
             ~T() {
@@ -226,6 +216,7 @@ TEST(TestClassicCpp, AssignmentOperator) {
         class T {
             // (O) IntPtr을 이용하여 복사 생성과 대입시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
             // (O) 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
+            // (O) 포인터 멤버 변수가 1개 있고, 내부적으로 대입 연산시 swap하므로 대입 연산자를 구현할 필요가 없습니다.
             IntPtr m_Val;
         public:
             // val : new 로 생성된 것을 전달하세요.
