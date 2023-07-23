@@ -304,8 +304,8 @@ TEST(TestClassicCpp, AssignmentOperator) {
             IntPtr m_Val1;
             IntPtr m_Val2;
         public:
-            // val : new 로 생성된 것을 전달하세요.
-            explicit T(int* val1, int* val2) :
+            // val1, val2 : new 로 생성된 것을 전달하세요.
+            T(int* val1, int* val2) :
                 m_Val1(val1),
                 m_Val2(val2) {}
             T& operator =(const T& other) {
@@ -335,5 +335,6 @@ TEST(TestClassicCpp, AssignmentOperator) {
             t2 = t1; // (O) swap 버전 대입 연산자 호출
             EXPECT_TRUE(t2.GetVal1() == 10 && t2.GetVal2() == 20);
         }
-    }    
+    }  
 }
+
