@@ -38,7 +38,6 @@ TEST(TestClassicCpp, Inheritance) {
             int m_Public;
         };
 
-        // Base의 protected, public 접근
         // 외부 노출이 안되도록 Base protected->private, Base public->private
         class PrivateDerived : private Base { 
             void f() {
@@ -52,7 +51,6 @@ TEST(TestClassicCpp, Inheritance) {
         // obj1.m_Protected; // (X) 컴파일 오류. private 접근 불가
         // obj1.m_Public; // (X) 컴파일 오류. private 접근 불가
 
-        // Base의 protected, public 접근
         // 외부 노출이 안되지만 상속은 되도록 Base protected->protected, Base public->protected
         class ProtectedDerived : protected Base { 
             void f() {
@@ -74,7 +72,6 @@ TEST(TestClassicCpp, Inheritance) {
         // obj2.m_Protected; // (X) 컴파일 오류. protected 접근 불가
         // obj2.m_Public; // (X) 컴파일 오류. protected 접근 불가
 
-        // Base의 protected, public 접근
         // 외부 노출과 상속은 되도록 Base protected->protected, Base public->public
         class PublicDerived : public Base { 
             void f() {
