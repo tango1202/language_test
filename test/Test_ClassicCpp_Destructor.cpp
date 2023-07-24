@@ -80,78 +80,6 @@ TEST(TestClassicCpp, Destructor) {
         U u;
     }
     // ----
-    // protected Non-Virtual 소멸자
-    // ----
-    {
-        class IEatable {
-        protected:
-            ~IEatable() {} // 상속받지만, 다형적으로 사용하지 않아 non-virtual 입니다.
-
-        public:
-            virtual void Eat() = 0;
-        };
-        class IWalkable {
-        protected:
-            ~IWalkable() {} // 상속받지만, 다형적으로 사용하지 않아 non-virtual 입니다.
-
-        public:
-            virtual void Walk() = 0;
-        };
-
-        class Dog :
-            public IEatable,
-            public IWalkable {
-        public:        
-            virtual void Eat() {}
-            virtual void Walk() {}
-        };
-        // IEatable eatable; // (X) 컴파일 오류. 소멸자가 protected
-        // IWalkable walkable; // (X) 컴파일 오류. 소멸자가 protected
-        Dog dog; // (O)
-        
-        // IEatable* p = &dog:
-        // delete* p; // (△) 비권장. 단위 전략 인터페이스를 이용하여 다형 소멸 하지 마세요. 메모리 릭이 발생합니다. 다형 소멸 참고.
-    }
-    {
-        class ResizeableImpl {
-        private:
-            int m_Width;
-            int m_Height;    
-        protected:
-            ResizeableImpl(int w, int h) :
-                m_Width(w), 
-                m_Height(h) {}
-            ~ResizeableImpl() {} // has-a 관계로 사용되기 때문에, 단독으로 생성되지 않도록 protected입니다.
-        public:    
-            // Get/Set 함수
-            int GetWidth() const {return m_Width;}
-            int GetHeight() const {return m_Height;}
-
-            void SetWidth(int val) {m_Width = val;}
-            void SetHeight(int val) {m_Height = val;}
-        };
-        class Rectangle : public ResizeableImpl {
-            int m_Left;
-            int m_Top;
-        public:
-            Rectangle(int l, int t, int w, int h) :
-                ResizeableImpl(w, h),
-                m_Left(l),
-                m_Top(t) {}
-        };
-        class Ellipse : public ResizeableImpl {
-            int m_CenterX;
-            int m_CenterY;
-        public:
-            Ellipse(int centerX, int centerY, int w, int h) :
-                ResizeableImpl(w, h),
-                m_CenterX(centerX),
-                m_CenterY(centerY) {}
-        };
-        Rectangle r(0, 0, 10, 20);
-        Ellipse e(5, 10, 10, 20);
-    }
-    // ----
     // public Virtual 소멸자
     // ----
     {
@@ -172,6 +100,27 @@ TEST(TestClassicCpp, Destructor) {
         // delete b; // (X) 오동작. 2만 호출됨. Derived 소멸자가 호출되지 않음. 메모리 릭.
         delete b; // (O) 1, 2 호출됨. 다형 소멸 지원.
     }
+    // ----
+    // protected Non - Virtual 소멸자
+    // ----
+    {
+        class Base {
+        protected:
+            ~Base() {} // 상속받지만, 다형적으로 사용하지 않아 non-virtual 입니다.
+        public:
+            virtual void Func() = 0;
+        };
+        class Derived :
+            public Base {
+        public:        
+            virtual void Func() {}
+        };
+        // Base base; // (X) 컴파일 오류. 소멸자가 protected
+        Derived derived; // (O)
+
+        Base* p = &derived;
+        // delete p; // (X) 컴파일 오류. Base의 소멸자가 protected        
+    }    
     {
         class Error {
         private:

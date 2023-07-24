@@ -69,7 +69,15 @@ namespace {
     // 4. MyClass 정의 - YourClass를 사용하고 있어 YourClass 선언 후 작성합니다.
     void MyClass::f() {
         m_Your->g(); 
-    }
+    } 
+    // 중첩 클래스의 전방 선언
+    // class T; // (O)
+    // class T::Nested; // (X) 컴파일 오류. 중첩 클래스는 전방 선언을 할 수 없습니다.
+    // class T {
+    // public:
+    //     class Nested {};
+    // };
+
     // ----
     // friend
     // ----
@@ -192,6 +200,17 @@ TEST(TestClassicCpp, StructClassUnion) {
         Derived d;
         d.m_Val = 10;
         EXPECT_TRUE(d.m_Val == 10); // 이제 public이라 접근 가능합니다.
+    }
+    // 중첩 클래스의 전방 선언
+    {
+        class T {
+        private:
+            class Nested;
+        private:
+            class Nested {}; // (O)
+        public:
+            // class Nested {}; // (X) 컴파일 오류. 전방 선언에선 private이고 실제 선언은 public 입니다.
+        };  
     }
     // ----
     // 공용체

@@ -97,7 +97,7 @@ TEST(TestClassicCpp, AssignmentOperator) {
         t1 = t2; // 대입 1회
         std::swap(t1, t2); // 복사 생성 1회 대입 2회
     }
-    // 복사 부하가 적은 swap
+    // nothrow swap
     {
         class Big {
             int m_Val; // 실제로는 복사 부하가 큰 데이터라고 생각해 주세요.
