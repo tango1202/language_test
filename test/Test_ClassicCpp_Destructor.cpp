@@ -74,7 +74,8 @@ TEST(TestClassicCpp, Destructor) {
         public:
             ~T() {}
         };
-        class U : public T { // (△) 비권장. has-a 관계가 명확하지 않음. is-a 관계에서는 사용 금지
+        // (△) 비권장. 다형 소멸이 되지 않아, 기능 개선을 하다 보면 나중에 메모리 릭이 발생할 수 있습니다.
+        class U : public T { 
         };
         T t;
         U u;
@@ -106,7 +107,7 @@ TEST(TestClassicCpp, Destructor) {
     {
         class Base {
         protected:
-            ~Base() {} // 상속받지만, 다형적으로 사용하지 않아 non-virtual 입니다.
+            ~Base() {} // 상속할 수 있지만, 다형적으로 사용하지 않아 non-virtual 입니다.
         public:
             virtual void Func() = 0;
         };

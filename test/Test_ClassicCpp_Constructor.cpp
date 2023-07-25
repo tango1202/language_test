@@ -289,6 +289,10 @@ TEST(TestClassicCpp, Constructor) {
         // T* p = new T(10, 0, 0); // (X) 컴파일 오류
         // delete p;
 
+        class U : public T {};
+        // U u; // (X) 컴파일 오류. 상속해서 생성할 수 없음
+        // U* p = new u; // (X) 컴파일 오류   
+
         T t(T::CreateFromA(10)); // (O) T를 복사 생성            
     }
 }

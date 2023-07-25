@@ -104,7 +104,7 @@ TEST(TestClassicCpp, Inheritance) {
         Derived d;
         Base* b = &d;
 
-        EXPECT_TRUE(b->f() == 10);  
+        EXPECT_TRUE(b->f() == 10); // (△) 비권장. Base 개체를 이용하면 Base::f()가 호출됨   
         EXPECT_TRUE(d.f() == 20);
 
         EXPECT_TRUE(b->Base::f() == 10); // 부모 개체에 명시적으로 접근합니다.
@@ -127,12 +127,12 @@ TEST(TestClassicCpp, Inheritance) {
         Derived d;
         Base* b = &d;
 
-        EXPECT_TRUE(b->f() == 10);  
+        EXPECT_TRUE(b->f() == 10);  // (△) 비권장. Base 개체를 이용하면 Base::f()가 호출됨 
         // EXPECT_TRUE(d.f() == 10); // (X) 컴파일 오류. 오버로딩 함수 탐색 규칙에서 제외됨
         EXPECT_TRUE(d.f(1) == 20);
 
-        EXPECT_TRUE(b->Base::f() == 10); // 부모 개체에 명시적으로 접근합니다.
-        EXPECT_TRUE(d.Base::f() == 10); // 부모 개체에 명시적으로 접근합니다.        
+        EXPECT_TRUE(b->Base::f() == 10); 
+        EXPECT_TRUE(d.Base::f() == 10);      
     }
     // ----
     // 부모 개체의 가상 함수 오버라이딩
@@ -150,7 +150,7 @@ TEST(TestClassicCpp, Inheritance) {
         Derived d;
         Base* b = &d;
 
-        EXPECT_TRUE(b->f() == 20); 
+        EXPECT_TRUE(b->f() == 20); // (O) 자식 개체의 함수가 호출됩니다.
         EXPECT_TRUE(b->Base::f() == 10); // (△) 비권장. 부모 개체에 명시적으로 접근하면, 부모 개체의 함수가 호출됩니다.
         EXPECT_TRUE(d.f() == 20);        
     }
@@ -190,14 +190,13 @@ TEST(TestClassicCpp, Inheritance) {
             int m_Z;
         public: 
             Derived(int x, int y, int z) : 
-                Base(x, y), // 부모 클래스 생성자 호출 
+                Base(x, y), 
                 m_Z(z) {}
         };
 
         Derived d(1, 2, 3);
-        Base b = d;
-        d = b;
-    
+        Base b = d; // (X) 오동작. 아무런 경고없이 실행됩니다. 
+        // d = b; // (X) 컴파일 오류
     }
     // ----
     // 다중 상속
@@ -264,6 +263,26 @@ TEST(TestClassicCpp, Inheritance) {
         EXPECT_TRUE(obj.Singer::m_Age == 30);
         EXPECT_TRUE(obj.Dancer::m_Age == 30);   
     } 
+    // ----
+    // 상속 제한
+    // ----
+    {
+        class T {
+        private:
+            T() {} // 상속 및 외부에서는 접근 불가
+        public:
+            static T Create() {return T();} // 내부 static 함수로 생성
+            static T* CreatePtr() {return new T;}
+        };
+        class U : public T {};
+        // U u; // (X) 컴파일 오류. 상속해서 생성할 수 없음
+        // U* p = new u; // (X) 컴파일 오류  
+
+        // T t; // (X) 컴파일 오류 
+        T t(T::Create()); // (O) T를 복사 생성    
+        T* p = T::CreatePtr(); // (O) T의 포인터 생성
+        delete p;       
+    }
     // is-a 관계
     {
         class Shape {
@@ -301,36 +320,7 @@ TEST(TestClassicCpp, Inheritance) {
     // has-a 관계
     // ----
     {
-        class IEatable {
-        protected:
-            ~IEatable() {} // 상속받지만, 다형적으로 사용하지 않아 non-virtual 입니다.
-
-        public:
-            virtual void Eat() = 0;
-        };
-        class IWalkable {
-        protected:
-            ~IWalkable() {} // 상속받지만, 다형적으로 사용하지 않아 non-virtual 입니다.
-
-        public:
-            virtual void Walk() = 0;
-        };
-
-        class Dog :
-            public IEatable,
-            public IWalkable {
-        public:        
-            virtual void Eat() {}
-            virtual void Walk() {}
-        };
-        // IEatable eatable; // (X) 컴파일 오류. 소멸자가 protected
-        // IWalkable walkable; // (X) 컴파일 오류. 소멸자가 protected
-        Dog dog; // (O)
-        
-        // IEatable* p = &dog:
-        // delete* p; // (X) 컴파일 오류. IEatable의 소멸자가 protected
-    }
-    {
+        // 너비/높이에 대한 공통 구현
         class ResizeableImpl {
         private:
             int m_Width;
@@ -369,4 +359,34 @@ TEST(TestClassicCpp, Inheritance) {
         Rectangle r(0, 0, 10, 20);
         Ellipse e(5, 10, 10, 20);
     }
+    {
+        class IEatable {
+        protected:
+            ~IEatable() {} // 상속할 수 있지만, 다형적으로 사용하지 않아 non-virtual 입니다.
+
+        public:
+            virtual void Eat() = 0;
+        };
+        class IWalkable {
+        protected:
+            ~IWalkable() {} // 상속할 수 있지만, 다형적으로 사용하지 않아 non-virtual 입니다.
+
+        public:
+            virtual void Walk() = 0;
+        };
+
+        class Dog :
+            public IEatable,
+            public IWalkable {
+        public:        
+            virtual void Eat() {}
+            virtual void Walk() {}
+        };
+        // IEatable eatable; // (X) 컴파일 오류. 소멸자가 protected
+        // IWalkable walkable; // (X) 컴파일 오류. 소멸자가 protected
+        Dog dog; // (O)
+        
+        // IEatable* p = &dog:
+        // delete* p; // (X) 컴파일 오류. IEatable의 소멸자가 protected
+    }    
 }
