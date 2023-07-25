@@ -286,7 +286,6 @@ TEST(TestClassicCpp, Constructor) {
 
         // T t(10, 0, 0); // (X) 컴파일 오류
         // T* p = new T(10, 0, 0); // (X) 컴파일 오류
-        // delete p;
 
         class U : public T {};
         // U u; // (X) 컴파일 오류. 상속해서 생성할 수 없음
