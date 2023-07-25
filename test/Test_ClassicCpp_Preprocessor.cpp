@@ -28,7 +28,7 @@ namespace {
 
     inline int Square(int x) { return x * x;} // (O) 인자 타입에 따른 코딩 계약, 디버깅 용이
 
-    // 개행을 사용하여 f 함수 매크로문 정의
+    // 개행으로 f 함수 매크로문 정의
     #define LONGFUNC int f(int x) { \
         return x + x;               \
     }

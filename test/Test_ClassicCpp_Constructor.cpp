@@ -80,7 +80,7 @@ TEST(TestClassicCpp, Constructor) {
             int m_Y;
         public:
             T(int x, int y) : // 필요한 모든 인자를 나열
-                m_X(x), // 초기화 리스트를 이용하여 모든 멤버 변수 초기화
+                m_X(x), // 초기화 리스트로 모든 멤버 변수 초기화
                 m_Y(y) {}
         };
         T t(10, 20); // (O) 개체 정의(인스턴스화)
@@ -182,7 +182,7 @@ TEST(TestClassicCpp, Constructor) {
         };
 
         class T {
-            // (O) IntPtr을 이용하여 복사 생성시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
+            // (O) IntPtr로 복사 생성시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
             // (O) 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
             IntPtr m_Val;
         public:

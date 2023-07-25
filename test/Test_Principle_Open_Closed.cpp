@@ -51,7 +51,7 @@ namespace {
         }
         virtual ~Shape() {} // 다형적 소멸
     public:
-        // m_Left, m_Top을 이용하여 자식 클래스들이 알아서 그려야 함
+        // m_Left, m_Top으로이용하여 자식 클래스들이 알아서 그려야 함
         virtual void Draw() const = 0; 
 
         // visitor 방문을 허용합니다.
