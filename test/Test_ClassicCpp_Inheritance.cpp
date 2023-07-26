@@ -388,5 +388,89 @@ TEST(TestClassicCpp, Inheritance) {
         
         // IEatable* p = &dog:
         // delete* p; // (X) 컴파일 오류. IEatable의 소멸자가 protected
-    }    
+    }  
+    // ----
+    // 나쁜 상속 - 부모 개체의 무의미한 구현
+    // ---- 
+    {
+        class Base {
+        public:
+            virtual void Func() {
+                // (△) 비권장. 대충 기본 작업을 합니다.
+            }
+        };
+        class Derived {
+        public:
+            virtual void Func() {
+                // 자식 개체에서 제대로 구현합니다.
+            }
+        };       
+    }  
+    // 순가상 함수 사용
+    {
+        class Base {
+        public:
+            virtual void Func() = 0; // (O) 순가상 함수
+        };
+        class Derived {
+        public:
+            virtual void Func() {
+                // 자식 개체에서 제대로 구현합니다.
+            }
+        };        
+    } 
+    // 기본 구현 제공
+    {
+        class Base {
+        public:
+            virtual void Func() {
+                // 기본 구현을 해둡니다.
+                // (△) 비권장. 누가 상속해서 사용하는지 파악하기 어렵습니다.
+            }
+        };
+        class Derived1 {
+        public:
+            // Base의 기본 구현을 사용합니다.
+        };
+        class Derived2 {
+        public:
+            // Base의 기본 구현을 사용합니다.
+        };
+        class Derived3 {
+        public:
+            // 기본 구현이 마음에 들지 않아 다시 구현합니다.
+            virtual void Func() {}
+        };        
+    }  
+    // 유틸리티 제공
+    {
+        class Base {
+        public:
+            virtual void Func() = 0; // 순가상 함수
+        };
+        // (O) Base의 기본 구현을 제공하는 유틸리티 함수를 제공합니다.
+        class BaseUtil {
+        public:
+            static void Func() {}
+        };
+        class Derived1 {
+        public:
+            // (O) Base의 기본 구현을 사용합니다.
+            virtual void Func() {
+                BaseUtil::Func();
+            }
+        };
+        class Derived2 {
+        public:
+            // (O) Base의 기본 구현을 사용합니다.
+            virtual void Func() {
+                BaseUtil::Func();
+            }
+        };
+        class Derived3 {
+        public:
+            // 기본 구현이 마음에 들지 않아 다시 구현합니다.
+            virtual void Func() {}
+        };        
+    }
 }
