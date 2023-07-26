@@ -117,7 +117,7 @@ TEST(TestClassicCpp, Conversions) {
         class Base {
         public:
             // dynamic_cast를 사용하려면 가상 함수가 있어야 합니다.
-            // RTTI(Runtime Type Info) 가 필요하기 때문입니다.
+            // Runtime Type Info(RTTI) 가 필요하기 때문입니다.
             virtual ~Base() {} 
         };
         class Derived: public Base {}; 
