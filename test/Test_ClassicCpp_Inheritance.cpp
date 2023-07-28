@@ -1,5 +1,16 @@
 #include "gtest/gtest.h" 
 
+namespace {
+    // ---- 
+    // 상속 강제 - 순가상 소멸자
+    // ----    
+    class T {
+    public:
+        virtual ~T() = 0; // 순가상 소멸자
+    };
+    T::~T() {} // (△) 비권장. 실제 구현 정의가 있어야 함
+}
+
 TEST(TestClassicCpp, Inheritance) {
     // ----
     // 개요
@@ -263,6 +274,25 @@ TEST(TestClassicCpp, Inheritance) {
         EXPECT_TRUE(obj.Singer::m_Age == 30);
         EXPECT_TRUE(obj.Dancer::m_Age == 30);   
     } 
+    // ----
+    // 상속 강제 - public virtual 소멸자는 순가상 함수 없으면 안됨
+    // ----  
+    {
+        class T {
+        public:
+            virtual ~T() {}
+        };
+
+        T t; // (△) 비권장. 순가상 함수가 없으면 인스턴스화 할 수 있습니다.        
+    }
+    // ----
+    // 상속 강제 - 순가상 소멸자
+    // ----  
+    {
+        class U : public T {};
+        // T t; // (X) 컴파일 오류. 순가상 소멸자가 있어 개체 정의(인스턴스화) 안됨
+        U u; // 상속하면 개체 정의(인스턴스화) 가능
+    }    
     // ----
     // 상속 제한
     // ----

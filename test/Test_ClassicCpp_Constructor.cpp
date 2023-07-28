@@ -269,7 +269,7 @@ TEST(TestClassicCpp, Constructor) {
         };
 
         // Base b; // (X) 컴파일 오류
-        Derived d;
+        Derived d; // (O) 상속하면 인스턴스화 가능
     }
     // ----
     // 생성자 접근 차단 - private 생성자

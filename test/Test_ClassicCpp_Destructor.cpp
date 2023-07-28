@@ -1,16 +1,5 @@
 #include "gtest/gtest.h" 
 
-namespace {
-    // ---- 
-    // 순가상 소멸자
-    // ----    
-    class T {
-    public:
-        virtual ~T() = 0; // 순가상 소멸자
-    };
-    T::~T() {} // 실제 구현 정의가 있어야 함
-}
-
 TEST(TestClassicCpp, Destructor) {
     // ----
     // 개요
@@ -148,14 +137,6 @@ TEST(TestClassicCpp, Destructor) {
             delete *itr;
         }
         errors.clear();        
-    }
-    // ----
-    // 순가상 소멸자
-    // ----  
-    {
-        class U : public T {};
-        // T t; // (X) 컴파일 오류. 순가상 소멸자가 있어 개체 정의(인스턴스화) 안됨
-        U u; // 상속하면 개체 정의(인스턴스화) 가능
     }
     // ----
     // 소멸자에서 가상 함수 호출 금지
