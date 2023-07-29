@@ -180,6 +180,6 @@ TEST(TestClassicCpp, Destructor) {
         };     
 
         T t;
-        t.Release(); // 예외 발생할 수 있는 경우, 메모리나 리소스 해제
+        t.Release(); // 소멸자 호출전에 명시적으로 메모리나 리소스 해제
     }
 }
