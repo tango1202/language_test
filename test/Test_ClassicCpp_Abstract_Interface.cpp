@@ -65,11 +65,28 @@ TEST(TestClassicCpp, Abstract) {
     // 마땅한 순가상 함수가 없는 추상 클래스
     // ----  
     {
+        class Abstract {
+        public:
+            virtual ~Abstract() {} // 다형 소멸 하도록 public virtual
+        };
+
+        Abstract abstract; // (X) 오동작. 순가상함수가 없어 인스턴스화 됩니다. 추상 클래스여서 인스턴스화 되면 안됩니다.
+    }
+    {
+        class Abstract {
+        protected:
+            Abstract() {} // 상속을 강제합니다.
+        public:
+            virtual ~Abstract() {} // 다형 소멸 하도록 public virtual
+        };
+
+        // Abstract abstract; // (X) 정상 코딩 계약. 추상 클래스를 인스턴스화 하지 못합니다.    
+    }
+    {
         class Concrete : public Abstract {
         };
 
-        // Abstract abstract; // (X) 컴파일 오류. 추상 클래스는 순가상 함수가 있어 구체화 할 수 없습니다.
-
+        // Abstract abstract; // (X) 정상 코딩 계약. 추상 클래스는 순가상 함수가 있어 구체화 할 수 없습니다.
         Concrete concrete; // (O)        
     }  
 }
