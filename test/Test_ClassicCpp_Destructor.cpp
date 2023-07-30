@@ -116,7 +116,7 @@ TEST(TestClassicCpp, Destructor) {
         private:
             std::string m_Message;
         public:
-            virtual ~Error() {} // (O) 가상 함수가 없어 억지로 만듬
+            virtual ~Error() {} // (O) 다형 소멸. 소멸자 외에는 별다른 가상 함수가 없습니다.
             // 모든 자식 개체들에서 사용합니다. 가상 함수는 없습니다.
             void SetMessage(const char* msg) {m_Message = msg;}
             const std::string& GetMessage() const {return m_Message;}
