@@ -274,45 +274,6 @@ TEST(TestClassicCpp, Inheritance) {
         EXPECT_TRUE(obj.Singer::m_Age == 30);
         EXPECT_TRUE(obj.Dancer::m_Age == 30);   
     } 
-    // ----
-    // 상속 강제 - public virtual 소멸자는 순가상 함수 없으면 안됨
-    // ----  
-    {
-        class T {
-        public:
-            virtual ~T() {}
-        };
-
-        T t; // (△) 비권장. 순가상 함수가 없으면 개체 정의(인스턴스화) 할 수 있습니다.        
-    }
-    // ----
-    // 상속 강제 - 순가상 소멸자
-    // ----  
-    {
-        class U : public T {};
-        // T t; // (X) 정상 코딩 계약. 순가상 소멸자가 있어 개체 정의(인스턴스화) 안됨
-        U u; // (O) 상속하면 개체 정의(인스턴스화) 가능
-    }    
-    // ----
-    // 상속 제한
-    // ----
-    {
-        class T {
-        private:
-            T() {} // 상속 및 외부에서는 접근 불가
-        public:
-            static T Create() {return T();} // 내부 static 함수로 생성
-            static T* CreatePtr() {return new T;}
-        };
-        class U : public T {};
-        // U u; // (X) 컴파일 오류. 상속해서 생성할 수 없음
-        // U* p = new u; // (X) 컴파일 오류  
-
-        // T t; // (X) 컴파일 오류 
-        T t(T::Create()); // (O) T를 복사 생성    
-        T* p = T::CreatePtr(); // (O) T의 포인터 생성
-        delete p;       
-    }
     // is-a 관계
     {
         class Shape {
@@ -503,6 +464,45 @@ TEST(TestClassicCpp, Inheritance) {
             virtual void Func() {}
         };        
     }
+    // ----
+    // 상속 강제 - public virtual 소멸자는 순가상 함수 없으면 안됨
+    // ----  
+    {
+        class T {
+        public:
+            virtual ~T() {}
+        };
+
+        T t; // (△) 비권장. 순가상 함수가 없으면 개체 정의(인스턴스화) 할 수 있습니다.        
+    }
+    // ----
+    // 상속 강제 - 순가상 소멸자
+    // ----  
+    {
+        class U : public T {};
+        // T t; // (X) 정상 코딩 계약. 순가상 소멸자가 있어 개체 정의(인스턴스화) 안됨
+        U u; // (O) 상속하면 개체 정의(인스턴스화) 가능
+    }    
+    // ----
+    // 상속 제한
+    // ----
+    {
+        class T {
+        private:
+            T() {} // 상속 및 외부에서는 접근 불가
+        public:
+            static T Create() {return T();} // 내부 static 함수로 생성
+            static T* CreatePtr() {return new T;}
+        };
+        class U : public T {};
+        // U u; // (X) 컴파일 오류. 상속해서 생성할 수 없음
+        // U* p = new u; // (X) 컴파일 오류  
+
+        // T t; // (X) 컴파일 오류 
+        T t(T::Create()); // (O) T를 복사 생성    
+        T* p = T::CreatePtr(); // (O) T의 포인터 생성
+        delete p;       
+    }    
     // ----
     // up casting, down casting sibling casting 형변환
     // ----
