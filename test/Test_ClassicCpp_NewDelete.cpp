@@ -357,6 +357,25 @@ TEST(TestClassicCpp, NewDelete) {
         // T* p = new T; // (X) 컴파일 오류
         // delete p;           
     }
+    // ----
+    // 힙에만 생성되는 개체
+    // ----    
+    {
+        class T {
+        protected: 
+            ~T() {} // 외부에서 암시적으로 소멸할 수 없습니다.
+        public:
+            void Destroy() const {delete this;} // 자기 자신을 소멸시킵니다.
+        };
+        {
+            // T t; // (X) 컴파일 오류. 스택으로 만들고 암시적으로 소멸될 때 컴파일 오류가 발생합니다.
+        }  
+        {
+            T* p = new T;
+            // delete p; // (X) 컴파일 오류. delete는 외부에서 호출할 수 없습니다.
+            p->Destroy(); // (O)
+        }
+    }
 }
 TEST(TestClassicCpp, NewHandler) { 
     // ----

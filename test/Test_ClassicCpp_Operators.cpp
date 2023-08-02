@@ -331,7 +331,7 @@ TEST(TestClassicCpp, Operators) {
                 return *this; // 자기 자신을 리턴합니다.
             }
             // 후위형. 인자 int는 전위형과 구분하기 위한 dummy입니다.
-            T operator ++(int) {
+            const T operator ++(int) { // t++++가 안되도록 const T를 리턴합니다.
                 T result = *this; // 복제합니다.
                 ++m_Val; // this의 값을 증가시킵니다.
                 return result; // 증가시키기 전에 복제한 값을 리턴합니다.

@@ -61,6 +61,8 @@ set(TestFiles
    test/Test_ClassicCpp_NewDelete.cpp  
    test/Test_ClassicCpp_Inheritance.cpp  
    test/Test_ClassicCpp_Abstract_Interface.cpp  
+   test/Test_ClassicCpp_Generic_Template.cpp
+   test/Test_ClassicCpp_TemplateArgumentDeduction.cpp  
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
