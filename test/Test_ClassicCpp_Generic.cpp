@@ -9,42 +9,6 @@ namespace {
         const T GetAt(size_t index) const {return m_Data[index];} 
         void SetAt(T data, size_t index) {m_Data[index] = data;} 
     };  
-
-    // 템플릿 클래스 정의부 - 코드가 생성되지 않은 상태
-    template<typename T> 
-    class MyClass {}; 
-
-    // 템플릿 함수 정의부 - 코드가 생성되지 않은 상태
-    template<typename T>
-    T MyFunc(T val) {return val + val;} 
-
-
-    // 멤버 엑세스 지정
-    template<typename T> 
-    class A {
-    private:
-        typedef T TType;
-    };  
-
-    template<typename T> 
-    class B : public T { // T로 A<int> 를 전달할 예정임. A<int>::TType은 int이나 private여서 접근 불가
-        typename T::TType m_Member; // typename은 종속 타입 참고
-    };
-}
-namespace Generic_1 {
-    // > 
-    // template<bool b = 3 > 4> // (X) 컴파일 오류
-    // class A {};
-    
-    template<bool b = (3 > 4)> // (O)
-    class B {};
-}
-namespace Generic_2 {
-    template<typename T>
-    class A {};
-
-    template<typename T>
-    using Alias = A<T>; // A의 별칭
 }
 
 TEST(TestClassicCpp, Generic) {
@@ -116,21 +80,6 @@ TEST(TestClassicCpp, Generic) {
         charContainer.SetAt(c, 5);
         EXPECT_TRUE(charContainer.GetAt(5) == 'c');           
     }  
-    {
-        // 템플릿 인스턴스부 - 이때 코드가 생성됨
-        MyClass<int> myClass;   
 
-        // 템플릿 함수 인스턴스부 - 이때 코드가 생성됨
-        int val = MyFunc<int>(10);      
-    }   
-    {
-        // B<A<int>> b; // (X) 컴파일 오류. 템플릿 인스턴스화시 private 멤버 접근 오류 발생
-    }  
-    // 템플릿 별칭 
-    {
-        using namespace Generic_2;
-    
-        Alias<int> alias;
-    }  
 }
 
