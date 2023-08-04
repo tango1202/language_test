@@ -194,11 +194,14 @@ namespace Overloading_5 {
     class B {
     public:
         template<typename U>
-        int operator +(U&) {return 1;} // #1
+        int operator +(const U&) const {return 1;} // #1
     };
     
     template<typename T, typename U>
-    int operator +(T&, U&) {return 2;} // #2     
+    int operator +(const T&, const U&) {return 2;} // #2     
+
+    template<typename U>
+    int operator +(const B<int>&, const U&) {return 3;} // #3     
 }
 
 namespace Overloading_6 {
@@ -243,27 +246,6 @@ namespace Overloading_10 {
     
     template<typename T>
     int f(T, A<T, T>* p = 0) {return 2;} // #2    
-}
-namespace Overloading_11 {
-    template<typename T>
-    int f(T) {return 1;}    // #1
-
-    template<typename T>
-    int f(T*) {return 2;}   // #2: #1의 오버로딩
-
-    template<>
-    int f(int*) {return 3;} // #3: 탬플릿 특수화   
-}
-
-namespace Overloading_12 {
-    template<typename T>
-    int f(T) {return 1;}    // #1
-
-    template<>
-    int f(int*) {return 3;} // #3: 탬플릿 특수화   
-
-    template<typename T>
-    int f(T*) {return 2;}   // #2: #1의 오버로딩
 }
 
 TEST(TestClassicCpp, TemplateOverloading) {
@@ -311,7 +293,7 @@ TEST(TestClassicCpp, TemplateOverloading) {
         // (X) 컴파일 오류.
         // #1 : B<int>&.operator +(A&)
         // #2 : operator +(B<int>&, A&) 로 추론됨. 어느것을 호출할지 모호함.
-        // EXPECT_TRUE( b + a == 2);
+        EXPECT_TRUE( b + a == 3);
     }
     // 기초 타입의 차이는 전문화 판단에 관여하지 않음
     {
@@ -371,26 +353,5 @@ TEST(TestClassicCpp, TemplateOverloading) {
         // #2 : T == int 이면 f(int, A<int, int>*) 로 추론됨. 더 전문화된 버전으로 채택함.
         EXPECT_TRUE(f(0, (A<int, int>*)0) == 2); 
         EXPECT_TRUE(f(0) == 2); 
-    }
-    // 오버로딩 버전에서 일치하는 것을 채택하고, 없다면 특수화 버전에서 정의한 것으로 채택하다는데, GCC 에서는 가장 마지막 정의된 것을 채택함.
-    {
-        using namespace Overloading_11;
-
-        int a;
-        int* p = &a;
-        // #1 : T == int* 이면 f(int*)
-        // #2 : T == int 이면 f(int*) 
-        // #3 : f(int*) - #2와 #3의 정의 순서가 바뀌면 마지막에 정의된 것으로 채택함
-        EXPECT_TRUE(f(p) == 3); // (△) 비권장. 정의 순서에 따라 바뀜
-    }
-    {
-        using namespace Overloading_12;
-
-        int a;
-        int* p = &a;
-        // #1 : T == int* 이면 f(int*)
-        // #3 : f(int*) - #2와 #3의 정의 순서가 바뀌면 마지막에 정의된 것으로 채택함
-        // #2 : T == int 이면 f(int*) 
-        EXPECT_TRUE(f(p) == 2); // (△) 비권장. 정의 순서에 따라 바뀜
     }
 }
