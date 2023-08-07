@@ -111,32 +111,30 @@ namespace Specialization_6 {
 namespace Specialization_7 {
     template<typename T> 
     int f(T) {return 1;} // #1
-   
-    template<typename T> 
-    int f(T*) {return 2;} // #2. 템플릿 부분 특수화
 
-    template<> 
-    int f(int*) {return 3;} //#3. 템플릿 특수화 
+    template<typename T> 
+    int f(T*) {return 2;} // #2. 템플릿 함수 오버로딩. 부분 특수화와 모양이 비슷합니다.
 }
 namespace Specialization_8 {
     template<typename T> 
     int f(T) {return 1;} // #1
-   
+
     template<> 
-    int f(int*) {return 3;} //#3. 템플릿 특수화 
- 
+    int f(int*) {return 3;} //#3. #1의 템플릿 특수화 버전. T== int*, int f<int*>(int*)
+
     template<typename T> 
-    int f(T*) {return 2;} // #2. 템플릿 부분 특수화    
+    int f(T*) {return 2;} // #2. 템플릿 함수 오버로딩.   
 }
 
 namespace Specialization_9 {
     template<typename T> 
     int f(T) {return 1;} // #1
-   
-    int f(int*) {return 3;} //#3. 일반 함수
- 
+
     template<typename T> 
-    int f(T*) {return 2;} // #2. 템플릿 부분 특수화    
+    int f(T*) {return 2;} // #2. 템플릿 함수 오버로딩. 
+
+    template<> 
+    int f(int*) {return 3;} //#3. #2의 템플릿 특수화 버전. T== int, int f<int>(int*)
 }
 
 TEST(TestClassicCpp, Specialization) {
@@ -203,44 +201,32 @@ TEST(TestClassicCpp, Specialization) {
         EXPECT_TRUE(b.f() == 3); // 템플릿 특수화 버전
         EXPECT_TRUE(c.f() == 2); // 템플릿 부분 특수화 버전
     } 
-    // 탬플릿 함수에서 특수화와 부분 특수화 우선 순위 오류
+    // 템플릿 함수 오버로딩
     {
-        using namespace Specialization_7;  
+        using namespace Specialization_7;
         int a;
-        EXPECT_TRUE(f(a) == 1);
-        
-        // (△) 비권장. T* 보다는 int*가 더 특수화 되었으니, 
-        // 템플릿 특수화 버전이 실행됩니다.
-        // 하지만 호출되는 이유는 다른데에 있습니다.
-        EXPECT_TRUE(f(&a) == 3); 
+        EXPECT_TRUE(f(a) == 1); // 주 템플릿 함수 버전이 실행됩니다. T == int, f<int>(int)
+        EXPECT_TRUE(f(&a) == 2); // 템플릿 특수화 버전이 실행됩니다. T == int, f<int>(int*)
+    } 
+    // 템플릿 함수 오버로딩과 템플릿 함수 특수화의 혼용
+    {
+        using namespace Specialization_8;  
+
+        int a;
+        EXPECT_TRUE(f(&a) == 2); // 템플릿 오버로딩 버전이 실행됩니다. T == int, f<int>(int*)
     } 
     {
         using namespace Specialization_8;  
+
         int a;
-        EXPECT_TRUE(f(a) == 1);
-        
-        // (△) 비권장. 정의 순서를 바꿨더니 #2가 호출됩니다.
-        EXPECT_TRUE(f(&a) == 2); 
-        EXPECT_TRUE(f<>(&a) == 2);
-
-        // (△) 비권장. 명시적으로 호출하면 #3이 호출됩니다.
-        EXPECT_TRUE(f<int*>(&a) == 3);
-
-    } 
+        EXPECT_TRUE(f<int*>(&a) == 3); // #1 템플릿 함수가 호출되고, 이중 특수화 버전인 #3 이 호출됩니다.
+        EXPECT_TRUE(f<int>(&a) == 2); // #2 템플릿 함수가 호출됩니다.
+    }     
     {
         using namespace Specialization_9;  
         int a;
-        char ch;
-        EXPECT_TRUE(f(a) == 1);
-        
-        // (O) 일반 함수를 호출합니다.
-        EXPECT_TRUE(f(&a) == 3); 
-
-        // (O) 템플릿 부분 특수화 버전을 호출합니다.
-        EXPECT_TRUE(f(&ch) == 2); 
-
-        // (△) 비권장. 억지로 템플릿 부분 특수화 버전을 호출을 시도 하면 주 템플릿 버전이 실행됩니다.
-        EXPECT_TRUE(f<int*>(&a) == 1);
-    }             
+        EXPECT_TRUE(f(&a) == 3); // 템플릿 특수화 버전이 실행됩니다. T == int, f<int>(int*)
+    }  
+      
 }
 
