@@ -104,6 +104,7 @@ namespace Parameter_9 {
 namespace Parameter_10 {
     template<typename T>
     class A {
+    public:
         template<typename U>
         void f() {}
     };
@@ -115,6 +116,15 @@ namespace Parameter_10 {
         a.template f<T>(); // (O) 템플릿임을 명시합니다.
     }
 }
+
+namespace Paramenter_11 {
+    template<typename T> // #1
+    class A {};
+
+    // template<typename U> // #1과 동등
+    // class A {};
+}
+
 
 TEST(TestClassicCpp, TemplateParameterArgument) {
 

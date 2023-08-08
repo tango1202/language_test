@@ -227,7 +227,7 @@ namespace Overloading_8 {
     class A {
     public:
         template<typename U>
-        int operator +(U) const {return 1;} // #1.
+        int operator +(U) const {return 1;} // #1. 멤버 버전
     };
     
     template<typename T, typename U>
@@ -235,19 +235,30 @@ namespace Overloading_8 {
 }
 namespace Overloading_9 {
     template<typename T>
+    class A {
+    };
+    
+    template<typename T, typename U>
+    int operator +(const A<T>&, U) {return 1;} // #1. 비멤버 버전
+
+    template<typename T, typename U>
+    int operator +(const T&, U) {return 2;} // #2.    
+}
+namespace Overloading_10 {
+    template<typename T>
     int f(T a) {return 1;} // #1.
 
     // template<typename T>
     // int f(const T a) {return 2;} // #2. (X) 컴파일 오류. 재정의됨. 최상위 const는 제거되어 f(T a)와 동일
 }
-namespace Overloading_10 {
+namespace Overloading_11 {
     template<typename T>
     int f(T) {return 1;}  // #1.
 
     template<typename T>
     int f(T&) {return 2;} // #2.
 }
-namespace Overloading_11 {
+namespace Overloading_12 {
     template<typename T>
     int f(T, T*) {return 1;}   // #1.
 
@@ -340,11 +351,21 @@ TEST(TestClassicCpp, TemplateOverloading) {
         //      비멤버 버전 변환        operator +(A<int>&, int)             
         // #2 : T == A<int>, U == int 이면 operator +(A<int>&, int) 
         // (X) 컴파일 경고. #1 과 #2 가 모호하고, 대충 비멤버 버전 호출함
-        EXPECT_TRUE( a + 10 == 2);
+        // EXPECT_TRUE( a + 10 == 2);
     } 
-    // 동등한 템플릿 함수 - 최상위 const 제거
     {
         using namespace Overloading_9;
+        A<int> a;
+        
+        // #1 : T == int, U == int 이면 operator +(A<int>&, int)
+        // #2 : T == A<int>, U == int 이면 operator +(A<int>&, int) 
+        // (O) 더 특수화된 버전으로 선택함.
+        EXPECT_TRUE( a + 10 == 1);
+    } 
+
+    // 동등한 템플릿 함수 - 최상위 const 제거
+    {
+        using namespace Overloading_10;
         // #1 : T == int 이면 f(int) 
         // #2 : T == int 이면 f(const int)인데, 오버로딩시 최상위 const는 제거되므로 f(int)
         // (X) 컴파일 오류. 최상위 const는 제거됨. 오버로딩 함수가 중복됨
@@ -354,7 +375,7 @@ TEST(TestClassicCpp, TemplateOverloading) {
 
     // 참조자로 인한 모호
     {
-        using namespace Overloading_10;
+        using namespace Overloading_11;
 
          int a = 0;
          int& b = a;
@@ -368,7 +389,7 @@ TEST(TestClassicCpp, TemplateOverloading) {
 
     // 특수화 판단 모호
     {
-        using namespace Overloading_11;
+        using namespace Overloading_12;
         char ch;
         int i;
         int* p;
