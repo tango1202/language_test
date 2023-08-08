@@ -21,12 +21,12 @@ namespace Template_3 {
     template<typename T> 
     class A {
     private:
-        typedef T TType;
+        typedef T Type;
     };  
 
     template<typename T> 
-    class B : public T { // T로 A<int> 를 전달할 예정임. A<int>::TType은 int이나 private여서 접근 불가
-        typename T::TType m_Member; // typename은 종속 타입 참고
+    class B : public T { // T로 A<int> 를 전달할 예정임. A<int>::Type은 int이나 private여서 접근 불가
+        typename T::Type m_Member; // typename은 종속 타입 참고
     };
 }
 namespace Template_4 {
