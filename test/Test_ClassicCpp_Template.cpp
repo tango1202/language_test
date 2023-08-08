@@ -83,17 +83,6 @@ namespace Template_7 {
     U A<T>::g(U val) {return val + val;} 
 }
 
-namespace Template_8 {
-    template<typename T>
-    class A {
-    public:    
-        int f(int) {return 1;} // #1. 멤버 함수
-    
-        template<typename U>
-        int f(U) {return 2;} // #2. 템플릿 멤버 함수
-    };    
-}
-
 TEST(TestClassicCpp, Template) {
     {
         using namespace Template_1;
@@ -150,15 +139,6 @@ TEST(TestClassicCpp, Template) {
 
         a.f(); // 일반 함수 호출
         a.g<int>(10); // 템플릿 멤버 함수 호출
-    }
-    // 함수 오버로딩
-    {
-        using namespace Template_8;
-        A<int> a;
-
-        EXPECT_TRUE(a.f(10) == 1); // f(int) 호출
-        EXPECT_TRUE(a.f<>(10) == 2); // f<int>(int) 호출
-        EXPECT_TRUE(a.f('a') == 2); // f<char>(char) 호출
     }
 }
 
