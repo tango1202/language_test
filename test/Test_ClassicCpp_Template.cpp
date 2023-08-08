@@ -17,19 +17,6 @@ namespace Template_2 {
     class B {};
 }
 namespace Template_3 {
-    // 멤버 엑세스 지정
-    template<typename T> 
-    class A {
-    private:
-        typedef T Type;
-    };  
-
-    template<typename T> 
-    class B : public T { // T로 A<int> 를 전달할 예정임. A<int>::Type은 int이나 private여서 접근 불가
-        typename T::Type m_Member; // typename은 종속 타입 참고
-    };
-}
-namespace Template_4 {
     template<typename T>
     class A {
     public:
@@ -37,7 +24,7 @@ namespace Template_4 {
         void g(); // 함수 선언만 됨. 불완전함. 함수 정의부가 없음
     };    
 }
-namespace Template_5 {
+namespace Template_4 {
     template<typename T>
     class A {};
 
@@ -45,7 +32,7 @@ namespace Template_5 {
     using Alias = A<T>; // A의 별칭
 }
 
-namespace Template_6 {
+namespace Template_5 {
     // 템플릿 함수    
     template <typename T>
     T Plus(T left, T right) {
@@ -53,7 +40,7 @@ namespace Template_6 {
     }
 }
 
-namespace Template_7 {
+namespace Template_6 {
     class A {
     public:
         // 템플릿 생성자
@@ -76,7 +63,7 @@ namespace Template_7 {
     };
 }
 
-namespace Template_8 {
+namespace Template_7 {
     template<typename T> 
     class A {
     public:    
@@ -96,7 +83,7 @@ namespace Template_8 {
     U A<T>::g(U val) {return val + val;} 
 }
 
-namespace Template_9 {
+namespace Template_8 {
     template<typename T>
     class A {
     public:    
@@ -118,10 +105,6 @@ TEST(TestClassicCpp, Template) {
     // 템플릿 정의부와 인스턴스부
     {
         using namespace Template_3;
-        // B<A<int>> b; // (X) 컴파일 오류. 템플릿 인스턴스화시 private 멤버 접근 오류 발생
-    } 
-    {
-        using namespace Template_4;
 
         A<int> a;
         a.f(); // A<int>::g() 를 사용하지 않았기에 컴파일 됨 
@@ -129,19 +112,19 @@ TEST(TestClassicCpp, Template) {
     }
     // 템플릿 별칭 
     {
-        using namespace Template_5;
+        using namespace Template_4;
     
         Alias<int> alias;
     } 
     // 템플릿 함수 
     {
-        using namespace Template_6;
+        using namespace Template_5;
 
         EXPECT_TRUE(Plus<int>(10, 10) == 20);
         EXPECT_TRUE(Plus<char>('a', 1) == 'b');
     }
     {
-        using namespace Template_6;
+        using namespace Template_5;
 
         EXPECT_TRUE(Plus(10, 10) == 20); // (O) 인수로부터 int가 추론됨
         EXPECT_TRUE(Plus<>(10, 10) == 20); // (O) <>를 기재하여 템플릿 함수를 명시하고, 인수로부터 추론
@@ -150,7 +133,7 @@ TEST(TestClassicCpp, Template) {
     }   
     // 템플릿 멤버 함수와 템플릿 중첩 클래스
     {
-        using namespace Template_7;
+        using namespace Template_6;
         int val;
         A a(val); // 템플릿 생성자 호출, 타입을 명시적으로 지정 못함
         a.f(); // 일반 함수 호출
@@ -161,7 +144,7 @@ TEST(TestClassicCpp, Template) {
     } 
     // 템플릿 선언과 정의 분리
     {
-        using namespace Template_8;
+        using namespace Template_7;
 
         A<int> a;
 
@@ -170,7 +153,7 @@ TEST(TestClassicCpp, Template) {
     }
     // 함수 오버로딩
     {
-        using namespace Template_9;
+        using namespace Template_8;
         A<int> a;
 
         EXPECT_TRUE(a.f(10) == 1); // f(int) 호출
