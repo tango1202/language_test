@@ -111,7 +111,7 @@ namespace Parameter_10 {
     
     template<typename T>
     void g() {
-        A<T> a;
+        A<T> a; // 아직 구체 타입으로 인스턴스화 안됐습니다.
         // a.f<T>(); // (X) 아직 인스턴스화 되지 않아 함수 이름에 접근할 수 없습니다.
         a.template f<T>(); // (O) 템플릿임을 명시합니다.
     }
