@@ -55,18 +55,11 @@ namespace Parameter_6 {
     class C {}; 
 }
 namespace Parameter_7 {
-    // template<bool b = 3 > 4> // (X) 컴파일 오류. 
-    // class A {};
-
-    template<bool b = (3 > 4)> // (O)
-    class B {};   
-}
-namespace Parameter_8 {
 
     template<typename T = char, typename U = int>
     class A {};
 }
-namespace Parameter_9 {
+namespace Parameter_8 {
     template<typename T>
     class A {};
 
@@ -100,31 +93,68 @@ namespace Parameter_9 {
     // void f(B<T>::Type val) {} // (X) 컴파일 오류. B<T>::Type이 static 변수인지, B<T>에 종속된 타입인지 모릅니다. 
     void f(typename B<T>::Type val) {} // (O)
 }
+namespace Parameter_9 {
+    // template<bool b = 3 > 4> // (X) 컴파일 오류. 
+    // class A {};
 
+    template<bool b = (3 > 4)> // (O)
+    class B {};   
+}
 namespace Parameter_10 {
-    template<typename T>
+    template<typename T> 
+    class Runner {
+        T m_Obj;
+    public:
+        int Run() {
+            return m_Obj.f(10); // 템플릿 정의에서는 함수 정의가 없어도 컴파일 됩니다.  
+        }
+    };
+     
     class A {
     public:
         template<typename U>
-        void f() {}
+        int f(U val) {return 1;} 
     };
-    
-    template<typename T>
-    void g() {
-        A<T> a;
-        // a.f<T>(); // (X) 컴파일 오류. 아직 인스턴스화 되지 않아 함수 이름에 접근할 수 없습니다.
-        a.template f<T>(); // (O) 템플릿임을 명시합니다.
-    }
+    class B {
+    public:
+        template<typename U>
+        int f(U val) {return 2;} 
+    };
 }
 
-namespace Paramenter_11 {
-    template<typename T> // #1
+namespace Parameter_11 {
+    template<typename T> 
+    class Runner {
+        T m_Obj;
+    public:
+        int Run() {
+            // (X) 컴파일 오류. 템플릿 멤버 함수를 명시적으로 호출하기 위해 <>을 사용하면, 
+            // < 을 비교 연산으로 파싱해서 컴파일 오류가 납니다.
+            // return m_Obj.f<int>(10);   
+
+            // (O) < 가 템플릿으로 파싱되도록 template 키워드를 작성했습니다.
+            return m_Obj.template f<int>(10);
+        }
+    };
+     
+    class A {
+    public:
+        template<typename U>
+        int f(U val) {return 1;} // 멤버 함수 정의 입니다.
+    };
+    class B {
+    public:
+        template<typename U>
+        int f(U val) {return 2;} // 멤버 함수 정의 입니다.
+    };
+}
+namespace Paramenter_12 {
+    template<typename T> // #1.
     class A {};
 
-    // template<typename U> // #1과 동등
+    // template<typename U> // (X) 컴파일 오류. #1과 동등
     // class A {};
 }
-
 
 TEST(TestClassicCpp, TemplateParameterArgument) {
 
@@ -177,10 +207,18 @@ TEST(TestClassicCpp, TemplateParameterArgument) {
     }
     // 기본값 인자
     {
-        using namespace Parameter_8;
+        using namespace Parameter_7;
         A<> a; // T == char, U == int
         A<char> b; // U == int
         A<char, char> c;
     }
+    {
+        using namespace Parameter_10;
 
+        Runner<A> a;
+        Runner<B> b;
+
+        EXPECT_TRUE(a.Run() == 1);
+        EXPECT_TRUE(b.Run() == 2); 
+    }    
 }

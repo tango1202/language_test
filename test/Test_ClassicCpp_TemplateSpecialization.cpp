@@ -227,6 +227,10 @@ TEST(TestClassicCpp, Specialization) {
         int a;
         EXPECT_TRUE(f(&a) == 3); // 템플릿 특수화 버전이 실행됩니다. T == int, f<int>(int*)
     }  
-      
+    {
+        using namespace Specialization_9;
+        int a;
+        EXPECT_TRUE(f<int*>(&a) == 1); // #1 템플릿 함수가 선택됩니다.
+        EXPECT_TRUE(f<int>(&a) == 3); // #2 템플릿 함수가 선택되고, 이중 특수화 버전인 #3 이 호출됩니다.    }  
+    }
 }
-
