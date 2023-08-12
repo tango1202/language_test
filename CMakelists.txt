@@ -66,6 +66,7 @@ set(TestFiles
    test/Test_ClassicCpp_TemplateSpecialization.cpp   
    test/Test_ClassicCpp_TemplateParameterArgument.cpp  
    test/Test_ClassicCpp_TemplateArgumentDeduction.cpp  
+   test/Test_ClassicCpp_Traits.cpp  
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
