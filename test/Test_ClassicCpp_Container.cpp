@@ -5,12 +5,46 @@
 namespace {
 
     // Iterator가 가르키는 곳부터 n개를 value로 채웁니다. 
+    // Iterator는 ++, *, = 연산자를 구현해야 합니다.
     template<typename Iterator>
     void Fill(Iterator first, size_t n, const int& value) {
         for (size_t i = n; 0 < n; --n, ++first) {
             *first = value;
         }
     }
+
+    template<typename ContainerT>
+    class BackInsertIterator {
+        ContainerT& m_Container;
+    public:
+        // 값 생성자에서는 Container를 전달받습니다.
+        explicit BackInsertIterator(ContainerT& container) : // #1
+            m_Container(container) {}
+
+        // 복사 생성자에서는 컨테이너 참조자를 복사합니다.
+        BackInsertIterator(const BackInsertIterator& other) : // #2
+            m_Container(other.m_Container) {}
+    private:   
+        // 대입 연산자는 사용하지 않습니다.
+        BackInsertIterator& operator =(const BackInsertIterator& other) {return *this;} // #3
+
+    public:
+        // = 에서 컨테이너 값 타입을 전달하면, push_back()을 하여 추가합니다.
+        BackInsertIterator& operator =(const typename ContainerT::value_type& value) { // #4
+            m_Container.push_back(value);
+            return *this;
+        }
+
+        // 무조건 끝에 추가하므로 ++는 별다른 동작하지 않습니다.
+        BackInsertIterator& operator ++() { // #5
+            return *this;
+        }
+
+        // * 시 자기 자신을 리턴하여 *first = value;시 #4가 호출되게 합니다.
+        BackInsertIterator& operator *() { //# 6
+            return *this;
+        }
+    };
 }
 
 TEST(TestClassicCpp, Container) {
@@ -111,22 +145,41 @@ TEST(TestClassicCpp, Container) {
     }
     // 삽입 이터레이터
     {
-
         std::vector<int> v; 
-        // Fill(v.begin(), 5, 7); // v[0] ~ v[4] 에 7 대입
-        // v가 5개 할당되지 않았다면 예외발생
-        // vector<int> v; 
-
-    //   back_insert_iterator& operator=(const typename _Container::value_type& __value)
-    //   {
-    //     container->push_back(__value);
-    //     return *this;
-    //   }
-    //   back_insert_iterator&  operator*()
-    //   { return *this; }
-
-        Fill(std::back_inserter(v), 5, 7); // 현 컨테이너 뒤 5 개에 7 삽입
-        // operator = 을 push_back() 으로 구현
+        // Fill(v.begin(), 5, 7); // v[0] ~ v[4] 에 7 대입. v가 5개 할당되지 않았다면 예외 발생 
+        Fill(BackInsertIterator<std::vector<int>>(v), 5, 7); // 현 컨테이너 뒤 5 개에 7 삽입. BackInsertIterator에서 operator = 을 push_back() 으로 구현
+        
+        EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
+    }
+    // 삽입 이터레이터
+    {
+        std::vector<int> v; 
+        Fill(std::back_inserter(v), 5, 7); // 표준 유틸리티 함수 사용
+        
+        EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
+    }
+    // 역방향 이터레이터
+    {
+        std::vector<int> v(5); 
+ 
+        // 순방향
+        {
+            std::vector<int>::iterator itr = v.begin(); // 요소의 시작
+            std::vector<int>::iterator endItr = v.end(); // 요소의 끝
+            for (int i = 0; itr != endItr; ++itr, ++i) { 
+                *itr = i; 
+            }
+            EXPECT_TRUE(v[0] == 0 && v[1] == 1 && v[2] == 2 && v[3] == 3 && v[4] == 4);
+        }
+        // 역방향
+        {
+            std::vector<int>::reverse_iterator itr = v.rbegin(); // 요소의 끝
+            std::vector<int>::reverse_iterator endItr = v.rend(); // 요소의 시작
+            for (int i = 0; itr != endItr; ++itr, ++i) { 
+                *itr = i; 
+            }
+            EXPECT_TRUE(v[0] == 4 && v[1] == 3 && v[2] == 2 && v[3] == 1 && v[4] == 0);
+        }
     }
 }
 
