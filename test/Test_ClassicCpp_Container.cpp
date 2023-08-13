@@ -143,21 +143,6 @@ TEST(TestClassicCpp, Container) {
         *(v.begin() + 1) = 10; 
         EXPECT_TRUE(v[1] == 10); 
     }
-    // 삽입 이터레이터
-    {
-        std::vector<int> v; 
-        // Fill(v.begin(), 5, 7); // v[0] ~ v[4] 에 7 대입. v가 5개 할당되지 않았다면 예외 발생 
-        Fill(BackInsertIterator<std::vector<int>>(v), 5, 7); // 현 컨테이너 뒤 5 개에 7 삽입. BackInsertIterator에서 operator = 을 push_back() 으로 구현
-        
-        EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
-    }
-    // 삽입 이터레이터
-    {
-        std::vector<int> v; 
-        Fill(std::back_inserter(v), 5, 7); // 표준 유틸리티 함수 사용
-        
-        EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
-    }
     // 역방향 이터레이터
     {
         std::vector<int> v(5); 
@@ -180,6 +165,21 @@ TEST(TestClassicCpp, Container) {
             }
             EXPECT_TRUE(v[0] == 4 && v[1] == 3 && v[2] == 2 && v[3] == 1 && v[4] == 0);
         }
+    }
+    // 삽입 이터레이터
+    {
+        std::vector<int> v; 
+        // Fill(v.begin(), 5, 7); // v[0] ~ v[4] 에 7 대입. v가 5개 할당되지 않았다면 예외 발생 
+        Fill(BackInsertIterator<std::vector<int>>(v), 5, 7); // 현 컨테이너 뒤 5 개에 7 삽입. BackInsertIterator에서 operator = 을 push_back() 으로 구현
+        
+        EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
+    }
+    // 삽입 이터레이터
+    {
+        std::vector<int> v; 
+        Fill(std::back_inserter(v), 5, 7); // 표준 유틸리티 함수 사용
+        
+        EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
     }
 }
 
