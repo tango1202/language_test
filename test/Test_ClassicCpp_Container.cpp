@@ -181,5 +181,62 @@ TEST(TestClassicCpp, Container) {
         
         EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
     }
+    {
+        std::vector<int> v;
+
+        v.push_back(10); // 요소 생성
+        v.push_back(20);
+        EXPECT_TRUE(v[0] == 10);
+        EXPECT_TRUE(v[1] == 20);
+
+        EXPECT_TRUE(*(&v[0]) == 10);
+        EXPECT_TRUE(*((&v[0]) + 1) == 20); // 연속된 메모리여서 포인터 연산으로도 접근 가능합니다.
+    }
+    // 벡터 clear 시 이전 capacity
+    {
+        std::vector<int> v(100);
+        size_t old = v.capacity();
+        v.clear();
+        EXPECT_TRUE(v.capacity() == old); // clear해서 요소를 모두 지웠지만, capacity는 그대로 입니다.
+    }
+    {
+        std::vector<int> v;
+
+        for (int i = 0; i < 16; ++i) {
+            v.push_back(0);
+            std::cout<<"size:"<<v.size()<<" capacity:"<<v.capacity()<<std::endl;
+        }
+    }
+    {
+        std::vector<int> v;   
+        v.reserve(100);
+        EXPECT_TRUE(v.capacity() == 100); // 100개를 저장할 수 있는 메모리 공간이 확보됨
+        // v[0] = 0; // (X) 컴파일 오류. 아직 요소는 아직 생성된게 아니기에 접근할 수 없습니다.
+        v.push_back(0); // (0) 
+    }
+    // swap을 이용한 메모리 해제
+    {
+        std::vector<int> v(100);
+        size_t old = v.capacity();
+        v.clear();
+        EXPECT_TRUE(v.capacity() == old); // clear를 했지만 메모리 용량은 그대로 입니다.
+    }
+    {
+        std::vector<int> v(100);
+        EXPECT_TRUE(v.capacity() == 100);
+        std::vector<int> temp;
+        v.swap(temp); // vector는 pImpl로 구현되어 swap시 복사 부하가 없습니다.
+        EXPECT_TRUE(v.capacity() == 0); // 크기가 0인 vector와 바꿔치기 했습니다.
+    }
+    // vector<bool>
+    {
+        std::vector<bool> v; // 내부적으로는 bool 타입이 아니라 비트 필드를 사용합니다.
+        v.push_back(true);
+        v.push_back(false);
+
+        EXPECT_TRUE(v[0] == true && v[1] == false);
+        //EXPECT_TRUE(*(&v[0]) == true); // (X) 컴파일 오류. &v[0]와 같은 포인터 연산과 호환되지 않습니다.
+   }
+
 }
 

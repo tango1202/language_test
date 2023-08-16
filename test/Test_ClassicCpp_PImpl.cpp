@@ -83,6 +83,7 @@ namespace {
     //     return *this;
     // } 
     // void T::Swap(T& other) {
+    //     // PImpl 이디엄을 사용하면 포인터 끼리의 swap이므로 복사 부하가 거의 없습니다.
     //     std::swap(this->m_Impl, other.m_Impl);
     // }
 

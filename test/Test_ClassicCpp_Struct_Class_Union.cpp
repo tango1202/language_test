@@ -258,6 +258,36 @@ TEST(TestClassicCpp, StructClassUnion) {
         EXPECT_TRUE(u.s2.x == 20);
     }
     // ----
+    // 비트 필드
+    // ----
+    {
+        class Flag {
+        public:
+            unsigned char m_Val1 : 2; // 2bit 00(0), 01(1), 10(2), 11(3)
+            unsigned char m_Val2 : 3; // 3bit 000(0), 001(1), 010(2), 011(3), 100(4), 101(5), 110(6), 111(7)
+        };
+
+        Flag flag;
+        EXPECT_TRUE(sizeof(flag) == sizeof(unsigned char));
+
+        // 주어진 비트 범위내의 데이터는 잘 저장함
+        flag.m_Val1 = 3; // 0~3 저장
+        flag.m_Val2 = 7; // 0~7 저장
+        
+        EXPECT_TRUE(flag.m_Val1 == 3);
+        EXPECT_TRUE(flag.m_Val2 == 7);
+ 
+        // 저장 공간이 부족하면 상위 비트를 버림
+        flag.m_Val1 = 5; // (△) 비권장. 101을 대입하면 앞의 1은 저장하지 못하고 01만 저장됨  
+        flag.m_Val2 = 15; // (△) 비권장. 1111을 대입하면 앞의 1은 저장하지 못하고 111만 저장됨
+
+        EXPECT_TRUE(flag.m_Val1 == 1);
+        EXPECT_TRUE(flag.m_Val2 == 7);
+
+        // unsigned char* ptr =  &flag.m_Val1; // (X) 컴파일 오류. 비트 필드는 포인터를 지원하지 않습니다.
+        // unsigned char& ref =  flag.m_Val1; // (X) 컴파일 오류. 비트 필드는 레퍼런스를 지원하지 않습니다.
+    }    
+    // ----
     // 중첩 클래스
     // ----
     {
