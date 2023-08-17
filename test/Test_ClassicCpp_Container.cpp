@@ -68,7 +68,7 @@ TEST(TestClassicCpp, Container) {
         };
 
         std::vector<A> v;
-        v.push_back(A(0));
+        v.push_back(A(0)); // vector 뒤에 요소 추가
         v.push_back(A(1));
     }
     // sort 등 알고리즘 사용시
@@ -98,7 +98,7 @@ TEST(TestClassicCpp, Container) {
         // 정렬합니다. 
         // 내부적으로 요소의 대입 연산자와 대소 비교 연산자를 사용합니다.
         std::sort(v.begin(), v.end()); 
-        EXPECT_TRUE(v[0].m_Val == 0 && v[1].m_Val == 1);
+        EXPECT_TRUE(v[0].m_Val == 0 && v[1].m_Val == 1); // 크기순으로 정렬됩니다.
     }
     // 연관 컨테이너의 key
     {
@@ -125,7 +125,7 @@ TEST(TestClassicCpp, Container) {
         std::map<A, std::string> m;
 
         // insert시 내부적으로 key를 비교 연산하여 정렬하여 삽입합니다. 
-        m.insert(std::make_pair(A(0), "data0"));
+        m.insert(std::make_pair(A(0), "data0")); // map에 key-value 쌍을 추가
         m.insert(std::make_pair(A(1), "data1"));
     }
     // ----
