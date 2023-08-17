@@ -158,7 +158,7 @@ TEST(TestClassicCpp, TemplateDeduction) {
 
         // Argument :A<10> 
         // Parameter : A<10>
-        f<10>(a); // s 로 10을 전달하여 Parameter에서 A<10> 이 됨. 같은 타입이어서 함수 호출됨   
+        f<10>(a); // 명시적으로 10을 전달하여 A<10> 타입이 됨. 같은 타입이어서 함수 호출됨 
     }
 }
 
