@@ -193,7 +193,7 @@ TEST(TestClassicCpp, TemplateParameterArgument) {
         using namespace Parameter_5;
         B<A> b; 
         b.m_U1.m_X = 10;
-        b.m_U2.m_Y = 20;
+        b.m_U2.m_Y = 20; // A<T*> 버전으로 생성됩니다.
 
         EXPECT_TRUE(b.m_U1.m_X == 10);
         EXPECT_TRUE(b.m_U2.m_Y == 20);
