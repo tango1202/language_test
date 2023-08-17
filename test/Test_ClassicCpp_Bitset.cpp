@@ -16,6 +16,6 @@ TEST(TestClassicCpp, Bitset) {
     EXPECT_TRUE(b1.test(1) == true);
     EXPECT_TRUE(b1.test(2) == false);
     EXPECT_TRUE(b4.test(99) == true);
-    EXPECT_TRUE(b4.test(100) == false); // (X) 예외 발생. 범위를 벗어나면 예외를 발생합니다.
+    // EXPECT_TRUE(b4.test(100) == false); // (X) 예외 발생. 범위를 벗어나면 예외를 발생합니다.
 }
 

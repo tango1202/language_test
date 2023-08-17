@@ -1,6 +1,7 @@
 #include "gtest/gtest.h" 
 
 #include <list>
+#include <algorithm>
 
 namespace {
 
@@ -48,6 +49,88 @@ namespace {
 }
 
 TEST(TestClassicCpp, Container) {
+
+    // 복사 생성자
+    {
+        class A {
+        public:
+            int m_Val;
+        public:
+            explicit A(int val) : m_Val(val) {}
+            // 복사 생성자를 구현해야 합니다.
+            A(const A& other) : m_Val(other.m_Val) {}
+        private:
+            // 대입 연산자를 사용하지 못하도록 private로 정의합니다.
+            A& operator =(const A& other) {
+                m_Val = other.m_Val;
+                return *this;
+            }
+        };
+
+        std::vector<A> v;
+        v.push_back(A(0));
+        v.push_back(A(1));
+    }
+    // sort 등 알고리즘 사용시
+    {
+        class A {
+        public:
+            int m_Val;
+        public:
+            explicit A(int val) : m_Val(val) {}
+            // 복사 생성자
+            A(const A& other) : m_Val(other.m_Val) {}
+            // 대입 연산자
+            A& operator =(const A& other) {
+                m_Val = other.m_Val;
+                return *this;
+            }
+            // 비교 연산자
+            bool operator <(const A& other) const {
+                return m_Val < other.m_Val;
+            }
+        };
+
+        std::vector<A> v;
+        v.push_back(A(1));
+        v.push_back(A(0));
+
+        // 정렬합니다. 
+        // 내부적으로 요소의 대입 연산자와 대소 비교 연산자를 사용합니다.
+        std::sort(v.begin(), v.end()); 
+        EXPECT_TRUE(v[0].m_Val == 0 && v[1].m_Val == 1);
+    }
+    // 연관 컨테이너의 key
+    {
+        class A {
+        public:
+            int m_Val;
+        public:
+            explicit A(int val) : m_Val(val) {}
+            // 복사 생성자
+            A(const A& other) : m_Val(other.m_Val) {}
+        private:    
+            // 대입 연산자를 사용하지 못하도록 private로 정의합니다.
+            A& operator =(const A& other) {
+                m_Val = other.m_Val;
+                return *this;
+            }
+        public:
+            // 비교 연산자
+            bool operator <(const A& other) const {
+                return m_Val < other.m_Val;
+            }
+        };        
+
+        std::map<A, std::string> m;
+
+        // insert시 내부적으로 key를 비교 연산하여 정렬하여 삽입합니다. 
+        m.insert(std::make_pair(A(0), "data0"));
+        m.insert(std::make_pair(A(1), "data1"));
+    }
+    // ----
+    // vector 의 삽입과 삭제
+    // ----
     {
         std::vector<int> v;
    
@@ -71,6 +154,9 @@ TEST(TestClassicCpp, Container) {
         EXPECT_TRUE(v.size() == 2); // 요소 갯수 2개
         EXPECT_TRUE(*result == 1); // 삭제한 요소의 다음 요소를 리턴함
     }
+    // ----
+    // list 의 삽입과 삭제
+    // ----
     {
         std::list<int> l;
         l.push_back(0);
@@ -91,6 +177,9 @@ TEST(TestClassicCpp, Container) {
         EXPECT_TRUE(l.size() == 2); // 요소 갯수 2개
         EXPECT_TRUE(*result == 1); // 삭제한 요소의 다음 요소를 리턴함
     }
+    // ----
+    // map 의 삽입과 삭제
+    // ----
     {
         std::map<int, std::string> m;
 
@@ -121,7 +210,9 @@ TEST(TestClassicCpp, Container) {
         EXPECT_TRUE((*eraseResult).first == 1); // 삭제한 요소의 다음 요소를 리턴함
     }
 
-    // 이터레이터
+    // ----
+    // 이터레이터를 이용한 요소 접근
+    // ----
     {
         std::vector<int> v(5); // 5개의 요소 생성(클래스면 생성자를 호출함)
         EXPECT_TRUE(v[0] == 0 && v[1] == 0 && v[2] == 0 && v[3] == 0 && v[4] == 0);
@@ -143,7 +234,9 @@ TEST(TestClassicCpp, Container) {
         *(v.begin() + 1) = 10; 
         EXPECT_TRUE(v[1] == 10); 
     }
+    // ----
     // 역방향 이터레이터
+    // ----
     {
         std::vector<int> v(5); 
  
@@ -166,7 +259,9 @@ TEST(TestClassicCpp, Container) {
             EXPECT_TRUE(v[0] == 4 && v[1] == 3 && v[2] == 2 && v[3] == 1 && v[4] == 0);
         }
     }
+    // ----
     // 삽입 이터레이터
+    // ----
     {
         std::vector<int> v; 
         // Fill(v.begin(), 5, 7); // v[0] ~ v[4] 에 7 대입. v가 5개 할당되지 않았다면 예외 발생 
@@ -174,13 +269,15 @@ TEST(TestClassicCpp, Container) {
         
         EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
     }
-    // 삽입 이터레이터
     {
         std::vector<int> v; 
         Fill(std::back_inserter(v), 5, 7); // 표준 유틸리티 함수 사용
         
         EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
     }
+    // ----
+    // 배열과 vector
+    // ----
     {
         std::vector<int> v;
 
@@ -192,7 +289,9 @@ TEST(TestClassicCpp, Container) {
         EXPECT_TRUE(*(&v[0]) == 10);
         EXPECT_TRUE(*((&v[0]) + 1) == 20); // 연속된 메모리여서 포인터 연산으로도 접근 가능합니다.
     }
-    // 벡터 clear 시 이전 capacity
+    // ----
+    // size와 capacity
+    // ----
     {
         std::vector<int> v(100);
         size_t old = v.capacity();
@@ -207,6 +306,9 @@ TEST(TestClassicCpp, Container) {
             std::cout<<"size:"<<v.size()<<" capacity:"<<v.capacity()<<std::endl;
         }
     }
+    // ----
+    // 저장 공간 예약 
+    // ----
     {
         std::vector<int> v;   
         v.reserve(100);
@@ -214,7 +316,9 @@ TEST(TestClassicCpp, Container) {
         // v[0] = 0; // (X) 컴파일 오류. 아직 요소는 아직 생성된게 아니기에 접근할 수 없습니다.
         v.push_back(0); // (0) 
     }
-    // swap을 이용한 메모리 해제
+    // ----
+    // clear와 swap
+    // ----
     {
         std::vector<int> v(100);
         size_t old = v.capacity();
@@ -228,7 +332,9 @@ TEST(TestClassicCpp, Container) {
         v.swap(temp); // vector는 pImpl로 구현되어 swap시 복사 부하가 없습니다.
         EXPECT_TRUE(v.capacity() == 0); // 크기가 0인 vector와 바꿔치기 했습니다.
     }
+    // ----
     // vector<bool>
+    // ----
     {
         std::vector<bool> v; // 내부적으로는 bool 타입이 아니라 비트 필드를 사용합니다.
         v.push_back(true);
