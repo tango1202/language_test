@@ -69,7 +69,10 @@ set(TestFiles
    test/Test_ClassicCpp_Traits.cpp  
    test/Test_ClassicCpp_Container.cpp  
    test/Test_ClassicCpp_Allocator.cpp  
-   test/Test_ClassicCpp_Bitset.cpp  
+   test/Test_ClassicCpp_Bitset.cpp 
+   test/Test_ClassicCpp_Algorithm.cpp  
+   test/Test_ClassicCpp_Functor.cpp    
+   test/Test_ClassicCpp_String.cpp  
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
