@@ -73,6 +73,8 @@ set(TestFiles
    test/Test_ClassicCpp_Algorithm.cpp  
    test/Test_ClassicCpp_Functor.cpp    
    test/Test_ClassicCpp_String.cpp  
+   test/Test_ClassicCpp_AutoPtr.cpp  
+   test/Test_ClassicCpp_MetaProgramming.cpp 
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
