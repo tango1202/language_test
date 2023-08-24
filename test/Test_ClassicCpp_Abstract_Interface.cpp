@@ -1,6 +1,5 @@
 #include "gtest/gtest.h" 
 
-// test
 namespace {
     // ----
     // 마땅한 순가상 함수가 없는 추상 클래스
