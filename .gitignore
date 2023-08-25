@@ -1,4 +1,5 @@
 .vscode/
 build/
 googletest-1.13.0/
+googletest-1.14.0/
 *.exe
