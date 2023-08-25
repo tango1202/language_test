@@ -394,7 +394,7 @@ TEST(TestClassicCpp, MetaProgramming) {
         using namespace MetaProgramming_5;
         
         // // 컴타일타임에 ICloneable 상속했는지는 판단하고, 런타임에 if 문으로 복사 생성할지, Clone()을 호출할지 분기합니다.
-        // Shape* shape = CloneTraits<Shape>::CloneForRunTime(new Rectangle);
+        // Shape* shape = CloneTraits<Shape>::Clone(new Rectangle);
         // EXPECT_TRUE(typeid(*shape).hash_code() == typeid(Rectangle).hash_code());
         // delete shape;
     }
