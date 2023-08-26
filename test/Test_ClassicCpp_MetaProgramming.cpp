@@ -8,14 +8,14 @@ namespace MetaProgramming_1 {
     template<unsigned int n>
     struct Factorial { 
         enum {
-            val = n * Factorial<n-1>::val
+            Val = n * Factorial<n-1>::Val
         }; 
     };
     // 0일때 특수화 버전. 더이상 재귀 호출을 안합니다.
     template<>
     struct Factorial<0> { 
         enum {
-            val = 1
+            Val = 1
         }; 
     };
 }
@@ -63,7 +63,6 @@ namespace MetaProgramming_3 {
         }
 
     private:
-        // 테스트와 상관없어서 복사 생성자와 대입 연산자는 private로 막아 두었습니다.
         my_smart_ptr(my_smart_ptr& other) {}
         my_smart_ptr& operator =(my_smart_ptr& other) {return *this;}
 
@@ -71,7 +70,6 @@ namespace MetaProgramming_3 {
         T* GetPtr() {
             return m_Ptr;
         } 
-        // T 개체의 복사 생성자를 호출합니다.
         T* Clone() const {
             if (m_Ptr == NULL) {
                 return(NULL);
@@ -87,14 +85,11 @@ namespace MetaProgramming_3 {
         Shape(const Shape& other) {}
     public:
         virtual ~Shape() {}
-        // (O) 부모 개체에서는 Shape* 으로 리턴합니다.  
         virtual Shape* Clone() const = 0; 
     };
 
     class Rectangle : public Shape {
     public:
-        // (O) 자식 개체에서는 자식 타입으로 리턴합니다.
-        // Rectangle의 복사 생성자를 이용하며 복제본을 리턴합니다.
         virtual Rectangle* Clone() const { 
             return new Rectangle(*this); 
         }
@@ -111,7 +106,6 @@ namespace MetaProgramming_3 {
         }
 
     private:
-        // 테스트와 상관없어서 복사 생성자와 대입 연산자는 private로 막아 두었습니다.
         my_smart_ptr(my_smart_ptr& other) {}
         my_smart_ptr& operator =(my_smart_ptr& other) {return *this;}
 
@@ -155,7 +149,6 @@ namespace MetaProgramming_4 {
         }
 
     private:
-        // 테스트와 상관없어서 복사 생성자와 대입 연산자는 private로 막아 두었습니다.
         my_smart_ptr(my_smart_ptr& other) {}
         my_smart_ptr& operator =(my_smart_ptr& other) {return *this;}
 
@@ -176,14 +169,11 @@ namespace MetaProgramming_4 {
         Shape(const Shape& other) {}
     public:
         virtual ~Shape() {}
-        // (O) 부모 개체에서는 Shape* 으로 리턴합니다.  
         virtual Shape* Clone() const = 0; 
     };
 
     class Rectangle : public Shape {
     public:
-        // (O) 자식 개체에서는 자식 타입으로 리턴합니다.
-        // Rectangle의 복사 생성자를 이용하며 복제본을 리턴합니다.
         virtual Rectangle* Clone() const { 
             return new Rectangle(*this); 
         }
@@ -257,7 +247,8 @@ namespace MetaProgramming_5 {
 
             return Clone(
                 ptr, 
-                CloneTag<IsDerivedFrom<T, ICloneable>::Val>());
+                CloneTag<IsDerivedFrom<T, ICloneable>::Val>()
+            );
         }
 
 		// if 문을 사용했기 때문에 런타임에 복사 생성자를 사용할지 Clone()을 사용할 지 결정합니다.
@@ -331,7 +322,7 @@ TEST(TestClassicCpp, MetaProgramming) {
         using namespace MetaProgramming_1;
 
         // 컴파일 타임에 계산된 120이 val에 대입됩니다.
-        unsigned int val = Factorial<5>::val; 
+        unsigned int val = Factorial<5>::Val; 
         EXPECT_TRUE(val == 1 * 2 * 3 * 4 * 5);
     }
     {
@@ -371,6 +362,12 @@ TEST(TestClassicCpp, MetaProgramming) {
 
         // sp2는 Rectangle 을 관리합니다.
         EXPECT_TRUE(typeid(*sp2.GetPtr()).hash_code() == typeid(Rectangle).hash_code());
+
+        my_smart_ptr<int> sp3(new int);
+        my_smart_ptr<int> sp4(sp3.Clone());
+
+        // sp4는 int 를 관리합니다.
+        EXPECT_TRUE(typeid(*sp4.GetPtr()).hash_code() == typeid(int).hash_code());
     }
     {
         using namespace MetaProgramming_4;
@@ -380,6 +377,12 @@ TEST(TestClassicCpp, MetaProgramming) {
 
         // sp2는 Rectangle 을 관리합니다.
         EXPECT_TRUE(typeid(*sp2.GetPtr()).hash_code() == typeid(Rectangle).hash_code());
+
+        my_smart_ptr<int> sp3(new int);
+        my_smart_ptr<int> sp4(sp3.Clone());
+
+        // sp4는 int 를 관리합니다.
+        EXPECT_TRUE(typeid(*sp4.GetPtr()).hash_code() == typeid(int).hash_code());    
     }
     {
         using namespace MetaProgramming_5;
@@ -389,6 +392,12 @@ TEST(TestClassicCpp, MetaProgramming) {
         
         // sp2는 Rectangle 을 관리합니다.
         EXPECT_TRUE(typeid(*sp2.GetPtr()).hash_code() == typeid(Rectangle).hash_code());
+         
+        my_smart_ptr<int> sp3(new int);
+        my_smart_ptr<int> sp4(sp3.Clone());
+
+        // sp4는 int 를 관리합니다.
+        EXPECT_TRUE(typeid(*sp4.GetPtr()).hash_code() == typeid(int).hash_code());      
     }
     {
         using namespace MetaProgramming_5;
