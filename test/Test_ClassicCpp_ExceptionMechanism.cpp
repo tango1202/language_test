@@ -31,10 +31,6 @@ namespace {
             // 아무 작업도 안합니다.
         }
     }
-    void myTerminate () {
-        std::cerr << "#########################################terminate handler called\n";
-        //std::abort();  // forces abnormal termination
-    }
 }
 
 TEST(TestClassicCpp, ExceptionMechanism) {
@@ -83,13 +79,5 @@ TEST(TestClassicCpp, ExceptionMechanism) {
         catch (std::out_of_range& e) {
             // 아무 작업도 안합니다.
         }        
-    }
-    // ---
-    // terminate
-    // ---
-    {
-        std::set_terminate(myTerminate); // terminate 핸들러를 설정합니다.
-
-        std::terminate(); // 예외 발생
     }
 }
