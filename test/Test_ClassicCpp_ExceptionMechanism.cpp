@@ -8,17 +8,17 @@ namespace {
         assert(0 <= val && val < 256); // 인자가 유효한지 검사합니다.
 
         if (!(0 <= val && val < 256)) {
-            throw std::out_of_range("범위 오류"); // 예외를 발생시킵니다.
+            throw std::out_of_range("Fail : val range"); // 예외를 발생시킵니다.
         }
         return static_cast<char>(val);
     }
 
     int f(int val) {
-        throw std::out_of_range("f() 범위 오류"); // 예외를 발생시킵니다.
+        throw std::out_of_range("Fail : f()"); // 예외를 발생시킵니다.
         return 0;
     }
     int g(int val) {
-        throw std::out_of_range("g() 범위 오류"); // 예외를 발생시킵니다.
+        throw std::out_of_range("Fail : g()"); // 예외를 발생시킵니다.
         return 0;
     }
     void h() {

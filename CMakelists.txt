@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0) # 최소요구버전
+cmake_minimum_required(VERSION 3.5.0) # 최소요구버전
 project(UnitTester VERSION 0.1.0) # PROJECT_NAME 과 PROJECT_VERSION
 
 #set(CMAKE_C_STANDARD 99)
@@ -76,6 +76,7 @@ set(TestFiles
    test/Test_ClassicCpp_AutoPtr.cpp  
    test/Test_ClassicCpp_MetaProgramming.cpp 
    test/Test_ClassicCpp_ExceptionMechanism.cpp  
+   test/Test_ClassicCpp_Diagonostics.cpp     
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
