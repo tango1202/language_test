@@ -15,8 +15,7 @@ namespace {
     };
 
     // IResizeable 구현한 클래스입니다. 다른 클래스에서 상속받아 기능을 포함합니다.
-    class ResizeableImpl : 
-        public IResizeable {
+    class ResizeableImpl : public IResizeable {
     private:
         int m_Width;
         int m_Height;    
@@ -87,8 +86,7 @@ namespace {
     };
 
     // 자식 클래스입니다. m_Length를 제공합니다.
-    class Square : 
-        public Shape {
+    class Square : public Shape {
     public:
         int m_Length;
     public:

@@ -8,13 +8,11 @@ namespace {
         virtual void WriteIntVal(const std::wstring& attrName, int val) const = 0;
     };
 
-    class XmlWriter : 
-        public IWriter {
+    class XmlWriter : public IWriter {
     public:
         virtual void WriteIntVal(const std::wstring& attrName, int val) const override { /* xml로 저장합니다 */ }
     };
-    class JsonWriter : 
-        public IWriter {
+    class JsonWriter : public IWriter {
     public:
         virtual void WriteIntVal(const std::wstring& attrName, int val) const override { /* json로 저장합니다 */ }
     };

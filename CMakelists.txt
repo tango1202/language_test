@@ -78,7 +78,9 @@ set(TestFiles
    test/Test_ClassicCpp_ExceptionMechanism.cpp  
    test/Test_ClassicCpp_Diagonostics.cpp     
    test/Test_ClassicCpp_ExceptionWarranty.cpp
+   test/Test_MordernCpp_RValueValueCategory.cpp
    test/Test_MordernCpp_AutoDecltype.cpp
+   test/Test_MordernCpp_DefaultDeleteOverrideFinal.cpp
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp

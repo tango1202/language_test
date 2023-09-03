@@ -107,8 +107,7 @@ TEST(TestClassicCpp, Interface) {
     };
 
     // 추상 클래스
-    class Shape : 
-        public IDrawable { // Shape은 IDrawable 인터페이스를 제공합니다.
+    class Shape : public IDrawable { // Shape은 IDrawable 인터페이스를 제공합니다.
         // 모든 도형은 왼쪽 상단 좌표와 크기를 가집니다.
         int m_Left;
         int m_Top;

@@ -24,8 +24,7 @@ namespace {
     // DeepPtr
     // ----
     template<typename T> 
-    class DeepPtr :
-        private OnlyStackAssignable { // new 로 생성 안됨.
+    class DeepPtr : private OnlyStackAssignable { // new 로 생성 안됨.
         T* m_Ptr;   
     public:
         explicit DeepPtr(T* ptr) :
