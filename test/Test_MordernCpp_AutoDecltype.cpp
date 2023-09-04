@@ -53,7 +53,7 @@ namespace Decltype_4 {
         return result; 
     }
     decltype(auto) Func4(int a, int b) {
-        const int result = a + b;
+        const int result = a + b; // (X) 예외 발생. Func4의 지역 변수 참조를 전달하기 때문
 
         // 왼값 표현식의 결과로 평가. T&형태로 평가
         return (result); 
@@ -138,7 +138,7 @@ TEST(TestCppPattern, Decltype) {
         auto result1 = Func1(10, 20); // int를 리턴
         auto result2 = Func2(10, 20); // const int를 리턴했지만 템플릿 함수 인수 추론 규칙에 따라 int를 리턴
         auto result3 = Func3(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
-        auto result3 = Func4(10, 20); // const int& 리턴. 리턴하는 (result) 표현식과 동일
+        // auto result4 = Func4(10, 20); // const int& 리턴. 리턴하는 (result) 표현식과 동일. 
     }
 
 }
