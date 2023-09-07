@@ -98,18 +98,18 @@ namespace Constexpr_2 {
     class CloneTraits {
     public:
 
-        static T* Clone(const T* ptr) {
+        static T* Clone_14(const T* ptr) {
             if (ptr == NULL) {
                 return  NULL;
             }
 
-            // 조건에 맞는 부부만 컴파일 합니다.
-            if constexpr (!IsDerivedFrom<T, ICloneable>::Val) {
-                return new T(*ptr);
-            }
-            else {
-                return ptr->Clone();
-            }
+            // // 조건에 맞는 부부만 컴파일 합니다.
+            // if constexpr (!IsDerivedFrom<T, ICloneable>::Val) {
+            //     return new T(*ptr);
+            // }
+            // else {
+            //     return ptr->Clone();
+            // }
         } 
     };    
 }
@@ -175,12 +175,14 @@ TEST(TestCppPattern, Constexpr) {
         using namespace Constexpr_1;
 
         int val;
-        // CloneTraits<int>::Clone(&val); // (X) 컴파일 오류. int에 Clone() 함수가 없습니다.       
+        // int* ptr = CloneTraits<int>::Clone(&val); // (X) 컴파일 오류. int에 Clone() 함수가 없습니다.       
+        // delete ptr;
     }
     {
         using namespace Constexpr_2;
 
         int val;
-        CloneTraits<int>::Clone(&val); // (O) 
+        // int* ptr = CloneTraits<int>::Clone_14(&val); // (O)
+        // delete ptr; 
     }    
 }
