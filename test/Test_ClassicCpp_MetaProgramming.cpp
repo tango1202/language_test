@@ -230,8 +230,7 @@ namespace MetaProgramming_5 {
 
     // IsDerivedFrom을 이용하여 ICloneable 상속 여부를 컴파일 타임에 판단하여, 컴파일 타임에 복사 생성할지, Clone을 호출할지 결정합니다.
 	template<typename T>
-    class CloneTraits
-	{
+    class CloneTraits {
         static T* Clone(const T* ptr, CloneTag<false>) {
             return new T(*ptr); 
         }

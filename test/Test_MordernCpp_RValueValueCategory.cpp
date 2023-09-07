@@ -16,8 +16,8 @@ namespace RValue_2 {
     int f(T&& val) {return 20;}
 
     int g(T& val) {return f(val) + 1;}
-    // int g(T&& val) {return f(std::move(val)) + 2;} 
-    int g(T&& val) {return f(std::forward<T>(val)) + 2;} // 내부적으론 move와 동일하나 값 카테고리를 유지한채 전달한다는 의미로 forward 사용
+    // int g(T&& val) {return f(std::move(val)) + 2;} // (△) 비권장. 이동 연산을 수행한다는 느낌이어서 가독성이 떨어집니다.
+    int g(T&& val) {return f(std::forward<T>(val)) + 2;} // 값 카테고리를 유지한채 전달한다는 의미로 forward 사용
 }
 
 TEST(TestCppPattern, RValue) {
@@ -214,7 +214,7 @@ TEST(TestCppPattern, RValue) {
         EXPECT_TRUE(a.GetSize() == 30); 
 
         Big c(40);
-        a = std::move(c); // c 를 이름이 없는 rvalue로 변환. static_cast<Big&&>(b)와 동일. 이동 대입 연산자 호출
+        a = std::move(c); // c 를 이름이 없는 rvalue로 변환. static_cast<Big&&>(c)와 동일. 이동 대입 연산자 호출
         EXPECT_TRUE(a.GetSize() == 40);
 
         Big d(50);
