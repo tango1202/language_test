@@ -14,11 +14,11 @@ namespace Traits_1 {
     template<typename T> 
     class Runner {
         // T는 Type과 PointerType을 제공해야 합니다.
-        using Type = typename T::Type; 
-        using PointerType = typename T::PointerType;
+        typedef typename T::Type Type;
+        typedef typename T::PointerType PointerType;
  
-        Type m_Val1;
-        typename T::Type m_Val2; // using을 사용하지 않고 T::Type을 사용할 수 있습니다.
+        Type m_Val1; // Type == T::Type
+        typename T::Type m_Val2; // T::Type == Type
     };
 
     // Type과 PointerType을 제공하기 위해 ObjTraits를 사용합니다. 

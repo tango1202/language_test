@@ -24,15 +24,8 @@ namespace Template_3 {
         void g(); // 함수 선언만 됨. 불완전함. 함수 정의부가 없음
     };    
 }
+
 namespace Template_4 {
-    template<typename T>
-    class A {};
-
-    template<typename T>
-    using Alias = A<T>; // A의 별칭
-}
-
-namespace Template_5 {
     // 템플릿 함수    
     template <typename T>
     T Plus(T left, T right) {
@@ -40,7 +33,7 @@ namespace Template_5 {
     }
 }
 
-namespace Template_6 {
+namespace Template_5 {
     class A {
     public:
         // 템플릿 생성자
@@ -63,7 +56,7 @@ namespace Template_6 {
     };
 }
 
-namespace Template_7 {
+namespace Template_6 {
     template<typename T> 
     class A {
     public:    
@@ -99,21 +92,16 @@ TEST(TestClassicCpp, Template) {
         a.f(); // A<int>::g() 를 사용하지 않았기에 컴파일 됨 
         // a.g(); // (X) 컴파일 오류. 함수 정의부가 없음
     }
-    // 템플릿 별칭 
-    {
-        using namespace Template_4;
-    
-        Alias<int> alias;
-    } 
+
     // 템플릿 함수 
     {
-        using namespace Template_5;
+        using namespace Template_4;
 
         EXPECT_TRUE(Plus<int>(10, 10) == 20);
         EXPECT_TRUE(Plus<char>('a', 1) == 'b');
     }
     {
-        using namespace Template_5;
+        using namespace Template_4;
 
         EXPECT_TRUE(Plus(10, 10) == 20); // (O) 인수로부터 int가 추론됨
         EXPECT_TRUE(Plus<>(10, 10) == 20); // (O) <>를 기재하여 템플릿 함수임을 명시하고, 인수로부터 추론
@@ -122,7 +110,7 @@ TEST(TestClassicCpp, Template) {
     }   
     // 템플릿 멤버 함수와 템플릿 중첩 클래스
     {
-        using namespace Template_6;
+        using namespace Template_5;
         int val;
         A a(val); // 템플릿 생성자 호출, 타입을 명시적으로 지정 못함
         a.f(); // 일반 함수 호출
@@ -133,7 +121,7 @@ TEST(TestClassicCpp, Template) {
     } 
     // 템플릿 선언과 정의 분리
     {
-        using namespace Template_7;
+        using namespace Template_6;
 
         A<int> a;
 

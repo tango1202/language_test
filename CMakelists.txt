@@ -84,6 +84,10 @@ set(TestFiles
    test/Test_MordernCpp_ScopedEnum.cpp
    test/Test_MordernCpp_Constexpr.cpp    
    test/Test_MordernCpp_UniformInitialization.cpp   
+   test/Test_MordernCpp_DelegatingInheritedConstructor.cpp
+   test/Test_MordernCpp_Nullptr.cpp
+   test/Test_MordernCpp_VaradicTemplate.cpp
+   test/Test_MordernCpp_NonTrivialUnion.cpp
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
