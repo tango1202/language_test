@@ -114,7 +114,7 @@ namespace Constexpr_2 {
     };    
 }
 
-TEST(TestCppPattern, Constexpr) {
+TEST(TestMordern, Constexpr) {
     // constexpr
     {
         const int size = 20; // 상수 입니다.

@@ -4,7 +4,7 @@ namespace {
     int f(int) {return 1;} // #1
     int f(int*) {return 2;} // #2
 }
-TEST(TestCppPattern, Nullptr) {
+TEST(TestMordern, Nullptr) {
     {
         int* ptr1 = 0;
         int* ptr2 = NULL;

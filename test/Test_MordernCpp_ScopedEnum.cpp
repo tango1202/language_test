@@ -1,6 +1,6 @@
 #include "gtest/gtest.h" 
 
-TEST(TestCppPattern, ScopedEnum) {
+TEST(TestMordern, ScopedEnum) {
 
     {
         enum Week {

@@ -75,7 +75,7 @@ namespace Decltype_4 {
     //     virtual auto Add(int a) {return a;}
     // };
 }
-TEST(TestCppPattern, Auto) {
+TEST(TestMordern, Auto) {
     {
         int a = 0;
         const int b = 0;
@@ -93,7 +93,7 @@ TEST(TestCppPattern, Auto) {
         auto itrEnd = v.end();
     }
 }
-TEST(TestCppPattern, Decltype) {
+TEST(TestMordern, Decltype) {
     {
         int a = 0;
         const int b = 0;

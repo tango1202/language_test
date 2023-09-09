@@ -1,7 +1,7 @@
 #include "gtest/gtest.h" 
 
 
-TEST(TestCppPattern, DefaultDeleteOverrideFinal) {
+TEST(TestMordern, DefaultDeleteOverrideFinal) {
     // default와 delete
     {
         class T {

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h" 
 
-TEST(TestCppPattern, DelegatingInheritedConstructor) {
+TEST(TestMordern, DelegatingInheritedConstructor) {
     // 생성자 위임
     {
         class T {

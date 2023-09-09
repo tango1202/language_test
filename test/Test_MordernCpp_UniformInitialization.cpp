@@ -15,7 +15,7 @@ namespace UniformInitialization_1 {
     }
 }
 
-TEST(TestCppPattern, UniformInitialization) {
+TEST(TestMordern, UniformInitialization) {
     // 중괄호 초기화
     {
         class T {

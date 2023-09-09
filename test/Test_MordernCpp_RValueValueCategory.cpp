@@ -20,7 +20,7 @@ namespace RValue_2 {
     int g(T&& val) {return f(std::forward<T>(val)) + 2;} // 값 카테고리를 유지한채 전달한다는 의미로 forward 사용
 }
 
-TEST(TestCppPattern, RValue) {
+TEST(TestMordern, RValue) {
 
     // 왼쪽값(lvalue, left Value)과 우측값(rvalue, right value)
     {
