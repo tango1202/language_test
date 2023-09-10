@@ -31,6 +31,8 @@ namespace {
             // 아무 작업도 안합니다.
         }
     }
+
+    void f() {}
 }
 
 TEST(TestClassicCpp, ExceptionMechanism) {
@@ -67,6 +69,17 @@ TEST(TestClassicCpp, ExceptionMechanism) {
             // throw; // (O) std::length_error 를 재전파
         }        
     }  
+    {
+        class Base : public std::exception {};
+        class Derived : public Base {};
+        try {
+            f();
+        }
+        catch (const Derived&) {} // 자식 개체 타입을 먼저 사용
+        catch (const Base&) {}
+        catch (const std::exception&) {}
+        catch (...) {} // 그외 모든 예외 타입
+    }
     {
         h();
     }

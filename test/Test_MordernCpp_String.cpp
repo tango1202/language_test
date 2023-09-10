@@ -27,7 +27,7 @@ TEST(TestMordern, String) {
 def)"
         <<std::endl;
 
-        // 임의 딜리미터 aaa 사용
+        // 임의 구분자 aaa 사용
         std::cout<<R"aaa(abc"()"
 def)aaa"
         <<std::endl;

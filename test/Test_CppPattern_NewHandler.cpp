@@ -199,8 +199,8 @@ TEST(TestCppPattern, NewHandler) {
                 NewHandler::GetInstanceRef().SetMode(NewHandler::UsingReserved); 
                 Tester::Recursive();
             }
-            catch(std::bad_alloc& e) {
-                std::cout<<"## [UsingReserved] catch(std::bad_alloc& e)"<<std::endl;    
+            catch (std::bad_alloc& e) {
+                std::cout<<"## [UsingReserved] catch (std::bad_alloc& e)"<<std::endl;    
             }
         }
         {
@@ -209,8 +209,8 @@ TEST(TestCppPattern, NewHandler) {
                 NewHandler::GetInstanceRef().SetMode(NewHandler::Remove); 
                 Tester::Recursive();
             }
-            catch(std::bad_alloc& e) {
-                std::cout<<"## [Remove] catch(std::bad_alloc& e)"<<std::endl;    
+            catch (std::bad_alloc& e) {
+                std::cout<<"## [Remove] catch (std::bad_alloc& e)"<<std::endl;    
             }
         }
         {
