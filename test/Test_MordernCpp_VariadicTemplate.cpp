@@ -16,7 +16,7 @@ namespace {
     }
 }
 
-TEST(TestMordern, VaradicTemplate) {
+TEST(TestMordern, VariadicTemplate) {
     {
         int val = Sum(1, 3, 5);
         EXPECT_TRUE(val == 1 + 3 + 5);  

@@ -86,7 +86,7 @@ set(TestFiles
    test/Test_MordernCpp_UniformInitialization.cpp   
    test/Test_MordernCpp_DelegatingInheritedConstructor.cpp
    test/Test_MordernCpp_Nullptr.cpp
-   test/Test_MordernCpp_VaradicTemplate.cpp
+   test/Test_MordernCpp_VariadicTemplate.cpp
    test/Test_MordernCpp_UnrestrictedUnion.cpp
    test/Test_MordernCpp_String.cpp
    test/Test_MordernCpp_UserLiteral.cpp
@@ -97,6 +97,10 @@ set(TestFiles
    test/Test_MordernCpp_Align.cpp
    test/Test_MordernCpp_MemberInitialization.cpp
    test/Test_MordernCpp_Lambda.cpp 
+   test/Test_MordernCpp_VariadicMacro.cpp 
+   test/Test_MordernCpp_MemberFunctionRef.cpp 
+   test/Test_MordernCpp_InlineNamespace.cpp 
+   test/Test_MordernCpp_ExplicitConversions.cpp 
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp

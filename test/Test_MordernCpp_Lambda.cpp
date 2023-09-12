@@ -88,7 +88,8 @@ TEST(TestMordern, Lambda) {
                 int local = 2;
 
                 auto f = [=]() -> int {
-                    m_Member = 10; // 멤버 변수의 값을 수정합니다.
+                    // this->m_Member = 10; 
+                    m_Member = 10; // this->m_Member = 10; 과 동일. 멤버 변수의 값을 수정합니다.
                     return m_Member + local;
                 };  
 
@@ -98,7 +99,7 @@ TEST(TestMordern, Lambda) {
 
         T t;
         EXPECT_TRUE(t.Func() == 12);
-        EXPECT_TRUE(t.GetMember() == 10);
+        EXPECT_TRUE(t.GetMember() == 10); // 멤버 변수가 수정되어 있습니다.
     }
     // 참조 캡쳐
     {
@@ -128,7 +129,7 @@ TEST(TestMordern, Lambda) {
     {
         int c = 30;
         f = [=](int a, int b) -> int {return a + b + c;}; // 캡쳐를 사용하는 람다 표현식도 사용할 수 있습니다.      
-        EXPECT_TRUE(g(f, 10, 20) == 60); // g 함수에 클로져 개체를 저장한 f를 전달합니다.       
+        EXPECT_TRUE(g(f, 10, 20) == 60); // g() 함수에 클로져 개체를 저장한 f를 전달합니다.       
     }
     // 클로져 개체 복사 부하
     {
