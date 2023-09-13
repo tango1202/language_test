@@ -101,6 +101,9 @@ set(TestFiles
    test/Test_MordernCpp_MemberFunctionRef.cpp 
    test/Test_MordernCpp_InlineNamespace.cpp 
    test/Test_MordernCpp_ExplicitConversions.cpp 
+   test/Test_MordernCpp_ExternTemplate1.cpp 
+   test/Test_MordernCpp_ExternTemplate2.cpp 
+   test/Test_MordernCpp_Sizeof.cpp 
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
