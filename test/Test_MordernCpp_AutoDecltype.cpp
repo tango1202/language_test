@@ -57,7 +57,7 @@ namespace Decltype_4 {
     // decltype(auto) Add4(int a, int b) {
     //     const int result = a + b; // (X) 예외 발생. Func4의 지역 변수 참조를 전달하기 때문
 
-    //     // 왼값 표현식의 결과로 평가. T&형태로 평가
+    //     // 좌측값 표현식의 결과로 평가. T&형태로 평가
     //     return (result); 
     // }
     // (X) 컴파일 오류. 리턴 타입은 동일해야 합니다.
@@ -110,7 +110,7 @@ TEST(TestMordern, Decltype) {
         const T* t;
 
         decltype(t->m_Val) a = 10; // 멤버 엑세스로 평가됩니다. double
-        decltype((t->m_Val)) b = 10; // 괄호를 추가하면 왼값 표현식으로 처리합니다. t가 const 이므로 const double&
+        decltype((t->m_Val)) b = 10; // 괄호를 추가하면 좌측값 표현식으로 처리합니다. t가 const 이므로 const double&
     }
     // 함수 인자
     {
