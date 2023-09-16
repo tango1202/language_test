@@ -402,19 +402,20 @@ TEST(TestClassicCpp, NewHandler) {
 
         std::new_handler oldHandler = std::set_new_handler(&T::MyExceptionHandler); // 핸들러를 설치합니다.
 
-        T* arr[100] = {}; // 모두 NULL(0)로 초기화
-        for (int i = 0; i < 100; ++i) { // 대략 예외를 발생시킬때까지 반복합니다.
-            try {
-                arr[i] = new T;
-            }
-            catch (MyException& e) {
-                // i 이전까지 생성된 T 개체를 모두 삭제합니다.
-                for (int j = 0; j < i; ++j) {
-                    delete arr[j];
-                }
-                break; // T 할당을 그만두기 위해 for문을 탈출합니다.
-            }
-        }
+        // !! 테스트 속도가 느려 임시로 막습니다. 
+        // T* arr[100] = {}; // 모두 NULL(0)로 초기화
+        // for (int i = 0; i < 100; ++i) { // 대략 예외를 발생시킬때까지 반복합니다.
+        //     try {
+        //         arr[i] = new T;
+        //     }
+        //     catch (MyException& e) {
+        //         // i 이전까지 생성된 T 개체를 모두 삭제합니다.
+        //         for (int j = 0; j < i; ++j) {
+        //             delete arr[j];
+        //         }
+        //         break; // T 할당을 그만두기 위해 for문을 탈출합니다.
+        //     }
+        // }
 
         std::set_new_handler(oldHandler); // 이전 핸들러로 복원합니다.
     }

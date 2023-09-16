@@ -125,6 +125,7 @@ TEST(TestMordern, RValue) {
                 return *this;
             }
 
+            // 이동 함수
             Big& Move(Big& other) {
                 std::cout<<"Big : Move()"<<std::endl; 
 
@@ -210,11 +211,11 @@ TEST(TestMordern, RValue) {
         EXPECT_TRUE(a.GetSize() == 20);   
         EXPECT_TRUE(b.GetSize() == 0); // b는 이동되어 더이상 쓸 수 없음  
 
-        a = Big(30); // Big(30) 이름이 없는 rvalue를 생성. 이동 대입 연산자 호출
-        EXPECT_TRUE(a.GetSize() == 30); 
-
-        Big c(40);
+        Big c(30);
         a = std::move(c); // c 를 이름이 없는 rvalue로 변환. static_cast<Big&&>(c)와 동일. 이동 대입 연산자 호출
+        EXPECT_TRUE(a.GetSize() == 30);
+
+        a = Big(40); // Big(40) 이름이 없는 rvalue를 생성. 이동 대입 연산자 호출
         EXPECT_TRUE(a.GetSize() == 40);
 
         Big d(50);

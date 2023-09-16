@@ -6,18 +6,18 @@ namespace {
 }
 TEST(TestMordern, Nullptr) {
     {
-        int* ptr1 = 0;
-        int* ptr2 = NULL;
-        int* ptr3 = nullptr;
+        int* ptr1{0};
+        int* ptr2{NULL};
+        int* ptr3{nullptr}; // C++11
 
         EXPECT_TRUE(f(ptr1) == 2); // int* 이므로 f(int*) 호출
         EXPECT_TRUE(f(ptr2) == 2); // int* 이므로 f(int*) 호출
         EXPECT_TRUE(f(ptr3) == 2); // int* 이므로 f(int*) 호출
     }
     {
-        auto ptr1 = 0; // int
-        auto ptr2 = NULL; // long long
-        auto ptr3 = nullptr; // nullptr_t
+        auto ptr1{0}; // int
+        auto ptr2{NULL}; // long long
+        auto ptr3{nullptr}; // nullptr_t
 
         EXPECT_TRUE(f(ptr1) == 1); // f(int) 호출  
         EXPECT_TRUE(f(ptr2) == 1); // f(int) 호출

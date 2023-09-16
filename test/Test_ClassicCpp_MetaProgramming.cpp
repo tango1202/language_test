@@ -351,7 +351,7 @@ TEST(TestClassicCpp, MetaProgramming) {
         my_smart_ptr<Shape> sp2(sp1.Clone());     
 
         // sp2는 Rectangle 을 관리합니다.
-        EXPECT_TRUE(typeid(*sp2.GetPtr()).hash_code() == typeid(Rectangle).hash_code());
+        EXPECT_TRUE(typeid(*sp2.GetPtr()).name() == typeid(Rectangle).name());
     }
     {
         using namespace MetaProgramming_3;
@@ -360,13 +360,13 @@ TEST(TestClassicCpp, MetaProgramming) {
         my_smart_ptr<Shape> sp2(sp1.Clone());     
 
         // sp2는 Rectangle 을 관리합니다.
-        EXPECT_TRUE(typeid(*sp2.GetPtr()).hash_code() == typeid(Rectangle).hash_code());
+        EXPECT_TRUE(typeid(*sp2.GetPtr()).name() == typeid(Rectangle).name());
 
         my_smart_ptr<int> sp3(new int);
         my_smart_ptr<int> sp4(sp3.Clone());
 
         // sp4는 int 를 관리합니다.
-        EXPECT_TRUE(typeid(*sp4.GetPtr()).hash_code() == typeid(int).hash_code());
+        EXPECT_TRUE(typeid(*sp4.GetPtr()).name() == typeid(int).name());
     }
     {
         using namespace MetaProgramming_4;
@@ -375,13 +375,13 @@ TEST(TestClassicCpp, MetaProgramming) {
         my_smart_ptr<Shape> sp2(sp1.Clone());     
 
         // sp2는 Rectangle 을 관리합니다.
-        EXPECT_TRUE(typeid(*sp2.GetPtr()).hash_code() == typeid(Rectangle).hash_code());
+        EXPECT_TRUE(typeid(*sp2.GetPtr()).name() == typeid(Rectangle).name());
 
         my_smart_ptr<int> sp3(new int);
         my_smart_ptr<int> sp4(sp3.Clone());
 
         // sp4는 int 를 관리합니다.
-        EXPECT_TRUE(typeid(*sp4.GetPtr()).hash_code() == typeid(int).hash_code());    
+        EXPECT_TRUE(typeid(*sp4.GetPtr()).name() == typeid(int).name());    
     }
     {
         using namespace MetaProgramming_5;
@@ -390,20 +390,20 @@ TEST(TestClassicCpp, MetaProgramming) {
         my_smart_ptr<Shape> sp2(sp1.Clone());     
         
         // sp2는 Rectangle 을 관리합니다.
-        EXPECT_TRUE(typeid(*sp2.GetPtr()).hash_code() == typeid(Rectangle).hash_code());
+        EXPECT_TRUE(typeid(*sp2.GetPtr()).name() == typeid(Rectangle).name());
          
         my_smart_ptr<int> sp3(new int);
         my_smart_ptr<int> sp4(sp3.Clone());
 
         // sp4는 int 를 관리합니다.
-        EXPECT_TRUE(typeid(*sp4.GetPtr()).hash_code() == typeid(int).hash_code());      
+        EXPECT_TRUE(typeid(*sp4.GetPtr()).name() == typeid(int).name());      
     }
     {
         using namespace MetaProgramming_5;
         
         // // 컴타일타임에 ICloneable 상속했는지는 판단하고, 런타임에 if 문으로 복사 생성할지, Clone()을 호출할지 분기합니다.
         // Shape* shape = CloneTraits<Shape>::Clone(new Rectangle);
-        // EXPECT_TRUE(typeid(*shape).hash_code() == typeid(Rectangle).hash_code());
+        // EXPECT_TRUE(typeid(*shape).name() == typeid(Rectangle).name());
         // delete shape;
     }
 }

@@ -8,7 +8,7 @@ TEST(TestMordern, MemberFunctionRef) {
     };
 
     T t;
-    EXPECT_TRUE(t.Func() == 1);
-    EXPECT_TRUE(std::move(t).Func() == 2);
-    EXPECT_TRUE(T{}.Func() == 2);    
+    EXPECT_TRUE(t.Func() == 1); // 좌측값이므로 #1 호출
+    EXPECT_TRUE(std::move(t).Func() == 2); // move는 우측값이므로 #2 호출
+    EXPECT_TRUE(T().Func() == 2); // T() 는 임시 개체(우측값)이므로 #2 호출   
 }

@@ -10,7 +10,7 @@ namespace {
     }
 }
 TEST(TestMordern, StaticAssert) {
-    int a = 20;
+    int a{20};
     Func(&a);
     // Func(a); // (X) 컴파일 오류. error: static assertion failed: only pointer
 }

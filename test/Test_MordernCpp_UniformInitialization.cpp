@@ -29,7 +29,7 @@ TEST(TestMordern, UniformInitialization) {
 
         T obj1; // 기본 생성자로 T 개체 생성
         T obj2(T()); // 기본 생성자인 T()로 생성한 개체를 obj의 복사 생성자로 복사 생성
-        T obj3 = T(); // T obj = T();와 동일
+        T obj3 = T(); // T obj(T());와 동일
         T obj4(10, 'b'); // // m_A == 10, m_B == `b`인 T 개체 생성
 
         T arr[] = {T(), T(10, 'b')}; // T 요소 2개인 배열 생성
