@@ -78,6 +78,7 @@ set(TestFiles
    test/Test_ClassicCpp_ExceptionMechanism.cpp  
    test/Test_ClassicCpp_Diagonostics.cpp     
    test/Test_ClassicCpp_ExceptionWarranty.cpp
+   test/Test_ClassicCpp_Pair.cpp 
    test/Test_MordernCpp_RValueValueCategory.cpp
    test/Test_MordernCpp_AutoDecltype.cpp
    test/Test_MordernCpp_DefaultDeleteOverrideFinal.cpp
@@ -107,6 +108,7 @@ set(TestFiles
    test/Test_MordernCpp_TypeIndex.cpp 
    test/Test_MordernCpp_UniquePtr.cpp 
    test/Test_MordernCpp_SharedPtr.cpp 
+   test/Test_MordernCpp_Tuple.cpp 
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
