@@ -37,5 +37,9 @@ TEST(TestMordern, UniquePtr) {
         EXPECT_TRUE(*v[0] == 10 && *v[1] == 20 && *v[2] == 30);
        
     }
+    // std::default_delete
+    {
+        std::unique_ptr<int> a{new int{10}, std::default_delete<int>{}};
+    }
 }
 

@@ -344,4 +344,20 @@ TEST(TestMordern, SharedPtr) {
 
         EXPECT_TRUE(sp1.use_count() == 4); // sp1, sp2, temp1, temp2 총 4개 입니다.
     }   
+    // std::bad_weak_ptr
+    {
+        std::weak_ptr<int> wp;
+        {
+            std::shared_ptr<int> sp{new int{10}};
+            wp = sp;
+        } // sp가 소멸되었습니다.
+        try {
+            // 소멸된 sp를 사용하는 wp로 shared_ptr을 만듭니다.
+            // bad_weak_ptr 예외가 발생합니다.
+            std::shared_ptr<int> error{wp};
+        }
+        catch(std::bad_weak_ptr&) {
+            std::cout<<"bad_weak_ptr"<<std::endl;
+        }
+    }
 }

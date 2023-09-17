@@ -126,6 +126,32 @@ TEST(TestMordern, Decltype) {
         auto result = Add(10, 20);
         EXPECT_TRUE(result == 30);  
     }
+    // declval()
+    {
+        class T {
+        public:
+            int Func(int) {return 1;}
+        };
+
+        T t;
+        // T::Func(int) 함수의 리턴 타입
+        decltype(T().Func(10)) val = t.Func(10); 
+    }
+    {
+        class T {
+        public:
+            explicit T(int) {} // 기본 생성자가 없습니다.
+            int Func(int) {return 1;}
+        };
+
+        T t(10);
+        
+        //decltype(T().Func(10)) val = t.Func(10); // (X) 컴파일 오류. T에 기본 생성자가 없습니다.
+        //decltype(T(10).Func(10)) val = t.Func(10); // (O)
+
+        // T::Func(int) 함수의 리턴 타입
+        decltype(std::declval<T>().Func(10)) val = t.Func(10); 
+    }
     // decltype(auto)
     {
         using namespace Decltype_3;
