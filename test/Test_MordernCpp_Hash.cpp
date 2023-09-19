@@ -10,7 +10,7 @@ TEST(TestMordern, Hash) {
     size_t hashC{std::hash<int>{}(c)};
 
     EXPECT_TRUE(hashA == hashB); // 같은 값은 해시값도 같습니다.
-    EXPECT_TRUE(hashA != hashC); // 다른값은 해시값도 다릅니다.
+    EXPECT_TRUE(hashA != hashC); // 다른 값은 해시값도 다릅니다.
 
     std::string str1{"Hello"};
     std::string str2{"Hello"};
@@ -21,5 +21,5 @@ TEST(TestMordern, Hash) {
     size_t hashStr3{std::hash<std::string>{}(str3)};
 
     EXPECT_TRUE(hashStr1 == hashStr2); // 같은 값은 해시값도 같습니다.
-    EXPECT_TRUE(hashStr1 != hashStr3); // 다른값은 해시값도 다릅니다.
+    EXPECT_TRUE(hashStr1 != hashStr3); // 다른 값은 해시값도 다릅니다.
 }
