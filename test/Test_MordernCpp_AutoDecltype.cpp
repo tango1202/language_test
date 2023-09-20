@@ -87,10 +87,10 @@ TEST(TestMordern, Auto) {
         std::vector<int> v;
 
         // std::vector<int>::iterator itr = v.begin(); 
-        // std::vector<int>::iterator itrEnd = v.end();
+        // std::vector<int>::iterator endItr = v.end();
 
         auto itr = v.begin(); // 템플릿 사용에 따른 긴 타입명 간소화
-        auto itrEnd = v.end();
+        auto endItr = v.end();
     }
 }
 TEST(TestMordern, Decltype) {
