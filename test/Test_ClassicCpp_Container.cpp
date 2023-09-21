@@ -342,7 +342,6 @@ TEST(TestClassicCpp, Container) {
 
         EXPECT_TRUE(v[0] == true && v[1] == false);
         //EXPECT_TRUE(*(&v[0]) == true); // (X) 컴파일 오류. &v[0]와 같은 포인터 연산과 호환되지 않습니다.
-   }
-
+    }
 }
 
