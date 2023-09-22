@@ -1,10 +1,15 @@
 #include "gtest/gtest.h" 
 
 
-namespace Deduction_1 {
+namespace Deduction_0 {
     template<typename T, typename U>
     T f(T, U) {return 2;}
 }
+namespace Deduction_1 {
+    template<typename T, typename U, typename V>
+    void f(T, U, V) {}
+}
+
 namespace Deduction_2 {
     template<typename T>
     void f(T) {}
@@ -62,11 +67,23 @@ namespace Deduction_9 {
 TEST(TestClassicCpp, TemplateDeduction) {
     // 누락된 인수를 추론합니다.
     {
-        using namespace Deduction_1;
+        using namespace Deduction_0;
 
         f<int>(0, (double)0); // int f(int, double)
         f<double>(0, (int)0); // double f(double, int)
         f(0, 0); // int f(int, int)
+    }
+    // 값 타입과 포인터 타입은 타입 그대로, 참조자는 참조성을 제거하고 추론합니다.
+    {
+        using namespace Deduction_1;    
+
+        int val = 0;
+        int* ptr = NULL;
+        int& ref = val;
+
+        f(val, ptr, ref); // f<int, int*, int>(int, int*, int). 참조자가 제거됩니다.
+
+        f<int, int*, int&>(val, ptr, ref); // f<int, int*, int&>(int, int*, int&). 명시적으로 지정하면 참조자로 사용됨
     }
     // 배열 인수는 포인터로 추론합니다.
     {
@@ -76,7 +93,7 @@ TEST(TestClassicCpp, TemplateDeduction) {
         // Argument : int[3] -> int*로 조정 
         // T : int* 
         // Parameter : int*        
-        f(arr);
+        f(arr); // f<int*>(int*)
     }
     // 함수는 함수 포인터로 추론합니다.
     {
@@ -85,7 +102,7 @@ TEST(TestClassicCpp, TemplateDeduction) {
         // Argument : void (*)(int) 
         // T : void (*)(int) 
         // Parameter : void (*)(int)
-        f(Func);
+        f(Func); // f<void (*)(int)>(void (*)(int))
     }
     // 최상위 const는 무시됨 
     {
@@ -95,7 +112,7 @@ TEST(TestClassicCpp, TemplateDeduction) {
         // Argument : const int -> int로 조정 
         // T : int 
         // Parameter : int
-        f(a);
+        f(a); // f<int>(int)
     }
     // 참조자의 참조자는 없으므로, 참조자가 되도록 T 변환
     {
@@ -106,12 +123,12 @@ TEST(TestClassicCpp, TemplateDeduction) {
         // Argument : int 
         // T : int 
         // Parameter : const int&
-        f(a);
+        f(a); // f<int>(const int&)
 
         // Argument : int& 
         // T : int 
         // Parameter : const int&
-        f(b);
+        f(b); // f<int>(const int&)
     }
     // 포인터의 포인터가 중첩되어 만들어 지지 않도록, T 변환
     {
@@ -122,8 +139,8 @@ TEST(TestClassicCpp, TemplateDeduction) {
         // Argument : int* 
         // T : int 
         // Parameter : const int*
-        f(&a);
-        f(b);
+        f(&a); // f<int>(const int*)
+        f(b); // f<int>(const int*)
     } 
     // 자식 개체는 부모 개체로 변환
     {
@@ -133,7 +150,7 @@ TEST(TestClassicCpp, TemplateDeduction) {
         // Argument : Derived<int>* -> Base<int>* 로 조정 
         // T : int 
         // Parameter : Base<int>*
-        f(&d);
+        f(&d); // f<int>(Base<int>*)
     } 
     // 다른 인수의 추론으로 부터 추론
     {
@@ -145,7 +162,7 @@ TEST(TestClassicCpp, TemplateDeduction) {
         // Parameter1 : Other<int>
         // Argument2 : int -> Argument1에서 T가 int로 추론되어 Another<int>::Type  
         // Parameter2 : int
-        f(other, 10);
+        f(other, 10); // f<int>(Other<int>, int)
     }  
     // 템플릿 템플릿 인자에서 템플릿 인자 타입 불일치
     {

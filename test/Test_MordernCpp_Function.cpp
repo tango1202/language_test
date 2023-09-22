@@ -20,6 +20,37 @@ namespace {
         return std::is_bind_expression<T>::value;
     }
 }
+
+namespace Assign_1 {
+    void Assign(int& obj, int val) {
+        obj = 10;
+    }
+}
+namespace Assign_2 {
+    template<typename T>
+    void Assign(T obj, int val) {
+        obj = 10;
+    }
+}
+namespace Assign_3 {
+    template<typename T>
+    void Assign(T& obj, int val) { // 참조자입니다.
+        obj = 10;
+    }
+}
+
+namespace Assign_4{
+    void Assign(int& obj, int val) {
+        obj = 10;
+    } 
+
+    // func(params...) 를 호출합니다.
+    template<typename Func, typename... Params>
+    void Forwarding(Func func, Params... params) {
+        func(params...);
+    }  
+}
+
 TEST(TestMordern, Function) {
     {
         // 7보다 작은지 검사하는 함수
@@ -84,6 +115,65 @@ TEST(TestMordern, Function) {
     }
     // reference_wrapper
     {
+        int a{0};
+        std::reference_wrapper<int> rw(a);
+
+        rw.get() = 10; // reference_wrapper가 관리하는 참조자에 값 대입
+        EXPECT_TRUE(a == 10);
+        
+        int& b = rw; // 참조자 생성시 암시적 형변환을 통해 reference_wrapper가 관리하는 참조자 대입
+        b = 20;
+        EXPECT_TRUE(a == 20);     
+    }
+    {
+        using namespace Assign_1;
+        int a{0};
+        Assign(a, 10);
+        EXPECT_TRUE(a == 10);        
+    }
+    {
+        using namespace Assign_2;
+        int a{0};
+        Assign(a, 10); // (X) 오동작. T == int 여서 a의 복제본이 사용됩니다. 참조성이 깨졌습니다.
+        EXPECT_TRUE(a == 0);        
+    }
+    {
+        using namespace Assign_2;
+        int a{0};
+        int& ref{a}; // 강제로 참조자로 만들었습니다.
+        Assign(ref, 10); // (X) 오동작. 여전히 T == int 여서 ref의 복제본이 사용됩니다. 참조성이 깨졌습니다.
+        EXPECT_TRUE(a == 0);        
+    }
+    
+    {
+        using namespace Assign_3;
+        int a{0};
+        Assign(a, 10); // (O) 
+        EXPECT_TRUE(a == 10);  
+    }
+    {
+        using namespace Assign_4;
+        
+        int a{0};
+        
+        // (X) 오동작. 
+        // int 타입을 전달했기 때문에 Forwarding()의 파라메터 팩에서 int 타입으로 간주하여 복제본을 만들어 Assign()에 전달합니다.
+        Forwarding(Assign, a, 10); 
+        EXPECT_TRUE(a == 0);  
+
+        int& ref{a};
+        // (X) 오동작. 
+        // int& 타입을 전달했기 때문에 Forwarding()의 파라메터 팩에서 int 타입으로 간주하여 복제본을 만들어 Assign()에 전달합니다.
+        Forwarding(Assign, ref, 10); 
+        EXPECT_TRUE(a == 0);        
+
+        // (O) 참조성이 유지됩니다.
+        std::reference_wrapper<int> rw{a};
+        Forwarding(Assign, rw, 10); 
+        EXPECT_TRUE(a == 10);   
+    }
+
+    {
         int a{1};
         int b{2};
         int& ref1{a}; // 참조자 타입으로 만드려고 억지로 정의했습니다. ref()나 cref()가 더 낫습니다.
@@ -145,10 +235,10 @@ TEST(TestMordern, Function) {
         int c{3};
 
         std::function<void()> add{
-            std::bind(Add, a, b, c) // 복사 대입합니다.
+            std::bind(Add, a, b, c) // a, b, c를 복제합니다.
         };
         add();
-        // (X) 런타임 오류. 복사 대입하기 때문에 값이 변하지 않았습니다.
+        // (X) 오동작. bind()에서 인수를 복제했기 때문에 참조성이 깨졌습니다.
         EXPECT_TRUE(a == 1 && b == 2 && c == 3);        
     }
     {

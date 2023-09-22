@@ -77,7 +77,7 @@ TEST(TestMordern, SharedPtr) {
         
          EXPECT_TRUE(a.use_count() == 2);
 
-        // (X) 런타임 오류. 동일한 개체를 각각의 제어 블록으로 관리합니다. 소유권을 공유하지 않았기 때문에 소멸시 각각 delete 하여 소유권 분쟁이 발생합니다.
+        // (X) 오동작. 동일한 개체를 각각의 제어 블록으로 관리합니다. 소유권을 공유하지 않았기 때문에 소멸시 각각 delete 하여 소유권 분쟁이 발생합니다.
         // a가 관리하는 포인터를 이용하여 새로운 제어 블록을 만듭니다.
         // std::shared_ptr<T> b{a.get()}; 
         // EXPECT_TRUE(a.use_count() == 1 && b.use_count() == 1);

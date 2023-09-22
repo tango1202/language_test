@@ -62,7 +62,7 @@ TEST(TestClassicCpp, PointerReference) {
         EXPECT_TRUE(r == 30 && x == 30);
     }
     // ----
-    // 안정적인 참조자
+    // 안전한 참조자
     // ----       
     {
         // int& r; // (X) 컴파일 오류. 생성만 할 수 없습니다. 초기값을 넣어주어야 합니다. 쓰레기값을 가질 일이 없습니다.
