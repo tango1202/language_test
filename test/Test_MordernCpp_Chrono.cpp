@@ -21,5 +21,4 @@ TEST(TestMordern, Chrono) {
 
         std::cout<<"MyFunc() : "<<duration.count()<<std::endl; 
     }
-
 }
