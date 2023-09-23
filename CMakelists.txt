@@ -117,6 +117,7 @@ set(TestFiles
    test/Test_MordernCpp_Iterator.cpp
    test/Test_MordernCpp_Thread.cpp
    test/Test_MordernCpp_ConditionVariable.cpp
+   test/Test_MordernCpp_Chrono.cpp
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp

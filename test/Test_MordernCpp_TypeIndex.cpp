@@ -15,8 +15,8 @@ TEST(TestMordern, TypeIndex) {
 
     std::map<std::type_index, int> m;
 
-    m.insert(std::make_pair(a, 0));
-    m.insert(std::make_pair(b, 1));
+    m.insert(std::make_pair(a, 0)); // A 타입의 추가 정보를 저장할 수 있습니다.
+    m.insert(std::make_pair(b, 1)); // B 타입의 추가 정보를 저장할 수 있습니다.
 
     EXPECT_TRUE(m[typeid(A)] == 0 && m[typeid(B)] == 1);
 }

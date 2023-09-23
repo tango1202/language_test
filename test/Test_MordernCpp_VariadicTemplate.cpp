@@ -14,6 +14,16 @@ namespace {
     int Func(Types... params) {
         return sizeof...(params);
     }
+
+    // func(params...) 를 호출합니다.
+    template<typename Func, typename... Params>
+    int Forwarding(Func func, Params... params) {
+        return func(params...);
+    }
+
+    int MySum(int a, int b, int c) {
+        return a + b + c;
+    }
 }
 
 TEST(TestMordern, VariadicTemplate) {
@@ -23,5 +33,8 @@ TEST(TestMordern, VariadicTemplate) {
     }
     {
         EXPECT_TRUE(Func(1, 2, 3) == 3);
+    }
+    {
+        EXPECT_TRUE(Forwarding(MySum, 1, 2, 3) == 1 + 2 + 3);       
     }
 }
