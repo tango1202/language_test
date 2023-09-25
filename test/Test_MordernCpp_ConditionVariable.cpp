@@ -7,22 +7,22 @@ TEST(TestMordern, ConditionValriable) {
         class A {
             std::string m_Str;
             std::condition_variable m_CV;
-            bool m_IsRunProducer{false}; // true면 Producer가 wait를 멈춥니다.
-            bool m_IsRun1{false}; // true면 Consumer1이 wait를 멈춥니다.
-            bool m_IsRun2{false}; // true면 Consumer2가 wait를 멈춥니다.
+            bool m_IsRunBuild{false}; // true면 Build가 wait를 멈춥니다.
+            bool m_IsRun1{false}; // true면 Part1이 wait를 멈춥니다.
+            bool m_IsRun2{false}; // true면 Part2가 wait를 멈춥니다.
         public:
             const std::string& GetStr() const {return m_Str;}
 
-            void Consumer1(std::mutex& mutex) {
+            void Part1(std::mutex& mutex) {
 
                 std::unique_lock<std::mutex> lock{mutex};
                 m_CV.wait(lock, [&]() -> bool {return m_IsRun1;}); // 누군가가 m_IsRun1 == true로 하고 m_CV에서 notify할때까지 대기
 
-                std::cout<<"#2. Consumer1()" <<std::endl;
+                std::cout<<"#2. Part1()" <<std::endl;
 
                 m_Str += "Hello";
 
-                m_IsRunProducer = true; // Producer를 깨움
+                m_IsRunBuild = true; // Build를 깨움
                 m_IsRun1 = false;
                 lock.unlock();
                 m_CV.notify_all(); 
@@ -31,62 +31,62 @@ TEST(TestMordern, ConditionValriable) {
                 lock.lock();
                 m_CV.wait(lock, [&]() -> bool {return m_IsRun1;}); // 누군가가 m_IsRun1 == true로 하고 m_CV에서 notify할때까지 대기
                 
-                std::cout<<"#6. Consumer1()" <<std::endl;
+                std::cout<<"#6. Part1()" <<std::endl;
                 m_Str += "!!";
 
-                m_IsRunProducer = true; // Producer를 깨움
+                m_IsRunBuild = true; // Build를 깨움
                 m_IsRun1 = false;
                 lock.unlock();
                 m_CV.notify_all(); 
             }
-            void Consumer2(std::mutex& mutex) {
+            void Part2(std::mutex& mutex) {
                 std::unique_lock<std::mutex> lock{mutex};
                 m_CV.wait(lock, [&]() -> bool {return m_IsRun2;});// 누군가가 m_IsRun2 == true로 하고 m_CV에서 notify할때까지 대기
 
-                std::cout<<"#4. Consumer2()" <<std::endl;
+                std::cout<<"#4. Part2()" <<std::endl;
 
                 m_Str += "World";
 
-                m_IsRunProducer = true; // Producer를 깨움
+                m_IsRunBuild = true; // Build를 깨움
                 m_IsRun2 = false;
                 lock.unlock();
                 m_CV.notify_all(); 
             } 
 
-            void Producer() {
+            void Build() {
                 std::mutex mutex; // mutex 개체
 
-                std::thread worker1{std::mem_fn(&A::Consumer1), std::ref(*this), std::ref(mutex)};
-                std::thread worker2{std::mem_fn(&A::Consumer2), std::ref(*this), std::ref(mutex)};
+                std::thread worker1{std::mem_fn(&A::Part1), std::ref(*this), std::ref(mutex)};
+                std::thread worker2{std::mem_fn(&A::Part2), std::ref(*this), std::ref(mutex)};
 
-                std::cout<<"#1. Producer Start" <<std::endl;
-                m_IsRun1 = true; // Consumer1을 깨움
+                std::cout<<"#1. Build Start" <<std::endl;
+                m_IsRun1 = true; // Part1을 깨움
                 m_CV.notify_all(); 
 
                 std::unique_lock<std::mutex> lock{mutex};
-                m_CV.wait(lock, [&]() -> bool {return m_IsRunProducer;});
+                m_CV.wait(lock, [&]() -> bool {return m_IsRunBuild;});
 
-                std::cout<<"#3. Producer Wake Up" <<std::endl;
-                m_IsRunProducer = false;
+                std::cout<<"#3. Build Wake Up" <<std::endl;
+                m_IsRunBuild = false;
                 m_IsRun1 = false;
-                m_IsRun2 = true; // Consumer2를 깨움
+                m_IsRun2 = true; // Part2를 깨움
                 lock.unlock();
                 m_CV.notify_all(); 
 
                 lock.lock();
-                m_CV.wait(lock, [&]() -> bool {return m_IsRunProducer;});
+                m_CV.wait(lock, [&]() -> bool {return m_IsRunBuild;});
 
-                std::cout<<"#5. Producer Wake Up" <<std::endl;
-                m_IsRunProducer = false;
-                m_IsRun1 = true; // Consumer1를 깨움
+                std::cout<<"#5. Build Wake Up" <<std::endl;
+                m_IsRunBuild = false;
+                m_IsRun1 = true; // Part1를 깨움
                 m_IsRun2 = false; 
                 lock.unlock();
                 m_CV.notify_all(); 
 
                 lock.lock();
-                m_CV.wait(lock, [&]() -> bool {return m_IsRunProducer;});
+                m_CV.wait(lock, [&]() -> bool {return m_IsRunBuild;});
 
-                std::cout<<"#7. Producer Completed" <<std::endl;
+                std::cout<<"#7. Build Completed" <<std::endl;
 
                 worker1.join(); 
                 worker2.join();
@@ -94,7 +94,7 @@ TEST(TestMordern, ConditionValriable) {
         };
 
         A a{};
-        a.Producer();
+        a.Build();
         std::cout<<"Make String : "<<a.GetStr()<<std::endl; // HelloWorld!!를 출력함
 
     }
