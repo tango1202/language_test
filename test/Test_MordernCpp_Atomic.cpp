@@ -63,5 +63,8 @@ TEST(TestMordern, Atomic) {
         A a{};
         std::thread producer{std::mem_fn(&A::Producer), std::ref(a)};
         std::thread consumer{std::mem_fn(&A::Consumer), std::ref(a)};
+
+        producer.join();
+        consumer.join();
     }
 }

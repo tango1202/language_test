@@ -120,6 +120,7 @@ set(TestFiles
    test/Test_MordernCpp_Chrono.cpp
    test/Test_MordernCpp_Ratio.cpp
    test/Test_MordernCpp_Atomic.cpp
+   test/Test_MordernCpp_Future.cpp
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
