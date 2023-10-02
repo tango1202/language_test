@@ -23,7 +23,7 @@ TEST(TestMordern, Lambda) {
         EXPECT_TRUE(val == 30);
     }
     {
-        int val{[](int a, int b) -> int {return a + b;}(10, 20)}; // 클로져 개체에 (10, 20)을 붙여 호출합니다.
+        int val{[](int a, int b) -> int {return a + b;}(10, 20)}; // 클로저 개체에 (10, 20)을 붙여 호출합니다.
         EXPECT_TRUE(val == 30);
     }
     // 캡처
@@ -42,7 +42,7 @@ TEST(TestMordern, Lambda) {
     // 캡쳐 시기
     {
         int val{1};
-        auto f{[=]() -> int {return val;}}; // 클로져 개체가 생성되는 시점에 val을 캡쳐합니다.
+        auto f{[=]() -> int {return val;}}; // 클로저 개체가 생성되는 시점에 val을 캡쳐합니다.
         val = 2;
 
         EXPECT_TRUE(f() == 1); // 캡쳐할 때의 값을 사용하므로 1입니다.        
@@ -116,7 +116,7 @@ TEST(TestMordern, Lambda) {
 
         EXPECT_TRUE( a == 10 && b == 20 && c == 30);     
     }
-    // 클로져 개체 저장
+    // 클로저 개체 저장
     {
         auto f{[](int a, int b) -> int {return a + b;}};
         EXPECT_TRUE(f(10, 20) == 30);       
@@ -129,9 +129,9 @@ TEST(TestMordern, Lambda) {
     {
         int c{30};
         f = [=](int a, int b) -> int {return a + b + c;}; // 캡쳐를 사용하는 람다 표현식도 사용할 수 있습니다.      
-        EXPECT_TRUE(g(f, 10, 20) == 60); // g() 함수에 클로져 개체를 저장한 f를 전달합니다.       
+        EXPECT_TRUE(g(f, 10, 20) == 60); // g() 함수에 클로저 개체를 저장한 f를 전달합니다.       
     }
-    // 클로져 개체 복사 부하
+    // 클로저 개체 복사 부하
     {
         T t;
         [=]() {std::cout<<"Run Lambda"<<std::endl;}(); // t를 사용하지 않았습니다.        

@@ -22,6 +22,16 @@ namespace {
 }
 
 TEST(TestMordern, MemberInitialization) {
+    {
+        // C++14
+        class A {
+        public:
+            int m_X{0};
+            int m_Y{1};
+        };
 
+        A a{0, 1}; // (X) 컴파일 오류. no matching function for call to 'main()::A::A(<brace-enclosed initializer list>)'
+        EXPECT_TRUE(a.m_X == 0 && a.m_Y == 1); 
+    }
 
 }

@@ -77,6 +77,19 @@ namespace MyModule3 {
     } 
 }
 // ----
+// 중첩 네임스페이스
+// ----
+namespace MyLib {
+    namespace File {
+        void Load() {};
+        void Save() {};
+    }
+
+    namespace Parser {
+        void Tokenizer() {}
+    }
+}
+// ----
 // 별칭과 합성
 // ----
 namespace MyTestLibrary {
@@ -99,14 +112,20 @@ namespace MyModule { // 여러개의 네임스페이스를 합성할 수 있음
    using namespace H;
 }
 TEST(TestClassicCpp, Namespace) {
-    EXPECT_TRUE(A::f() == 10); // 네임스페이스 A의 f() 호출
-    EXPECT_TRUE(B::f() == 20); // 네임스페이스 B의 f() 호출
+    {
+        EXPECT_TRUE(A::f() == 10); // 네임스페이스 A의 f() 호출
+        EXPECT_TRUE(B::f() == 20); // 네임스페이스 B의 f() 호출
 
-    EXPECT_TRUE(C::g() == 30); 
-    EXPECT_TRUE(C::h() == 30);
+        EXPECT_TRUE(C::g() == 30); 
+        EXPECT_TRUE(C::h() == 30);
 
-    EXPECT_TRUE(MTL::f() == 40);
+        EXPECT_TRUE(MTL::f() == 40);
 
-    EXPECT_TRUE(MyModule::f() == 50);
-    EXPECT_TRUE(MyModule::g() == 60);
+        EXPECT_TRUE(MyModule::f() == 50);
+        EXPECT_TRUE(MyModule::g() == 60);
+    }
+    {
+        MyLib::Parser::Tokenizer();
+        MyLib::File::Load();    
+    }
 }
