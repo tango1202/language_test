@@ -12,19 +12,20 @@ namespace {
         return val == 1 ? val : val * Factorial(val - 1);
     }
 
-    // constexpr int Factorial_14(int val) {
-    //     int result{1}; // 초기화된 지역 변수 정의
+    // C++14 `constexpr` 함수 제약 완화
+    constexpr int Factorial_14(int val) {
+        int result{1}; // 초기화된 지역 변수 정의
 
-    //     if (val < 1) {
-    //         return 1; // 2개 이상의 리턴문
-    //     }
+        if (val < 1) {
+            return 1; // 2개 이상의 리턴문
+        }
 
-    //     for (int i{val}; 0 < i; --i) { // 제어문
-    //         result *= i;
-    //     }
+        for (int i{val}; 0 < i; --i) { // 제어문
+            result *= i;
+        }
 
-    //     return result;
-    // }   
+        return result;
+    }   
 }
 
 namespace Constexpr_1 {
@@ -94,24 +95,25 @@ namespace Constexpr_2 {
         enum {Val = sizeof(Test(static_cast<D*>(0))) == sizeof(Yes)};
     };
 
-    template<typename T>
-    class CloneTraits {
-    public:
+    // C++17
+    // template<typename T>
+    // class CloneTraits {
+    // public:
 
-        static T* Clone_14(const T* ptr) {
-            if (ptr == NULL) {
-                return  NULL;
-            }
+    //     static T* Clone_17(const T* ptr) {
+    //         if (ptr == NULL) {
+    //             return  NULL;
+    //         }
 
-            // // 조건에 맞는 부부만 컴파일 합니다.
-            // if constexpr (!IsDerivedFrom<T, ICloneable>::Val) {
-            //     return new T(*ptr);
-            // }
-            // else {
-            //     return ptr->Clone();
-            // }
-        } 
-    };    
+    //         // 조건에 맞는 부부만 컴파일 합니다.
+    //         if constexpr (!IsDerivedFrom<T, ICloneable>::Val) {
+    //             return new T(*ptr);
+    //         }
+    //         else {
+    //             return ptr->Clone();
+    //         }
+    //     } 
+    // };    
 }
 
 TEST(TestMordern, Constexpr) {
@@ -149,8 +151,8 @@ TEST(TestMordern, Constexpr) {
     }
     {
         // 컴파일 타임에 계산된 120이 Val에 대입됩니다.
-        // enum class MyEnum {Val = Factorial_14(5)};
-        // EXPECT_TRUE(static_cast<int>(MyEnum::Val) == 1 * 2 * 3 * 4 * 5);       
+        enum class MyEnum {Val = Factorial_14(5)};
+        EXPECT_TRUE(static_cast<int>(MyEnum::Val) == 1 * 2 * 3 * 4 * 5);       
     }
     {
         class Area {
@@ -181,8 +183,8 @@ TEST(TestMordern, Constexpr) {
     {
         using namespace Constexpr_2;
 
-        int val;
-        // int* ptr{CloneTraits<int>::Clone_14(&val)}; // (O)
+        // int val;
+        // int* ptr{CloneTraits<int>::Clone_17(&val)}; // (O)
         // delete ptr; 
     }    
 }

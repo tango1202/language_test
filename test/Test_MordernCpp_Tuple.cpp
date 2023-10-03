@@ -115,7 +115,6 @@ TEST(TestMordern, Tuple) {
     }
     // (C++14~) 타입 기반 get()
     {
-        // C++14
         // using namespace Tuple_1;
         // // 3개의 데이터로 구성된 tuple 입니다.
         // std::tuple<int, std::string, char> result{Func()};

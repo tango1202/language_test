@@ -19,16 +19,6 @@ namespace Decltype_2 {
     auto Add(T a, U b) -> decltype(a + b) { 
         return a + b;
     } 
-    // C++14
-    // template<typename T, typename U>
-    // decltype(auto) Add(T a, U b) { 
-    //     return a + b;
-    // }
-    // C++14
-    // template<typename T, typename U>
-    // auto Add(T a, U b) { 
-    //     return a + b;
-    // } 
 }
 namespace Decltype_3 {
     int Func(int a, int b) {
@@ -36,24 +26,24 @@ namespace Decltype_3 {
     } 
 }
 namespace Decltype_4 {
-    // C++14
-    // auto Add1(int a, int b) {
-    //     return a + b;
-    // }
-    // auto Add2(int a, int b) {
+    // C++14 리턴 타입 추론
+    auto Add1(int a, int b) {
+        return a + b;
+    }
+    auto Add2(int a, int b) {
 
-    //     const int result = a + b;
+        const int result = a + b;
         
-    //     // 템플릿 함수 인수 추론에 의해 const int 대신 int가 사용됩니다.
-    //     return result;
-    // }
+        // 템플릿 함수 인수 추론에 의해 const int 대신 int가 사용됩니다.
+        return result;
+    }
 
-    // decltype(auto) Add3(int a, int b) {
-    //     const int result = a + b;
+    decltype(auto) Add3(int a, int b) {
+        const int result = a + b;
 
-    //     // 개체 엑세스로 평가. result 타입 그대로 평가
-    //     return result; 
-    // }
+        // 개체 엑세스로 평가. result 타입 그대로 평가
+        return result; 
+    }
     // decltype(auto) Add4(int a, int b) {
     //     const int result = a + b; // (X) 예외 발생. Func4의 지역 변수 참조를 전달하기 때문
 
@@ -146,29 +136,34 @@ TEST(TestMordern, Decltype) {
 
         T t(10);
         
-        //decltype(T().Func(10)) val = t.Func(10); // (X) 컴파일 오류. T에 기본 생성자가 없습니다.
-        //decltype(T(10).Func(10)) val = t.Func(10); // (O)
+        // decltype(T().Func(10)) val = t.Func(10); // (X) 컴파일 오류. T에 기본 생성자가 없습니다.
+        // decltype(T(10).Func(10)) val = t.Func(10); // (O)
 
         // T::Func(int) 함수의 리턴 타입
         decltype(std::declval<T>().Func(10)) val = t.Func(10); 
     }
-    // decltype(auto)
+    // C++14 decltype(auto)
     {
         using namespace Decltype_3;
-
+        
         // Func(10, 20) 함수 결과 타입
         decltype(Func(10, 20)) c = Func(10, 20); // C++11
-        // decltype(auto) d = Func(10, 20); // C++14    
+        decltype(auto) d = Func(10, 20); // C++14  
     }
-    // 리턴타입 추론
+    // C++14 decltype(auto)
+    {
+        
+        const int val = 1;
+        auto c = val; // int로 추론됨. 최상위 const는 제거됨
+        decltype(auto) d = val; // const int로 추론됨. 
+    }
+    // C++14 리턴 타입 추론
     {
         using namespace Decltype_4;
 
-        // C++14
-        // auto result1 = Add1(10, 20); // int를 리턴
-        // auto result2 = Add2(10, 20); // const int를 리턴했지만 템플릿 함수 인수 추론 규칙에 따라 int를 리턴
-        // auto result3 = Add3(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
+        auto result1 = Add1(10, 20); // int를 리턴
+        auto result2 = Add2(10, 20); // const int를 리턴했지만 템플릿 함수 인수 추론 규칙에 따라 int를 리턴
+        auto result3 = Add3(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
         // auto result4 = Add4(10, 20); // const int& 리턴. 리턴하는 (result) 표현식과 동일. 
     }
-
 }

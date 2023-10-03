@@ -116,6 +116,17 @@ TEST(TestMordern, Lambda) {
 
         EXPECT_TRUE( a == 10 && b == 20 && c == 30);     
     }
+    // C++14 람다 캡쳐 초기화
+    {
+        // 클로저 개체 생성시 람다 내에서 사용할 수 있는 val 변수를 만들어 캡쳐 합니다.
+        // 캡쳐된 val 을 수정하기 위해 mutable로 만듭니다.
+        auto f{[val = 0]() mutable -> int {return ++val;}}; 
+
+        // 호출시마다  캡쳐된 val이 증가합니다.
+        EXPECT_TRUE(f() == 1);
+        EXPECT_TRUE(f() == 2);
+        EXPECT_TRUE(f() == 3);
+    }
     // 클로저 개체 저장
     {
         auto f{[](int a, int b) -> int {return a + b;}};
@@ -168,6 +179,13 @@ TEST(TestMordern, Lambda) {
         auto f2{f1}; // 대입시 복사 부하가 없습니다.
         f1();
         f2();
+    }
+    // 일반화된 람다 함수
+    {
+        auto add{[](auto a, auto b) {return a + b;}}; 
+
+        EXPECT_TRUE(add(1, 2) == 3);
+        EXPECT_TRUE(add(std::string{"hello"}, std::string{"world"}) == "helloworld");
     }
 
 }

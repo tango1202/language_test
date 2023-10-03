@@ -22,8 +22,8 @@ namespace {
 }
 
 TEST(TestMordern, MemberInitialization) {
+    // C++14 비정적 멤버 변수의 멤버 선언부 초기화시 집합 초기화 허용
     {
-        // C++14
         class A {
         public:
             int m_X{0};

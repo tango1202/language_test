@@ -124,6 +124,7 @@ set(TestFiles
    test/Test_MordernCpp_Future.cpp
    test/Test_MordernCpp_RegularExpressions.cpp
    test/Test_MordernCpp_DigitSeperator.cpp
+   test/Test_MordernCpp_BineryLiteral.cpp
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
