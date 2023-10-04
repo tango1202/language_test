@@ -1,6 +1,7 @@
 #include "gtest/gtest.h" 
 
 #include <thread>
+#include <shared_mutex>
 
 namespace {
     void Message1() {
@@ -59,6 +60,47 @@ namespace {
 
         return val;
     }
+
+    void UniqueRead(std::vector<int>::iterator itr, std::vector<int>::iterator endItr, std::mutex& mutex) {
+        for(int i = 0; itr != endItr; ++itr, ++i) {
+            std::unique_lock<std::mutex> lock(mutex); // mutex를 독점합니다.
+            *itr = 1;
+            std::this_thread::sleep_for(std::chrono::milliseconds{1}); 
+        }
+    }
+    void UniqueFunc(std::vector<int>::iterator itr, std::vector<int>::iterator endItr) {
+
+
+        std::mutex mutex; // mutex 개체
+        std::thread worker1{UniqueRead, itr, endItr, std::ref(mutex)};
+        std::thread worker2{UniqueRead, itr, endItr, std::ref(mutex)};
+        std::thread worker3{UniqueRead, itr, endItr, std::ref(mutex)};
+        std::thread worker4{UniqueRead, itr, endItr, std::ref(mutex)};
+        worker1.join(); 
+        worker2.join(); 
+        worker3.join();
+        worker4.join();
+    }
+    void SharedWrite(std::vector<int>::iterator itr, std::vector<int>::iterator endItr, std::shared_timed_mutex& mutex) {
+        for(int i = 0; itr != endItr; ++itr, i++) {
+            std::shared_lock<std::shared_timed_mutex> lock(mutex); // mutex를 공유합니다.
+            *itr = 1;
+            std::this_thread::sleep_for(std::chrono::milliseconds{1}); 
+        }
+    }
+    void SharedFunc(std::vector<int>::iterator itr, std::vector<int>::iterator endItr) {
+
+        std::shared_timed_mutex mutex; // mutex 개체
+        std::thread worker1{SharedWrite, itr, endItr, std::ref(mutex)};
+        std::thread worker2{SharedWrite, itr, endItr, std::ref(mutex)};
+        std::thread worker3{SharedWrite, itr, endItr, std::ref(mutex)};
+        std::thread worker4{SharedWrite, itr, endItr, std::ref(mutex)};
+        worker1.join(); 
+        worker2.join(); 
+        worker3.join();
+        worker4.join();
+    }    
+
 };
 
 
@@ -268,6 +310,33 @@ TEST(TestMordern, Thread) {
         worker2.join();
 
         a.OnceFunc(); // 더이상 Func()을 호출하지 않습니다.
+    }
+    // C++14 shared_timed_mutex 와 shared_lock
+    {
+        std::vector<int> v;
+
+        for (int i{0}; i < 100; ++i) {
+            v.push_back(i);
+        }
+
+        std::chrono::microseconds uniqueDuration{CheckMicrosecond(
+            UniqueFunc, 
+            v.begin(), v.end()
+        )};
+        std::cout<<"UniqueFunc : "<<uniqueDuration.count()<<std::endl; 
+        for (int i = 0; i < 100; ++i) {
+            EXPECT_TRUE(v[i] == 1);
+            v[i] = i; // 다시 값을 초기화 해둡니다.
+        }
+
+        std::chrono::microseconds sharedDuration{CheckMicrosecond(
+            SharedFunc, 
+            v.begin(), v.end() 
+        )};
+        std::cout<<"SharedFunc : "<<sharedDuration.count()<<std::endl;
+        for (int i = 0; i < 100; ++i) {
+            EXPECT_TRUE(v[i] == 1);
+        } 
     }
 
 }
