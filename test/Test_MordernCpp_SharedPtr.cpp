@@ -1,5 +1,11 @@
 #include "gtest/gtest.h" 
 
+namespace {
+    class T {};
+    class U {};
+    void Func(std::shared_ptr<T> t, std::shared_ptr<U> u) {}
+}
+
 TEST(TestMordern, SharedPtr) {
     {
         class T {
@@ -46,6 +52,10 @@ TEST(TestMordern, SharedPtr) {
         };
         std::shared_ptr<T> a{new T{10}}; // (△) 비권장. T를 할당하고, 내부적으로 제어 블록을 할당
         std::shared_ptr<T> b = std::make_shared<T>(10); // T + 제어 블록 크기만큼 할당
+    }
+    {
+        Func(std::shared_ptr<T>{new T}, std::shared_ptr<U>{new U}); // (△) 비권장. new T, new U 호출 순서에 따라 예외가 발생합니다.
+        Func(std::make_shared<T>(), std::make_shared<U>()); // (O) 
     }
     {
         class T {

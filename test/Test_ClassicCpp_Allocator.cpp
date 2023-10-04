@@ -2,7 +2,7 @@
 
 namespace {
 
-    template <typename T>
+    template<typename T>
     class Allocator {
     public:
         typedef size_t    size_type;
@@ -50,13 +50,13 @@ namespace {
         // T 타입에 대한 할당자(another)를 이용하여
         // 다른 타입인 U 타입용 컨테이너를 할당할 수 있게 합니다.
         // T::rebind<U>::other(another).allocate(10, static_cast<U*>(0));
-        template <class U>
+        template<class U>
         struct rebind {typedef Allocator<U> other;};
 
-        template <class U>
+        template<class U>
         Allocator(const Allocator<U>&) {}
 
-        template <class U>
+        template<class U>
         Allocator& operator =(const Allocator<U>&) {return *this;}
     };
 }

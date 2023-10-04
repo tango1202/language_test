@@ -1,6 +1,6 @@
 #include "gtest/gtest.h" 
 
-namespace {
+namespace VariadicTemplate_1 {
     template<typename Type>
     Type Sum(Type param) {
         return param; // 재귀 호출하다가 마지막에 도달하면 호출됩니다.
@@ -26,15 +26,33 @@ namespace {
     }
 }
 
+namespace VariadicTemplate_2 {
+    int Sum(int a, int b, int c) {
+        return a + b + c;
+    }
+    template<typename... Params>
+    int Func(Params... params) {
+        return Sum((params + 1)...); // 파라메터 팩의 각 요소에 1을 더해 배포합니다.
+    }        
+}
+
 TEST(TestMordern, VariadicTemplate) {
     {
+        using namespace VariadicTemplate_1;
         int val{Sum(1, 3, 5)};
         EXPECT_TRUE(val == 1 + 3 + 5);  
     }
     {
+        using namespace VariadicTemplate_1;
         EXPECT_TRUE(Func(1, 2, 3) == 3);
     }
     {
+        using namespace VariadicTemplate_1;
         EXPECT_TRUE(Forwarding(MySum, 1, 2, 3) == 1 + 2 + 3);       
+    }
+    // 파라메터 팩 확장
+    {
+        using namespace VariadicTemplate_2;
+        EXPECT_TRUE(Func(1, 2, 3) == 2 + 3 + 4);
     }
 }

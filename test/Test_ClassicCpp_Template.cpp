@@ -27,7 +27,7 @@ namespace Template_3 {
 
 namespace Template_4 {
     // 템플릿 함수    
-    template <typename T>
+    template<typename T>
     T Plus(T left, T right) {
         return left + right;
     }

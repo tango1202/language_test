@@ -113,17 +113,18 @@ TEST(TestMordern, Tuple) {
             data.second.GetVal() == 1 + 2 + 3 + 4
         );
     }
-    // (C++14~) 타입 기반 get()
+    // C++14~ 타입 기반 get()
     {
-        // using namespace Tuple_1;
-        // // 3개의 데이터로 구성된 tuple 입니다.
-        // std::tuple<int, std::string, char> result{Func()};
+        using namespace Tuple_1;
+        
+        // 3개의 데이터로 구성된 tuple 입니다.
+        std::tuple<int, std::string, char> result{Func()};
 
-        // // 타입들이 서로 다르다면 타입을 이용하여 데이터에 접근할 수 있습니다.
-        // EXPECT_TRUE(
-        //     std::get<int>(result) == 10 && 
-        //     std::get<std::string>(result) == "Name" &&
-        //     std::get<char>(result) == 'a' 
-        // );
+        // 타입들이 서로 다르다면 타입을 이용하여 데이터에 접근할 수 있습니다.
+        EXPECT_TRUE(
+            std::get<int>(result) == 10 && 
+            std::get<std::string>(result) == "Name" &&
+            std::get<char>(result) == 'a' 
+        );
     }
 }

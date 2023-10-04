@@ -1,5 +1,11 @@
 #include "gtest/gtest.h" 
 
+namespace {
+    class T {};
+    class U {};
+    void Func(std::unique_ptr<T> t, std::unique_ptr<U> u) {}
+}
+
 TEST(TestMordern, UniquePtr) {
     {
         class T {
@@ -41,5 +47,18 @@ TEST(TestMordern, UniquePtr) {
     {
         std::unique_ptr<int> a{new int{10}, std::default_delete<int>{}};
     }
+    // C++14 make_unique
+    {
+        class T {};
+        std::unique_ptr<T> a{new T}; 
+        std::unique_ptr<T> b{new T[2]}; // (△) 비권장. 실수로 빼먹었지만 컴파일 됩니다.
+        //std::unique_ptr<T> c{std::make_unique<T>(2)};  // (X) 컴파일 오류
+        std::unique_ptr<T[]> d{std::make_unique<T[]>(2)};
+    }
+    {
+        Func(std::unique_ptr<T>{new T}, std::unique_ptr<U>{new U}); // (△) 비권장. new T, new U 호출 순서에 따라 예외가 발생합니다.
+        Func(std::make_unique<T>(), std::make_unique<U>()); // (O) 
+    }
+    
 }
 
