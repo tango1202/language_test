@@ -134,7 +134,7 @@ TEST(TestMordern, RValue) {
                 m_Ptr = other.m_Ptr;
 
                 other.m_Size = 0; // other는 초기화 합니다.
-                other.m_Ptr = NULL;
+                other.m_Ptr = nullptr;
                 return *this;
             }
             
@@ -183,7 +183,7 @@ TEST(TestMordern, RValue) {
                 m_Ptr(other.m_Ptr) {
 
                 other.m_Size = 0; // other는 초기화 합니다.
-                other.m_Ptr = NULL;
+                other.m_Ptr = nullptr;
             }            
             // 이동 대입 연산자. 우측값(rvalue) 이동
             Big& operator =(Big&& other) {
@@ -192,7 +192,7 @@ TEST(TestMordern, RValue) {
                 m_Ptr = other.m_Ptr;
 
                 other.m_Size = 0; // other는 초기화 합니다.
-                other.m_Ptr = NULL;
+                other.m_Ptr = nullptr;
                 return *this;
             }
             
