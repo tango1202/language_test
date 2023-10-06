@@ -1,7 +1,7 @@
 #include "gtest/gtest.h" 
 
 namespace {
-    // 복사 생성과 대입 연산을 할 수 없는 개체
+    // 복사 생성과 복사 대입 연산을 할 수 없는 개체
     class Uncopyable {   
     protected:
         Uncopyable() {} // 상속해서만 사용 가능
@@ -77,12 +77,12 @@ TEST(TestCppPattern, Holder) {
         }
     } // 유효 범위를 벗어나면, 예외가 발생하면 holder의 소멸자가 호출되어 ptr이 소멸됩니다.
 
-    // 복사 생성, 대입 연산, new 생성이 컴파일 안되는지 확인
+    // 복사 생성, 복사 대입 연산, new 생성이 컴파일 안되는지 확인
     {
         Holder<T> holder1(new T);
         Holder<T> holder2(new T);
         // Holder<T> holder3(holder1); // (X) 컴파일 오류. 복사 생성자를 막았습니다.
-        // holder2 = holder1; // (X) 컴파일 오류. 대입 연산자를 막았습니다.
+        // holder2 = holder1; // (X) 컴파일 오류. 복사 대입 연산자를 막았습니다.
         // Holder<T> *p = new Holder<T>(new T); // (X) 컴파일 오류. Holder를 new로 생성하지 못하도록 막았습니다.  
     }
 }

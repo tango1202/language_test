@@ -52,7 +52,7 @@ TEST(TestMordern, UnorderedMap) {
                 m_Val{val}, 
                 m_Str{str} {}
             A(const A& other) = default; // 복사 생성자 필요
-            A& operator =(const A& other) = delete; // 대입 연산자 불필요
+            A& operator =(const A& other) = delete; // 복사 대입 연산자 불필요
         public:
             // == 비교 연산자 필요
             bool operator ==(const A& other) const {

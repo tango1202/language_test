@@ -66,7 +66,7 @@ TEST(TestMordern, RValue) {
                 memcpy(m_Ptr, other.m_Ptr, m_Size);
             }
 
-            // 대입 연산자
+            // 복사 대입 연산자
             Big& operator =(const Big& other) {
                 std::cout<<"Big : operator ="<<std::endl; 
 
@@ -115,7 +115,7 @@ TEST(TestMordern, RValue) {
                 memcpy(m_Ptr, other.m_Ptr, m_Size);
             }
 
-            // 대입 연산자
+            // 복사 대입 연산자
             Big& operator =(const Big& other) {
                 std::cout<<"Big : operator ="<<std::endl; 
 
@@ -170,7 +170,7 @@ TEST(TestMordern, RValue) {
                 memcpy(m_Ptr, other.m_Ptr, m_Size);
             }
 
-            // 대입 연산자. 좌측값(lvalue) 대입
+            // 복사 대입 연산자. 좌측값(lvalue) 대입
             Big& operator =(const Big& other) {
                 Big temp(other);
                 std::swap(m_Size, temp.m_Size);
@@ -202,7 +202,7 @@ TEST(TestMordern, RValue) {
         Big a(10);
         Big b(20);
 
-        a = b; // b는 이름이 있는 lvalue. 대입 연산자 호출
+        a = b; // b는 이름이 있는 lvalue. 복사 대입 연산자 호출
         EXPECT_TRUE(a.GetSize() == 20);   
         EXPECT_TRUE(b.GetSize() == 20);  
 

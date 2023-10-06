@@ -13,7 +13,7 @@ namespace {
     // public:
     //     // val1, val2 : new 로 생성된 것을 전달하세요.
     //     T(int* val1, int* val2);
-    //     // // (△) 비권장 . m_Impl이 포인터 멤버 변수여서, 복사 생성자에서 복제, 소멸자에서 delete, swap을 이용한 대입 연산자를 구현해야 합니다.
+    //     // // (△) 비권장 . m_Impl이 포인터 멤버 변수여서, 복사 생성자에서 복제, 소멸자에서 delete, swap을 이용한 복사 대입 연산자를 구현해야 합니다.
     //     T(const T& other);
     //     ~T();
     //     T& operator =(const T& other);
@@ -28,7 +28,7 @@ namespace {
     // // ----
 
     // // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.
-    // // 대입 연산은 임시 개체 생성 후 swap 합니다.
+    // // 복사 대입 연산은 임시 개체 생성 후 swap 합니다.
     // class IntPtr {
     // private:
     //     int* m_Ptr; 
@@ -66,7 +66,7 @@ namespace {
     //         m_Val1(val1),
     //         m_Val2(val2) {}
     // private:        
-    //     // 대입 연산자는 사용하지 않으므로 private로 못쓰게 만듭니다.
+    //     // 복사 대입 연산자는 사용하지 않으므로 private로 못쓰게 만듭니다.
     //     Impl& operator =(const Impl& other) {return *this;}  
     // };
 
@@ -76,7 +76,7 @@ namespace {
     //     m_Impl(new T::Impl(*other.m_Impl)) {} // T::Impl의 복사 생성자를 호출합니다.
     // T::~T() {delete m_Impl;} // T::Impl을 소멸시킵니다.
     
-    // // Swap으로 대입 연산자를 구현합니다.
+    // // Swap으로 복사 대입 연산자를 구현합니다.
     // T& T::operator =(const T& other) {
     //     T temp(other); 
     //     Swap(temp); 
@@ -124,12 +124,12 @@ namespace {
     };
 
     // ----    
-    // (O) T 선언 : 복사 생성자, 소멸자, swap을 이용한 대입 연산자, Swap 불필요
+    // (O) T 선언 : 복사 생성자, 소멸자, swap을 이용한 복사 대입 연산자, Swap 불필요
     // ----
     class T {
         // 중첩 클래스는 전방 선언이 안되어 별도 클래스로 선언하고, 전방 선언합니다.
         // (O) 스마트 포인터를 사용하여, 복사 생성자, 소멸자를 구현할 필요가 없고, 
-        // (O) 멤버 변수도 1개여서 Swap으로 대입 연산자를 구현할 필요가 없습니다.
+        // (O) 멤버 변수도 1개여서 Swap으로 복사 대입 연산자를 구현할 필요가 없습니다.
         TImplPtr m_Impl; 
     public:
         // val1, val2 : new 로 생성된 것을 전달하세요.
@@ -144,7 +144,7 @@ namespace {
     // --------
 
     // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.
-    // 대입 연산은 임시 개체 생성 후 swap 합니다.
+    // 복사 대입 연산은 임시 개체 생성 후 swap 합니다.
     class IntPtr {
     private:
         int* m_Ptr; 
@@ -185,7 +185,7 @@ namespace {
             m_Val1(val1),
             m_Val2(val2) {}
     private:        
-        // 대입 연산자는 사용하지 않으므로 private로 못쓰게 만듭니다.
+        // 복사 대입 연산자는 사용하지 않으므로 private로 못쓰게 만듭니다.
         TImpl& operator =(const TImpl& other) {return *this;}  
     };
 
@@ -234,11 +234,11 @@ TEST(TestClassicCpp, PImpl) {
 
             EXPECT_TRUE(t2.GetVal1() == 10 && t2.GetVal2() == 20);
         } 
-        // (O) 대입 연산 시에도 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
+        // (O) 복사 대입 연산 시에도 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
         {
             T t1(new int(10), new int(20));
             T t2(new int(1), new int (2));
-            t2 = t1; // (O) swap 버전 대입 연산자 호출
+            t2 = t1; // (O) swap 버전 복사 대입 연산자 호출
             EXPECT_TRUE(t2.GetVal1() == 10 && t2.GetVal2() == 20);
         }
     }

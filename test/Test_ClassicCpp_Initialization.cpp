@@ -10,7 +10,7 @@ namespace {
         explicit T(int t) {} // int를 전달받는 생성자. explicit를 주어 암시적 형변환을 막음
         T(const T& other) {} // 복사 생성자
 
-        void operator =(const T& other) {} // 대입 연산자
+        void operator =(const T& other) {} // 복사 대입 연산자
     };
 }
 

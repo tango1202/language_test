@@ -2,7 +2,7 @@
 
 namespace {
 
-    // 복사 생성과 대입 연산을 할 수 없는 개체
+    // 복사 생성과 복사 대입 연산을 할 수 없는 개체
     class Uncopyable {   
     protected:
         Uncopyable() {} // 상속해서만 사용 가능

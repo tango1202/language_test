@@ -112,7 +112,7 @@ TEST(TestMordern, SharedPtr) {
 
         EXPECT_TRUE(a.use_count() == 2);        
     }
-    // std::shared_ptr을 이용한 복사 생성자, 대입 연산자
+    // std::shared_ptr을 이용한 복사 생성자, 복사 대입 연산자
     {
         class Data {
             int m_Val;
@@ -164,7 +164,7 @@ TEST(TestMordern, SharedPtr) {
         a.m_Data1->SetVal(10);
         EXPECT_TRUE(a.m_Data1->GetVal() == 10 && b.m_Data1->GetVal() == 2 && c.m_Data1->GetVal() == 3 && d.m_Data1->GetVal() == 10);
 
-        // 대입 합니다. a, b, d는 동일 Data 입니다.
+        // 복사 대입 합니다. a, b, d는 동일 Data 입니다.
         b = d;
         EXPECT_TRUE(a.m_Data1.use_count() == 3 && b.m_Data1.use_count() == 3 && c.m_Data1.use_count() == 1 && d.m_Data1.use_count() == 3);
 

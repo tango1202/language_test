@@ -154,7 +154,7 @@ TEST(TestClassicCpp, Constructor) {
     }
     // 스마트 포인터 사용
     {
-        // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.(대입 연산은 지원하지 않습니다.)
+        // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.(복사 대입 연산은 지원하지 않습니다.)
         class IntPtr {
         private:
             int* m_Ptr; // new로 생성된 개체입니다.
@@ -197,11 +197,11 @@ TEST(TestClassicCpp, Constructor) {
 
             EXPECT_TRUE(t2.GetVal() == 10);
         } 
-        // (X) 예외 발생. 2번 delete 합니다. 아직 대입 연산은 지원하지 않습니다.
+        // (X) 예외 발생. 2번 delete 합니다. 아직 복사 대입 연산은 지원하지 않습니다.
         {
             T t1(new int(10));
             T t2(new int(20));
-            // t2 = t1; // 아직 대입 연산은 지원하지 않습니다.
+            // t2 = t1; // 아직 복사 대입 연산은 지원하지 않습니다.
         }
     }
     // ----

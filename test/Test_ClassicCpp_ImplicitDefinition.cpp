@@ -31,7 +31,7 @@ TEST(TestClassicCpp, ImplicitDefinition) {
                 m_Y(other.m_Y),
                 m_Object(other.m_Object) {}
 
-            // 대입 연산자 - 멤버별 대입
+            // 복사 대입 연산자 - 멤버별 복사 대입
             T& operator =(const T& other) {
                 m_X = other.m_X;
                 m_Y = other.m_Y;

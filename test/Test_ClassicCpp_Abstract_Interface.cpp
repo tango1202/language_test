@@ -23,7 +23,7 @@ TEST(TestClassicCpp, Abstract) {
             int m_Width;
             int m_Height;
             Shape(const Shape& other) {} // 추상 클래스여서 외부에서 사용 못하게 복사 생성자 막음
-            Shape& operator =(const Shape& other) {return *this;} // 추상 클래스여서 외부에서 사용 못하게 대입 연산자 막음    
+            Shape& operator =(const Shape& other) {return *this;} // 추상 클래스여서 외부에서 사용 못하게 복사 대입 연산자 막음    
         protected:
             Shape() {} // 추상 클래스여서 상속한 개체에서만 생성할 수 있게함               
         public:
@@ -98,7 +98,7 @@ TEST(TestClassicCpp, Interface) {
     class IDrawable {
     private:    
         IDrawable(const IDrawable& other) {} // 인터페이스여서 외부에서 사용 못하게 복사 생성자 막음
-        IDrawable& operator =(const IDrawable& other) {return *this;} // 인터페이스여서 외부에서 사용 못하게 대입 연산자 막음     
+        IDrawable& operator =(const IDrawable& other) {return *this;} // 인터페이스여서 외부에서 사용 못하게 복사 대입 연산자 막음     
     protected:
         IDrawable() {} // 인터페이스여서 상속한 개체에서만 생성할 수 있게함
         ~IDrawable() {} // 인터페이스여서 protected non-virtual(상속해서 사용하고, 다형 소멸 안함) 입니다. 

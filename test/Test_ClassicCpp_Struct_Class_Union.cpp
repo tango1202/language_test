@@ -17,7 +17,7 @@ namespace {
         T() {} // 기본 생성자
         T(const T& other) {} // 복사 생성자
         ~T() {} // 소멸자
-        T& operator =(const T& other) {return *this;} // 대입 연산자
+        T& operator =(const T& other) {return *this;} // 복사 대입 연산자
         
         operator int() const {return 0;} // 형변환 연산자
 

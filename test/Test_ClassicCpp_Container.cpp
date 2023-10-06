@@ -26,7 +26,7 @@ namespace {
         BackInsertIterator(const BackInsertIterator& other) : // #2
             m_Container(other.m_Container) {}
     private:   
-        // 대입 연산자는 사용하지 않습니다.
+        // 복사 대입 연산자는 사용하지 않습니다.
         BackInsertIterator& operator =(const BackInsertIterator& other) {return *this;} // #3
 
     public:
@@ -60,7 +60,7 @@ TEST(TestClassicCpp, Container) {
             // 복사 생성자를 구현해야 합니다.
             A(const A& other) : m_Val(other.m_Val) {}
         private:
-            // 대입 연산자를 사용하지 못하도록 private로 정의합니다.
+            // 복사 대입 연산자를 사용하지 못하도록 private로 정의합니다.
             A& operator =(const A& other) {
                 m_Val = other.m_Val;
                 return *this;
@@ -80,7 +80,7 @@ TEST(TestClassicCpp, Container) {
             explicit A(int val) : m_Val(val) {}
             // 복사 생성자
             A(const A& other) : m_Val(other.m_Val) {}
-            // 대입 연산자
+            // 복사 대입 연산자
             A& operator =(const A& other) {
                 m_Val = other.m_Val;
                 return *this;
@@ -96,7 +96,7 @@ TEST(TestClassicCpp, Container) {
         v.push_back(A(0));
 
         // 정렬합니다. 
-        // 내부적으로 요소의 대입 연산자와 대소 비교 연산자를 사용합니다.
+        // 내부적으로 요소의 복사 대입 연산자와 대소 비교 연산자를 사용합니다.
         std::sort(v.begin(), v.end()); 
         EXPECT_TRUE(v[0].m_Val == 0 && v[1].m_Val == 1); // 크기순으로 정렬됩니다.
     }
@@ -110,7 +110,7 @@ TEST(TestClassicCpp, Container) {
             // 복사 생성자
             A(const A& other) : m_Val(other.m_Val) {}
         private:    
-            // 대입 연산자를 사용하지 못하도록 private로 정의합니다.
+            // 복사 대입 연산자를 사용하지 못하도록 private로 정의합니다.
             A& operator =(const A& other) {
                 m_Val = other.m_Val;
                 return *this;

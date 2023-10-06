@@ -3,7 +3,7 @@
 
 TEST(TestClassicCpp, AssignmentOperator) {
     // ----
-    // 대입 연산자
+    // 복사 대입 연산자
     // ----
     {
         class T {
@@ -18,7 +18,7 @@ TEST(TestClassicCpp, AssignmentOperator) {
             //     m_X(other.m_X),
             //     m_Y(other.m_Y) {}
             
-            // 암시적 대입 연산자의 기본 동작은 멤버별 대입입니다.    
+            // 암시적 복사 대입 연산자의 기본 동작은 멤버별 복사 대입입니다.    
             // T& operator =(const T& other) {
             //     m_X = other.m_X;
             //     m_Y = other.m_Y;
@@ -29,12 +29,12 @@ TEST(TestClassicCpp, AssignmentOperator) {
         };
         T t1(10, 20);
         T t2(1, 2); 
-        t2 = t1; // (O) 암시적 대입 연산자 호출
+        t2 = t1; // (O) 암시적 복사 대입 연산자 호출
 
         EXPECT_TRUE(t2.GetX() == 10 && t2.GetY() == 20);
     }
     // ----
-    // swap을 이용한 예외 안전 대입 연산자
+    // swap을 이용한 예외 안전 복사 대입 연산자
     // ----
     {
         class T {
@@ -75,7 +75,7 @@ TEST(TestClassicCpp, AssignmentOperator) {
         };
         T t1(10, 20);
         T t2(1, 2); 
-        t2 = t1; // (O) swap 버전 대입 연산자 호출
+        t2 = t1; // (O) swap 버전 복사 대입 연산자 호출
 
         EXPECT_TRUE(t2.GetX() == 10 && t2.GetY() == 20);
     }
@@ -94,8 +94,8 @@ TEST(TestClassicCpp, AssignmentOperator) {
         };
         T t1;
         T t2;
-        t1 = t2; // 대입 1회
-        std::swap(t1, t2); // 복사 생성 1회 대입 2회
+        t1 = t2; // 복사 대입 1회
+        std::swap(t1, t2); // 복사 생성 1회 복사 대입 2회
     }
     // nothrow swap
     {
@@ -154,16 +154,16 @@ TEST(TestClassicCpp, AssignmentOperator) {
         };
         T t1(new Big(10));
         T t2(new Big(1)); 
-        t2 = t1; // (O) swap 버전 대입 연산자 호출
+        t2 = t1; // (O) swap 버전 복사 대입 연산자 호출
 
         EXPECT_TRUE(t2.GetBig()->GetVal() == 10);
     }
     // ----
-    // 대입 연산자까지 지원하는 스마트 포인터
+    // 복사 대입 연산자까지 지원하는 스마트 포인터
     // ----
     {
         // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.
-        // 대입 연산은 임시 개체 생성 후 swap 합니다.
+        // 복사 대입 연산은 임시 개체 생성 후 swap 합니다.
         class IntPtr {
         private:
             int* m_Ptr; // new로 생성된 개체입니다.
@@ -208,9 +208,9 @@ TEST(TestClassicCpp, AssignmentOperator) {
         };
 
         class T {
-            // (O) IntPtr로 복사 생성과 대입시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
+            // (O) IntPtr로 복사 생성과 복사 대입시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
             // (O) 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
-            // (O) 포인터 멤버 변수가 1개 있고, 내부적으로 대입 연산시 swap하므로 대입 연산자를 구현할 필요가 없습니다.
+            // (O) 포인터 멤버 변수가 1개 있고, 내부적으로 복사 대입 연산시 swap하므로 대입 연산자를 구현할 필요가 없습니다.
             IntPtr m_Val;
         public:
             // val : new 로 생성된 것을 전달하세요.
@@ -225,11 +225,11 @@ TEST(TestClassicCpp, AssignmentOperator) {
 
             EXPECT_TRUE(t2.GetVal() == 10);
         } 
-        // (O) 대입 연산 시에도 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
+        // (O) 복사 대입 연산 시에도 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
         {
             T t1(new int(10));
             T t2(new int(20));
-            t2 = t1; // (O) swap 버전 대입 연산자 호출
+            t2 = t1; // (O) swap 버전 복사 대입 연산자 호출
             EXPECT_TRUE(t2.GetVal() == 10);
         }
     }
@@ -238,7 +238,7 @@ TEST(TestClassicCpp, AssignmentOperator) {
     // ----
     {
         // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.
-        // 대입 연산은 임시 개체 생성 후 swap 합니다.
+        // 복사 대입 연산은 임시 개체 생성 후 swap 합니다.
         class IntPtr {
         private:
             int* m_Ptr; // new로 생성된 개체입니다.
@@ -283,7 +283,7 @@ TEST(TestClassicCpp, AssignmentOperator) {
         };
 
         class T {
-            // (O) IntPtr로 복사 생성과 대입시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
+            // (O) IntPtr로 복사 생성과 복사 대입시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
             // (O) 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
             // (O) 포인터 멤버 변수가 2개 있어, 예외에 안전하지 않으므로 swap으로 대입 연산자를 구현합니다.
             IntPtr m_Val1;
@@ -313,11 +313,11 @@ TEST(TestClassicCpp, AssignmentOperator) {
 
             EXPECT_TRUE(t2.GetVal1() == 10 && t2.GetVal2() == 20);
         } 
-        // (O) 대입 연산 시에도 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
+        // (O) 복사 대입 연산 시에도 소유권 분쟁 없이 각자의 힙 개체를 delete 합니다.
         {
             T t1(new int(10), new int(20));
             T t2(new int(1), new int (2));
-            t2 = t1; // (O) swap 버전 대입 연산자 호출
+            t2 = t1; // (O) swap 버전 복사 대입 연산자 호출
             EXPECT_TRUE(t2.GetVal1() == 10 && t2.GetVal2() == 20);
         }
     }  

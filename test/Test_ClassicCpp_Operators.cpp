@@ -220,7 +220,7 @@ TEST(TestClassicCpp, Operators) {
         EXPECT_TRUE(result == 10);
     }
     // ----
-    // 연산자 오버로딩(대입 연산자)
+    // 연산자 오버로딩(복사 대입 연산자)
     // ----
     {
         class T {

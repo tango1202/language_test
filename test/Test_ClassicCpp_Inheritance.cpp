@@ -610,7 +610,7 @@ TEST(TestClassicCpp, Inheritance) {
         }
     }    
     // ----
-    // 부모 개체의 대입 연산
+    // 부모 개체의 복사 대입 연산
     // ----
     {
         class Shape {
@@ -619,7 +619,7 @@ TEST(TestClassicCpp, Inheritance) {
             Shape(const Shape& other) {} // (O) 상속해서 생성할 수 있게끔 protected 입니다.  
         public:
             virtual ~Shape() {} // 다형 소멸 하도록 public virtual    
-            Shape& operator =(const Shape& other) { //  (△) 비권장. 자식 개체가 대입될 수 있습니다.
+            Shape& operator =(const Shape& other) { //  (△) 비권장. 자식 개체가 복사 대입될 수 있습니다.
                 if (typeid(*this) != typeid(other)) {
                     const std::type_info& ti = typeid(other);
                     std::cout<<ti.name()<<std::endl;  
@@ -648,7 +648,7 @@ TEST(TestClassicCpp, Inheritance) {
         Shape* shape = &rect1;
 
         rect1 = rect2; // (O) 메시지 표시 안됨
-        *shape = ellipse; // (X) 오동작. 동일한 Shape 타입이어서 실행됩니다. Rectangle에 Ellipse를 대입합니다.
+        *shape = ellipse; // (X) 오동작. 동일한 Shape 타입이어서 실행됩니다. Rectangle에 Ellipse를 복사 대입합니다.
     }
     {
         class Shape {
@@ -687,6 +687,6 @@ TEST(TestClassicCpp, Inheritance) {
         Shape* shape = &rect1;
 
         rect1 = rect2; // (O) 메시지 표시 안됨
-        // *shape = rect2; // (X) 컴파일 오류. 대입 연산은 private임         
+        // *shape = rect2; // (X) 컴파일 오류. 복사 대입 연산은 private임         
     }
 }

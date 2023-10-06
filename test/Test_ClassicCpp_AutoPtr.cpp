@@ -40,7 +40,7 @@ namespace AutoPtr_4 {
     class U {
     private:
         // T의 포인터를 auto_ptr로 관리합니다.
-        // 복사 생성자, 대입 연산자에서 소유권을 이전합니다.
+        // 복사 생성자, 복사 대입 연산자에서 소유권을 이전합니다.
         // auto_ptr 소멸시 T를 알아서 소멸시킵니다. 
         std::auto_ptr<T> m_T;
     public:
