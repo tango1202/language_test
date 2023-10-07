@@ -96,24 +96,23 @@ namespace Constexpr_2 {
     };
 
     // C++17
-    // template<typename T>
-    // class CloneTraits {
-    // public:
+    template<typename T>
+    class CloneTraits_17 {
+    public:
+        static T* Clone_17(const T* ptr) {
+            if (ptr == NULL) {
+                return  NULL;
+            }
 
-    //     static T* Clone_17(const T* ptr) {
-    //         if (ptr == NULL) {
-    //             return  NULL;
-    //         }
-
-    //         // 조건에 맞는 부부만 컴파일 합니다.
-    //         if constexpr (!IsDerivedFrom<T, ICloneable>::Val) {
-    //             return new T(*ptr);
-    //         }
-    //         else {
-    //             return ptr->Clone();
-    //         }
-    //     } 
-    // };    
+            // 조건에 맞는 부부만 컴파일 합니다.
+            if constexpr (!IsDerivedFrom<T, ICloneable>::Val) {
+                return new T(*ptr);
+            }
+            else {
+                return ptr->Clone();
+            }
+        } 
+    };    
 }
 
 TEST(TestMordern, Constexpr) {
@@ -172,7 +171,7 @@ TEST(TestMordern, Constexpr) {
         enum class MyEnum {Val = area.GetVal()}; // constexpr 함수 호출
         EXPECT_TRUE(static_cast<int>(MyEnum::Val) == 2 * 5);       
     }
-    // if constexpr
+    // C++17 if constexpr
     {
         using namespace Constexpr_1;
 
@@ -183,8 +182,8 @@ TEST(TestMordern, Constexpr) {
     {
         using namespace Constexpr_2;
 
-        // int val;
-        // int* ptr{CloneTraits<int>::Clone_17(&val)}; // (O)
-        // delete ptr; 
+        int val;
+        int* ptr{CloneTraits_17<int>::Clone_17(&val)}; // (O)
+        delete ptr; 
     }    
 }

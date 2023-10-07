@@ -8,11 +8,23 @@ namespace {
     void Func(T t) { 
         static_assert(std::is_pointer<T>::value, "only pointer"); // is_pointer는 C++11에 추가된 type_traits
     }
+    template<typename T>
+    void Func_17(T t) { 
+        static_assert(std::is_pointer<T>::value); 
+    }
 }
 TEST(TestMordern, StaticAssert) {
-    int a{20};
-    Func(&a);
-    // Func(a); // (X) 컴파일 오류. error: static assertion failed: only pointer
+    
+    {
+        int a{20};
+        Func(&a);
+        // Func(a); // (X) 컴파일 오류. error: static assertion failed: only pointer
+    }
+    // C++17 static_assert의 메시지 생략
+    {
+        int a{20};
+        // Func_17(a); // (X) 컴파일 오류. error: static assertion failed
+    }
 }
 
 

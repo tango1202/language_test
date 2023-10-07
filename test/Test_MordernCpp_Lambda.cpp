@@ -188,6 +188,27 @@ TEST(TestMordern, Lambda) {
         EXPECT_TRUE(add(std::string{"hello"}, std::string{"world"}) == "helloworld");
     }
 
+    // (C++17~) constexpr 람다 함수
+    {
+        // 명시적 constexpr 람다 함수 입니다.
+        auto id_17{[](int n) constexpr {return n;}};
+        static_assert(id_17(10) == 10);
+
+        // 암시적 constexpr 람다 함수 입니다.
+        auto add_17{[](int a, int b) {return a + b;}};
+        static_assert(add_17(1, 2) == 3);
+
+        // 인자로 전달한 a, b는 컴파일 타임 상수이기 때문에 요구사항이 맞아 암시적 constexpr 람다 함수 입니다.
+        constexpr int a{1};
+        constexpr int b{2};
+        static_assert(add_17(a, b) == 3);
+
+        // 인자로 전달한 c, d는 변수이기 때문에 요구사항이 맞지 않아 런타임 람다 함수 입니다.
+        int c{1};
+        int d{2};
+        EXPECT_TRUE(add_17(c, d) == 3);
+    }
+
 }
 
 

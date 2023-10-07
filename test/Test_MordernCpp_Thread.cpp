@@ -81,20 +81,20 @@ namespace {
         worker3.join();
         worker4.join();
     }
-    void SharedWrite(std::vector<int>::iterator itr, std::vector<int>::iterator endItr, std::shared_timed_mutex& mutex) {
+    void SharedWrite_14(std::vector<int>::iterator itr, std::vector<int>::iterator endItr, std::shared_timed_mutex& mutex) {
         for(int i = 0; itr != endItr; ++itr, i++) {
             std::shared_lock<std::shared_timed_mutex> lock(mutex); // mutex를 공유합니다.
             *itr = 1;
             std::this_thread::sleep_for(std::chrono::milliseconds{1}); 
         }
     }
-    void SharedFunc(std::vector<int>::iterator itr, std::vector<int>::iterator endItr) {
+    void SharedFunc_14(std::vector<int>::iterator itr, std::vector<int>::iterator endItr) {
 
         std::shared_timed_mutex mutex; // mutex 개체
-        std::thread worker1{SharedWrite, itr, endItr, std::ref(mutex)};
-        std::thread worker2{SharedWrite, itr, endItr, std::ref(mutex)};
-        std::thread worker3{SharedWrite, itr, endItr, std::ref(mutex)};
-        std::thread worker4{SharedWrite, itr, endItr, std::ref(mutex)};
+        std::thread worker1{SharedWrite_14, itr, endItr, std::ref(mutex)};
+        std::thread worker2{SharedWrite_14, itr, endItr, std::ref(mutex)};
+        std::thread worker3{SharedWrite_14, itr, endItr, std::ref(mutex)};
+        std::thread worker4{SharedWrite_14, itr, endItr, std::ref(mutex)};
         worker1.join(); 
         worker2.join(); 
         worker3.join();
@@ -330,7 +330,7 @@ TEST(TestMordern, Thread) {
         }
 
         std::chrono::microseconds sharedDuration{CheckMicrosecond(
-            SharedFunc, 
+            SharedFunc_14, 
             v.begin(), v.end() 
         )};
         std::cout<<"SharedFunc : "<<sharedDuration.count()<<std::endl;

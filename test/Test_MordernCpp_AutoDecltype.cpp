@@ -27,10 +27,10 @@ namespace Decltype_3 {
 }
 namespace Decltype_4 {
     // C++14 리턴 타입 추론
-    auto Add1(int a, int b) {
+    auto Add1_14(int a, int b) {
         return a + b;
     }
-    auto Add2(int a, int b) {
+    auto Add2_14(int a, int b) {
 
         const int result = a + b;
         
@@ -38,20 +38,20 @@ namespace Decltype_4 {
         return result;
     }
 
-    decltype(auto) Add3(int a, int b) {
+    decltype(auto) Add3_14(int a, int b) {
         const int result = a + b;
 
         // 개체 엑세스로 평가. result 타입 그대로 평가
         return result; 
     }
-    // decltype(auto) Add4(int a, int b) {
+    // decltype(auto) Add4_14(int a, int b) {
     //     const int result = a + b; // (X) 예외 발생. Func4의 지역 변수 참조를 전달하기 때문
 
     //     // 좌측값 표현식의 결과로 평가. T&형태로 평가
     //     return (result); 
     // }
     // (X) 컴파일 오류. 리턴 타입은 동일해야 합니다.
-    // auto Add5(int a, int b) {
+    // auto Add5_14(int a, int b) {
     //     if (a < 10) {
     //         return 10; // int
     //     }
@@ -59,7 +59,7 @@ namespace Decltype_4 {
     //         return 10.0F; // float
     //     }
     // }
-    // class T {
+    // class T_14 {
     // public:
     //     // (X) 컴파일 오류. 가상 함수는 리턴 타입 추론을 할 수 없습니다.
     //     virtual auto Add(int a) {return a;}
@@ -161,9 +161,9 @@ TEST(TestMordern, Decltype) {
     {
         using namespace Decltype_4;
 
-        auto result1 = Add1(10, 20); // int를 리턴
-        auto result2 = Add2(10, 20); // const int를 리턴했지만 템플릿 함수 인수 추론 규칙에 따라 int를 리턴
-        auto result3 = Add3(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
+        auto result1 = Add1_14(10, 20); // int를 리턴
+        auto result2 = Add2_14(10, 20); // const int를 리턴했지만 템플릿 함수 인수 추론 규칙에 따라 int를 리턴
+        auto result3 = Add3_14(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
         // auto result4 = Add4(10, 20); // const int& 리턴. 리턴하는 (result) 표현식과 동일. 
     }
 }

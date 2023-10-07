@@ -91,21 +91,20 @@ set(TestFiles
    test/Test_MordernCpp_VariadicTemplate.cpp
    test/Test_MordernCpp_UnrestrictedUnion.cpp
    test/Test_MordernCpp_String.cpp
-   test/Test_MordernCpp_UserLiteral.cpp
+   test/Test_MordernCpp_Literals.cpp
    test/Test_MordernCpp_StaticAssert.cpp
    test/Test_MordernCpp_Attribute.cpp
-   test/Test_MordernCpp_RangeFor.cpp
+   test/Test_MordernCpp_Statement.cpp
    test/Test_MordernCpp_NoExcept.cpp
    test/Test_MordernCpp_Align.cpp
    test/Test_MordernCpp_MemberInitialization.cpp
    test/Test_MordernCpp_Lambda.cpp 
-   test/Test_MordernCpp_VariadicMacro.cpp 
+   test/Test_MordernCpp_ETC.cpp 
    test/Test_MordernCpp_MemberFunctionRef.cpp 
-   test/Test_MordernCpp_InlineNamespace.cpp 
+   test/Test_MordernCpp_Namespace.cpp 
    test/Test_MordernCpp_ExplicitConversions.cpp 
    test/Test_MordernCpp_ExternTemplate1.cpp 
    test/Test_MordernCpp_ExternTemplate2.cpp 
-   test/Test_MordernCpp_Sizeof.cpp 
    test/Test_MordernCpp_TypeIndex.cpp 
    test/Test_MordernCpp_UniquePtr.cpp 
    test/Test_MordernCpp_SharedPtr.cpp 
@@ -123,13 +122,15 @@ set(TestFiles
    test/Test_MordernCpp_Atomic.cpp
    test/Test_MordernCpp_Future.cpp
    test/Test_MordernCpp_RegularExpressions.cpp
-   test/Test_MordernCpp_DigitSeperator.cpp
-   test/Test_MordernCpp_BineryLiteral.cpp
-   test/Test_MordernCpp_VariableTemplate.cpp
+   test/Test_MordernCpp_Template.cpp
    test/Test_MordernCpp_IntegerSequence.cpp
    test/Test_MordernCpp_HeterogeneousLookup.cpp
    test/Test_MordernCpp_Exchange.cpp
    test/Test_MordernCpp_CopyElision.cpp
+   test/Test_MordernCpp_InlineVariable1.cpp
+   test/Test_MordernCpp_InlineVariable2.cpp
+   test/Test_MordernCpp_InlineVariable3.cpp
+   test/Test_MordernCpp_StructuredBinding.cpp
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp

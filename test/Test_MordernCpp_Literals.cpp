@@ -26,6 +26,37 @@ TEST(TestMordern, UserLiteral) {
         EXPECT_TRUE("hello"_forced_string.size() == 5); // 임시 개체도 가능
     }
 }
+TEST(TestMordern, BineryLiteral) {
+    // C++14 이진 리터럴
+    {
+        int val1{0b11};
+        int val2{0b1111};
+        int val3{0B11111111};
+
+        EXPECT_TRUE(val1 == 0x03);
+        EXPECT_TRUE(val2 == 0x0F);
+        EXPECT_TRUE(val3 == 0xFF);
+    }
+}
+TEST(TestMordern, DigitSeperator) {
+    // C++14 숫자 구분자
+    {
+        int val1{1000000};
+        int val2{1'000'000};
+
+        EXPECT_TRUE(val1 == val2);
+    }
+
+}
+TEST(TestMordern, HexFloatingPointLiteral) {
+    // C++17~) 16진수 부동 소수점 리터럴
+    {
+        // A(10진수 10), 9(1/16 * 9 = 0.5625), (p11은 2의 11승 == 2048)
+        // 즉, 10.5625 * 2 ^ 11 =  21632
+        float floatVal_17 = 0xA.9p11; // 21632 
+    }
+}
+
 
 
 
