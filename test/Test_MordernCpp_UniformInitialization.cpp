@@ -13,7 +13,6 @@ namespace UniformInitialization_1 {
     T Func_11() {
         return {10, 'b'}; // return T{10, 'b'}; 와 동일
     }
-
 }
 namespace UniformInitialization_2 {
     class T {
@@ -287,37 +286,38 @@ TEST(TestMordern, UniformInitialization) {
             v.push_back(a_11);
         }        
     }
-    // auto와 initializer_list
-    {
-        int a_11{1}; // a는 int
-        auto b_11{1}; // b는 int
-        auto c_11 = {1}; // c는 initializer_list<int>
-        // auto d_11{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요     
-        auto e_11 = {1, 2}; // e는 initializer_list<int>  
-    }
     // 중괄호 초기화 우선 순위
     {
-        char arr[] = {"abc"}; // char arr[] = "abc"; 와 동일
+        char arr_11[] = {"abc"}; // char arr_11[] = "abc"; 와 동일
     }
     {
-        class T {
+        class T_11 {
         public:
-            T(int, int, int, int, int) {}
-            T(std::initializer_list<int>) {}
-            T(std::initializer_list<int>, int, int) {}
+            T_11(int, int, int, int, int) {}
+            T_11(std::initializer_list<int>) {}
+            T_11(std::initializer_list<int>, int, int) {}
         };
-        T a{1, 2, 3, 4, 5}; // T(std::initializer_list<int>)
-        T b{ {1, 2, 3}, 4, 5}; // T(std::initializer_list<int>, int, int)
+        T_11 a{1, 2, 3, 4, 5}; // T_11(std::initializer_list<int>)
+        T_11 b{ {1, 2, 3}, 4, 5}; // T_11(std::initializer_list<int>, int, int)
     } 
     // 기존 생성자와 initializer_list 생성자와의 충돌
     {
         // 요소가 2개인 vector를 생성합니다.
-        std::vector<int> v1(2);
-        EXPECT_TRUE(v1.size() == 2 && v1[0] == 0 && v1[1] == 0);
+        std::vector<int> v(2);
+        EXPECT_TRUE(v.size() == 2 && v[0] == 0 && v[1] == 0);
 
         // 요소값이 2인 vector를 생성합니다.
-        std::vector<int> v2{2};
-        EXPECT_TRUE(v2.size() == 1 && v2[0] == 2);        
+        std::vector<int> v_11{2};
+        EXPECT_TRUE(v_11.size() == 1 && v_11[0] == 2);        
+    }
+
+    // (C++17~) 중괄호 초기화에서 auto 추론의 새로운 규칙
+    {
+        int a_17{1}; // a는 int
+        auto b_17{1}; // b는 int
+        auto c_17 = {1}; // c는 initializer_list<int>
+        auto d_17 = {1, 2}; // d는 initializer_list<int>  
+        // auto e_11{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
     }
 
 

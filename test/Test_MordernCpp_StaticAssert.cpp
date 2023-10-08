@@ -5,7 +5,7 @@ namespace {
 
     // T는 포인터 타입만 전달되어야 합니다.
     template<typename T>
-    void Func(T t) { 
+    void Func_11(T t) { 
         static_assert(std::is_pointer<T>::value, "only pointer"); // is_pointer는 C++11에 추가된 type_traits
     }
     template<typename T>
@@ -17,8 +17,8 @@ TEST(TestMordern, StaticAssert) {
     
     {
         int a{20};
-        Func(&a);
-        // Func(a); // (X) 컴파일 오류. error: static assertion failed: only pointer
+        Func_11(&a);
+        // Func_11(a); // (X) 컴파일 오류. error: static assertion failed: only pointer
     }
     // C++17 static_assert의 메시지 생략
     {

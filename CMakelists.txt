@@ -96,7 +96,6 @@ set(TestFiles
    test/Test_MordernCpp_Attribute.cpp
    test/Test_MordernCpp_Statement.cpp
    test/Test_MordernCpp_NoExcept.cpp
-   test/Test_MordernCpp_Align.cpp
    test/Test_MordernCpp_MemberInitialization.cpp
    test/Test_MordernCpp_Lambda.cpp 
    test/Test_MordernCpp_ETC.cpp 

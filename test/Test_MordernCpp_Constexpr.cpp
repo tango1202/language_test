@@ -7,9 +7,9 @@ namespace {
         int operator ()() {return val;} // (X) 컴파일 오류. 비 템플릿 개체의 인수로 사용할 수 없습니다. 
     };   
 
-    constexpr int Factorial(int val) {
+    constexpr int Factorial_11(int val) {
         // 마지막으로 1에 도달하면 재귀호출 안함
-        return val == 1 ? val : val * Factorial(val - 1);
+        return val == 1 ? val : val * Factorial_11(val - 1);
     }
 
     // C++14 `constexpr` 함수 제약 완화
@@ -97,7 +97,7 @@ namespace Constexpr_2 {
 
     // C++17
     template<typename T>
-    class CloneTraits_17 {
+    class CloneTraits {
     public:
         static T* Clone_17(const T* ptr) {
             if (ptr == NULL) {
@@ -120,7 +120,7 @@ TEST(TestMordern, Constexpr) {
     {
         const int size{20}; // 상수 입니다.
 
-        enum class MyEnum {Val = size}; // (O) size는 컴파일 타임 상수 입니다.
+        enum class MyEnum_11 {Val = size}; // (O) size는 컴파일 타임 상수 입니다.
         T<size> t; // (O) size는 컴파일 타임 상수 입니다.
     }
 
@@ -128,48 +128,53 @@ TEST(TestMordern, Constexpr) {
         int a{20};
         const int size{a}; // 변수로부터 const int를 초기화 해서 런타임 상수 입니다.
 
-        // enum class MyEnum {Val = size}; // (X) 컴파일 오류. size는 런타임 상수 입니다.
+        // enum class MyEnum_11 {Val = size}; // (X) 컴파일 오류. size는 런타임 상수 입니다.
         // T<size> t; // (X) 컴파일 오류. size는 런타임 상수 입니다.
     }
     {
-        int a{20};
-        // constexpr int size{a}; // (X) 컴파일 오류. 상수를 대입해야 합니다.
+        constexpr int size_11{20}; // 컴파일 타입 상수 입니다.
 
-        // enum class MyEnum {Val = size}; // (X)
-        // T<size> t; // (X)        
+        enum class MyEnum_11 {Val = size_11}; // (O)
+        T<size_11> t; // (O) 
+    }    
+    {
+        int a{20};
+        // constexpr int size_11{a}; // (X) 컴파일 오류. 상수를 대입해야 합니다.
     }
     // constexpr 함수
     {
         // 컴파일 타임에 계산된 120이 Val에 대입됩니다.
-        enum class MyEnum {Val = Factorial(5)};
-        EXPECT_TRUE(static_cast<int>(MyEnum::Val) == 1 * 2 * 3 * 4 * 5);       
+        enum class MyEnum_11 {Val = Factorial_11(5)};
+        EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 1 * 2 * 3 * 4 * 5);       
 
         // 변수를 전달하면, 일반 함수처럼 동작합니다.
         int val{5};
-        int result{Factorial(5)};
+        int result{Factorial_11(5)};
     }
+
     {
-        // 컴파일 타임에 계산된 120이 Val에 대입됩니다.
-        enum class MyEnum {Val = Factorial_14(5)};
-        EXPECT_TRUE(static_cast<int>(MyEnum::Val) == 1 * 2 * 3 * 4 * 5);       
-    }
-    {
-        class Area {
+        class Area_11 {
         private:
             int m_X;
             int m_Y;
         public:
-            constexpr Area(int x, int y) : // 컴파일 타임 상수로 사용 가능
+            constexpr Area_11(int x, int y) : // 컴파일 타임 상수로 사용 가능
                 m_X(x),
                 m_Y(y) {} 
-            constexpr int GetVal() const {return m_X * m_Y;}
+            constexpr int GetVal_11() const {return m_X * m_Y;}
         };
 
-        constexpr Area area(2, 5); // 컴파일 타임 상수로 정의
+        constexpr Area_11 area(2, 5); // 컴파일 타임 상수로 정의
 
         // 컴파일 타임에 계산된 면적이 Val에 대입됩니다.
-        enum class MyEnum {Val = area.GetVal()}; // constexpr 함수 호출
-        EXPECT_TRUE(static_cast<int>(MyEnum::Val) == 2 * 5);       
+        enum class MyEnum_11 {Val = area.GetVal_11()}; // constexpr 함수 호출
+        EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 2 * 5);       
+    }
+    // (C++14~) constexpr 함수 제약 완화
+    {
+        // 컴파일 타임에 계산된 120이 Val에 대입됩니다.
+        enum class MyEnum {Val = Factorial_14(5)};
+        EXPECT_TRUE(static_cast<int>(MyEnum::Val) == 1 * 2 * 3 * 4 * 5);       
     }
     // C++17 if constexpr
     {
@@ -183,7 +188,7 @@ TEST(TestMordern, Constexpr) {
         using namespace Constexpr_2;
 
         int val;
-        int* ptr{CloneTraits_17<int>::Clone_17(&val)}; // (O)
+        int* ptr{CloneTraits<int>::Clone_17(&val)}; // (O)
         delete ptr; 
     }    
 }
