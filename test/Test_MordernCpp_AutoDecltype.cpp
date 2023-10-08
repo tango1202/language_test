@@ -9,14 +9,14 @@ namespace Auto {
 
 namespace Decltype_1 {
     template<typename T, typename U>
-    void Func(T a, U b, decltype(a + b)* result) { // decltype(a + b) 은 int
+    void Func_11(T a, U b, decltype(a + b)* result) { // decltype(a + b) 은 int
         *result = a + b;
     }  
 }
 namespace Decltype_2 {
     // C++11
     template<typename T, typename U>
-    auto Add(T a, U b) -> decltype(a + b) { 
+    auto Add_11(T a, U b) -> decltype(a + b) { 
         return a + b;
     } 
 }
@@ -59,10 +59,10 @@ namespace Decltype_4 {
     //         return 10.0F; // float
     //     }
     // }
-    // class T_14 {
+    // class T {
     // public:
     //     // (X) 컴파일 오류. 가상 함수는 리턴 타입 추론을 할 수 없습니다.
-    //     virtual auto Add(int a) {return a;}
+    //     virtual auto Add_14(int a) {return a;}
     // };
 }
 TEST(TestMordern, Auto) {
@@ -70,17 +70,17 @@ TEST(TestMordern, Auto) {
         int a = 0;
         const int b = 0;
 
-        auto c = a; // int로 추론됨
-        auto d = b; // 최상위 const는 무시되므로 const int 가 아닌 int로 추론됨
-        d = 10;   
+        auto c_11 = a; // int로 추론됨
+        auto d_11 = b; // 최상위 const는 무시되므로 const int 가 아닌 int로 추론됨
+        d_11 = 10;   
 
         std::vector<int> v;
 
         // std::vector<int>::iterator itr = v.begin(); 
         // std::vector<int>::iterator endItr = v.end();
 
-        auto itr = v.begin(); // 템플릿 사용에 따른 긴 타입명 간소화
-        auto endItr = v.end();
+        auto itr_11 = v.begin(); // 템플릿 사용에 따른 긴 타입명 간소화
+        auto endItr_11 = v.end();
     }
 }
 TEST(TestMordern, Decltype) {
@@ -88,9 +88,9 @@ TEST(TestMordern, Decltype) {
         int a = 0;
         const int b = 0;
 
-        decltype(a) c = a; // a와 동일한 int로 추론됨
-        decltype(b) d = a; // auto와는 다르게 b와 동일한 const int로 추론됨
-        // d = 10; // (X) 컴파일 오류. const int이므로 값대입 안됨
+        decltype(a) c_11 = a; // a와 동일한 int로 추론됨
+        decltype(b) d_11 = a; // auto와는 다르게 b와 동일한 const int로 추론됨
+        // d_11 = 10; // (X) 컴파일 오류. const int이므로 값대입 안됨
     }
     {
         class T {
@@ -99,22 +99,22 @@ TEST(TestMordern, Decltype) {
         };
         const T* t;
 
-        decltype(t->m_Val) a = 10; // 멤버 엑세스로 평가됩니다. double
-        decltype((t->m_Val)) b = 10; // 괄호를 추가하면 좌측값 표현식으로 처리합니다. t가 const 이므로 const double&
+        decltype(t->m_Val) a_11 = 10; // 멤버 엑세스로 평가됩니다. double
+        decltype((t->m_Val)) b_11 = 10; // 괄호를 추가하면 좌측값 표현식으로 처리합니다. t가 const 이므로 const double&
     }
     // 함수 인자
     {
         using namespace Decltype_1;
         int result = 0;
-        Func(10, 20, &result);
+        Func_11(10, 20, &result);
         EXPECT_TRUE(result == 30);        
     }
 
     // 후행 리턴 타입
     {
         using namespace Decltype_2;
-        auto result = Add(10, 20);
-        EXPECT_TRUE(result == 30);  
+        auto result_11 = Add_11(10, 20);
+        EXPECT_TRUE(result_11 == 30);  
     }
     // declval()
     {
@@ -125,37 +125,37 @@ TEST(TestMordern, Decltype) {
 
         T t;
         // T::Func(int) 함수의 리턴 타입
-        decltype(T().Func(10)) val = t.Func(10); 
+        decltype(T().Func(10)) val_11 = t.Func(10); 
     }
     {
         class T {
         public:
             explicit T(int) {} // 기본 생성자가 없습니다.
-            int Func(int) {return 1;}
+            int Func_11(int) {return 1;}
         };
 
         T t(10);
         
-        // decltype(T().Func(10)) val = t.Func(10); // (X) 컴파일 오류. T에 기본 생성자가 없습니다.
-        // decltype(T(10).Func(10)) val = t.Func(10); // (O)
+        // decltype(T().Func_11(10)) val_11 = t.Func(10); // (X) 컴파일 오류. T에 기본 생성자가 없습니다.
+        // decltype(T(10).Func_11(10)) val_11 = t.Func(10); // (O)
 
         // T::Func(int) 함수의 리턴 타입
-        decltype(std::declval<T>().Func(10)) val = t.Func(10); 
+        decltype(std::declval<T>().Func_11(10)) val_11 = t.Func_11(10); 
     }
     // C++14 decltype(auto)
     {
         using namespace Decltype_3;
         
         // Func(10, 20) 함수 결과 타입
-        decltype(Func(10, 20)) c = Func(10, 20); // C++11
-        decltype(auto) d = Func(10, 20); // C++14  
+        decltype(Func(10, 20)) c_11 = Func(10, 20); // C++11
+        decltype(auto) d_14 = Func(10, 20); // C++14  
     }
     // C++14 decltype(auto)
     {
         
         const int val = 1;
-        auto c = val; // int로 추론됨. 최상위 const는 제거됨
-        decltype(auto) d = val; // const int로 추론됨. 
+        auto c_11 = val; // int로 추론됨. 최상위 const는 제거됨
+        decltype(auto) d_14 = val; // const int로 추론됨. 
     }
     // C++14 리턴 타입 추론
     {

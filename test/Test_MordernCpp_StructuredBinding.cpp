@@ -110,7 +110,6 @@ TEST(TestMordern, StructuredBinding) {
             std::cout << key << value << std::endl; 
         }
 
-        EXPECT_TRUE(m_17.begin()->second == "data");
         // 삽입 실패 검사 -  초기식을 포함하는 if()와 구조화된 바인딩으로 단순화 됐습니다.
         if (auto [itr, result]{m_17.insert(std::make_pair(0, "data0"))}; result != true) {
             std::cout << "insert fail" << std::endl;

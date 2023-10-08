@@ -40,7 +40,7 @@ TEST(TestMordern, UniformInitialization) {
         T obj1; // 기본 생성자로 T 개체 생성
         T obj2(T()); // 기본 생성자인 T()로 생성한 개체를 obj의 복사 생성자로 복사 생성
         T obj3 = T(); // T obj(T());와 동일
-        T obj4(10, 'b'); // // m_A == 10, m_B == `b`인 T 개체 생성
+        T obj4(10, 'b'); // m_A == 10, m_B == `b`인 T 개체 생성
 
         T arr[] = {T(), T(10, 'b')}; // T 요소 2개인 배열 생성
 
@@ -233,9 +233,19 @@ TEST(TestMordern, UniformInitialization) {
     {
         int a{1}; // a는 int
         auto b{1}; // b는 int
+
+        std::string s = typeid(b).name();
+
+
+
         auto c = {1}; // c는 initializer_list<int>
         // auto d{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요     
         auto e = {1, 2}; // e는 initializer_list<int>  
+
+        std::cout << "a type : " << typeid(a).name() << std::endl;
+        std::cout << "b type : " << typeid(b).name()  << std::endl;
+        std::cout << "c type : " << typeid(c).name()  << std::endl;
+        std::cout << "e type : " << typeid(e).name()  << std::endl;
     }
     // 중괄호 초기화 우선 순위
     {
