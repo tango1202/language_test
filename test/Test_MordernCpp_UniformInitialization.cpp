@@ -267,7 +267,7 @@ TEST(TestMordern, UniformInitialization) {
         public:
             explicit T_11(std::initializer_list<int>) {}
         };
-        T_11 t({1, 2, 3}); // {1, 2, 3} 은 initializer_list를 생성해서 전달합니다.
+        T_11 t{{1, 2, 3}}; // {1, 2, 3} 은 initializer_list를 생성해서 전달합니다.
     }
     {
         std::initializer_list<int> data_11;

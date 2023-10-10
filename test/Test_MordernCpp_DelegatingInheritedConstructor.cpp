@@ -15,15 +15,15 @@ TEST(TestMordern, DelegatingInheritedConstructor) {
         };        
     }
     {
-        class T {
+        class T_11 {
             int m_X;
             int m_Y;
             int m_Z;
         public:
-            T() : T(0, 0, 0) {} // T(int x, int y, int z)에 위임
-            explicit T(int x) : T(x, 0, 0) {} // T(int x, int y, int z)에 위임
-            T(int x, int y) : T(x, y, 0) {} // T(int x, int y, int z)에 위임
-            T(int x, int y, int z) : m_X(x), m_Y(y), m_Z(z) {} 
+            T_11() : T_11(0, 0, 0) {} // T_11(int x, int y, int z)에 위임
+            explicit T_11(int x) : T_11(x, 0, 0) {} // T_11(int x, int y, int z)에 위임
+            T_11(int x, int y) : T_11(x, y, 0) {} // T_11(int x, int y, int z)에 위임
+            T_11(int x, int y, int z) : m_X(x), m_Y(y), m_Z(z) {} 
         };
     }
     // 생성자 상속
@@ -51,12 +51,12 @@ TEST(TestMordern, DelegatingInheritedConstructor) {
             Base(int x, int y) : m_X(x), m_Y(y) {}
         };
 
-        class Derived : public Base {
+        class Derived_11 : public Base {
         public:
             // 생성자 상속
             using Base::Base; 
         };
 
-        Derived d(10, 20);    
+        Derived_11 d(10, 20);    
     }    
 }

@@ -15,7 +15,8 @@ TEST(TestMordern, Atomic) {
                 for (int i{0}; i < 100; ++i) {
                     // m_Val = m_Val + 1; // atomic은 + 를 지원하지 않습니다. 
                     ++m_Val;
-                    std::this_thread::sleep_for(std::chrono::milliseconds{1}); // 1 밀리초 만큼 쉽니다.
+                    //!! 테스트 속도 때문에 임시 주석
+                    //!! std::this_thread::sleep_for(std::chrono::milliseconds{1}); // 1 밀리초 만큼 쉽니다.
                 }
             }
         };

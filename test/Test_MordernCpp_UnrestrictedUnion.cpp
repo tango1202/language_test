@@ -51,15 +51,15 @@ namespace {
         virtual int Func() override {return 2;} // #2        
     };
 
-    union MyUnion {
+    union MyUnion_11 {
         A m_A; // non-trivial 타입입니다.
         B m_B; // non-trivial 타입입니다.
         Derived m_Derived; // non-trivial 타입입니다.
-        MyUnion() {
-            std::cout<<"MyUnion : Constructor"<<std::endl;  
+        MyUnion_11() {
+            std::cout<<"MyUnion_11 : Constructor"<<std::endl;  
         }
-        ~MyUnion() {
-            std::cout<<"MyUnion : Destructor"<<std::endl;  
+        ~MyUnion_11() {
+            std::cout<<"MyUnion_11 : Destructor"<<std::endl;  
         }
     };
 }
@@ -73,14 +73,14 @@ TEST(TestMordern, UnrestrictedUnion) {
         EXPECT_TRUE(std::is_trivial<Derived>::value == false); 
 
         // MyUnion 은 A, B, Derived 중 크기가 큰 개체만큼 메모리를 할당합니다.
-        EXPECT_TRUE(sizeof(Derived) <= sizeof(A) && sizeof(A) <= sizeof(B) && sizeof(B) == sizeof(MyUnion));
+        EXPECT_TRUE(sizeof(Derived) <= sizeof(A) && sizeof(A) <= sizeof(B) && sizeof(B) == sizeof(MyUnion_11));
         
         // A, B, Derived의 생성자와 소멸자가 호출되지 않습니다.
-        MyUnion obj;
+        MyUnion_11 obj;
     }
 
     {
-        MyUnion obj;
+        MyUnion_11 obj;
 
         // A를 사용하기 위해 A의 생성자를 호출합니다.
         new (&obj.m_A) A(10, 20);

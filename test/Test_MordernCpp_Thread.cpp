@@ -19,7 +19,8 @@ namespace {
 
         for(;itr != endItr; ++itr) {
             result += *itr;
-            std::this_thread::sleep_for(std::chrono::milliseconds{1}); // 1 밀리초 만큼 쉽니다.
+            //!! 테스트 속도 때문에 임시 주석
+            //!! std::this_thread::sleep_for(std::chrono::milliseconds{1}); // 1 밀리초 만큼 쉽니다.
         }
     }
 
@@ -65,7 +66,8 @@ namespace {
         for(int i = 0; itr != endItr; ++itr, ++i) {
             std::unique_lock<std::mutex> lock(mutex); // mutex를 독점합니다.
             *itr = 1;
-            std::this_thread::sleep_for(std::chrono::milliseconds{1}); 
+            //!! 테스트 속도 때문에 임시 주석
+            //!! std::this_thread::sleep_for(std::chrono::milliseconds{1}); 
         }
     }
     void UniqueFunc(std::vector<int>::iterator itr, std::vector<int>::iterator endItr) {
@@ -85,7 +87,8 @@ namespace {
         for(int i = 0; itr != endItr; ++itr, i++) {
             std::shared_lock<std::shared_timed_mutex> lock(mutex); // mutex를 공유합니다.
             *itr = 1;
-            std::this_thread::sleep_for(std::chrono::milliseconds{1}); 
+            //!! 테스트 속도 때문에 임시 주석
+            //!! std::this_thread::sleep_for(std::chrono::milliseconds{1}); 
         }
     }
     void SharedFunc_14(std::vector<int>::iterator itr, std::vector<int>::iterator endItr) {
@@ -147,7 +150,8 @@ TEST(TestMordern, Thread) {
             void Increase() {
                 for (int i{0}; i < 100; ++i) {
                     m_Val = m_Val + 1;
-                    std::this_thread::sleep_for(std::chrono::milliseconds{1}); // 1 밀리초 만큼 쉽니다.
+                    //!! 테스트 속도 때문에 임시 주석
+                    //!! std::this_thread::sleep_for(std::chrono::milliseconds{1}); // 1 밀리초 만큼 쉽니다.
                 }
             }
             
@@ -174,7 +178,8 @@ TEST(TestMordern, Thread) {
                     mutex.lock(); // 값을 읽고 쓰기 전에 다른 쓰레드를 기다리게 합니다.
                     m_Val = m_Val + 1;
                     mutex.unlock(); // lock을 해제 합니다.
-                    std::this_thread::sleep_for(std::chrono::milliseconds{1});
+                    //!! 테스트 속도 때문에 임시 주석
+                    //!! std::this_thread::sleep_for(std::chrono::milliseconds{1});
                 }
             }
         };
@@ -260,7 +265,8 @@ TEST(TestMordern, Thread) {
                     // Todo
                     yourMutex.unlock();
                     myMutex.unlock();
-                    std::this_thread::sleep_for(std::chrono::milliseconds{1});
+                    //!! 테스트 속도 때문에 임시 주석
+                    //!! std::this_thread::sleep_for(std::chrono::milliseconds{1});
                 }
             }
             void Reset(std::mutex& myMutex, std::mutex& yourMutex) {
@@ -274,7 +280,8 @@ TEST(TestMordern, Thread) {
                     // Todo
                     myMutex.unlock();
                     yourMutex.unlock();
-                    std::this_thread::sleep_for(std::chrono::milliseconds{1});
+                    //!! 테스트 속도 때문에 임시 주석
+                    //!! std::this_thread::sleep_for(std::chrono::milliseconds{1});
                 }
             }
         };

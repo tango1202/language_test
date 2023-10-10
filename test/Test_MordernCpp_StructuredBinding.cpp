@@ -5,54 +5,54 @@ TEST(TestMordern, StructuredBinding) {
     {
         int arr[]{1, 2, 3};
         
-        auto [a, b, c]{arr}; // auto [a, b, c] = arr;
-        EXPECT_TRUE(a == 1 && b == 2 && c == 3); // arr을 임시 개체에 복제하고, 복제본에 a = &temp[0], b = &temp[1], c = &temp[2] 바인딩
+        auto [a_17, b_17, c_17]{arr}; // auto [a_17, b_17, c_!7] = arr;
+        EXPECT_TRUE(a_17 == 1 && b_17 == 2 && c_17 == 3); // arr을 임시 개체에 복제하고, 복제본에 a_17 = &temp[0], b_17 = &temp[1], c_17 = &temp[2] 바인딩
 
-        auto& [x, y, z]{arr};
-        EXPECT_TRUE(x == 1 && y == 2 && z == 3); // x = &a[0], y = &a[1], z = &a[2] 에 바인딩
+        auto& [x_17, y_17, z_17]{arr};
+        EXPECT_TRUE(x_17 == 1 && y_17 == 2 && z_17 == 3); // x_17 = &a[0], y_17 = &a[1], z_17 = &a[2] 에 바인딩
 
         arr[0] = 10; // 원본 수정
         arr[1] = 20;
         arr[2] = 30;
 
-        EXPECT_TRUE(a == 1 && b == 2 && c == 3); // 복제본이므로 원본 내용이 반영되지 않습니다.
-        EXPECT_TRUE(x == 10 && y == 20 && z == 30); // 참조본이므로 원본 수정시 값이 동기화 됩니다.
+        EXPECT_TRUE(a_17 == 1 && b_17 == 2 && c_17 == 3); // 복제본이므로 원본 내용이 반영되지 않습니다.
+        EXPECT_TRUE(x_17 == 10 && y_17 == 20 && z_17 == 30); // 참조본이므로 원본 수정시 값이 동기화 됩니다.
     }
     // C++17~ 구조화된 바인딩 - tuple
     {
-        auto data{std::make_tuple(10, "John")};
+        auto data_11{std::make_tuple(10, "John")};
        
-        auto [id, name]{data};
-        EXPECT_TRUE(id == 10 && name == "John");
+        auto [id_17, name_17]{data_11};
+        EXPECT_TRUE(id_17 == 10 && name_17 == "John");
 
-        auto& [idRef, nameRef]{data};
-        EXPECT_TRUE(idRef == 10 && nameRef == "John");
+        auto& [idRef_17, nameRef_17]{data_11};
+        EXPECT_TRUE(idRef_17 == 10 && nameRef_17 == "John");
 
-        std::get<0>(data) = 20;
+        std::get<0>(data_11) = 20;
 
-        EXPECT_TRUE(id == 10 && name == "John");
-        EXPECT_TRUE(idRef == 20 && nameRef == "John");
+        EXPECT_TRUE(id_17 == 10 && name_17 == "John");
+        EXPECT_TRUE(idRef_17 == 20 && nameRef_17 == "John");
     }
 
      // C++17~ 구조화된 바인딩 - 클래스
     {
         class T {
         public:
-            int m_Id{10};
-            std::string m_Name{"John"};    
+            int m_Id_11{10}; // C++11의 멤버 선언부 초기화
+            std::string m_Name_11{"John"};    
         };
-        T data;
+        T data_11;
 
-        auto [id, name]{data};
-        EXPECT_TRUE(id == 10 && name == "John");
+        auto [id_17, name_17]{data_11};
+        EXPECT_TRUE(id_17 == 10 && name_17 == "John");
 
-        auto& [idRef, nameRef]{data};
-        EXPECT_TRUE(idRef == 10 && nameRef == "John");
+        auto& [idRef_17, nameRef_17]{data_11};
+        EXPECT_TRUE(idRef_17 == 10 && nameRef_17 == "John");
 
-        data.m_Id = 20;
+        data_11.m_Id_11 = 20;
 
-        EXPECT_TRUE(id == 10 && name == "John");
-        EXPECT_TRUE(idRef == 20 && nameRef == "John");
+        EXPECT_TRUE(id_17 == 10 && name_17 == "John");
+        EXPECT_TRUE(idRef_17 == 20 && nameRef_17 == "John");
     }  
     // / C++17~ 구조화된 바인딩 - 컨테이너 활용 
     {
@@ -100,18 +100,18 @@ TEST(TestMordern, StructuredBinding) {
         // C++17 스타일
 
         // 초기 데이터 입력 - 중괄호 초기화로 단순화 됐습니다.
-        std::map<int, std::string> m_17{
+        std::map<int, std::string> m_11{
             {0, "data0"}, 
             {1, "data1"}
         }; 
 
         // 요소 이터레이팅 - 범위 기반 for와 구조화된 바인딩으로 단순화 됐습니다.
-        for (const auto& [key, value]: m_17) {
-            std::cout << key << value << std::endl; 
+        for (const auto& [key_17, value_17]: m_11) {
+            std::cout << key_17 << value_17 << std::endl; 
         }
 
         // 삽입 실패 검사 -  초기식을 포함하는 if()와 구조화된 바인딩으로 단순화 됐습니다.
-        if (auto [itr, result]{m_17.insert(std::make_pair(0, "data0"))}; result != true) {
+        if (auto [itr_17, result_17]{m_11.insert(std::make_pair(0, "data0"))}; result_17 != true) {
             std::cout << "insert fail" << std::endl;
         } 
     }

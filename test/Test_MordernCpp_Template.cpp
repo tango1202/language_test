@@ -31,19 +31,17 @@ namespace Template_1 {
 }
 // auto 템플릿 인자
 namespace Template_2 { 
-    template<int Num>
+    template<typename T, T val> // 타입과 개체를 전달받습니다.
     class A {
     public:
-        int GetNum() const {return Num;}
+        T GetVal() {return val;} 
     };
 
-    
-
-    template<auto Num>
+    template<auto val> // 타입이 아닌 개체인 경우 auto를 사용할 수 있습니다.
     class A_17 {
     public:
-        auto GetNum() const {return Num;}
-    };    
+        auto GetVal() const {return val;}
+    };   
 }
 
 TEST(TestMordern, Template) {
@@ -71,8 +69,12 @@ TEST(TestMordern, Template) {
     }
     {
         using namespace Template_2;
-        EXPECT_TRUE(A<10>{}.GetNum() == 10);
-        EXPECT_TRUE(A_17<10>{}.GetNum() == 10);
+
+        A<int, 10> a{};
+        EXPECT_TRUE(a.GetVal() == 10);
+
+        A_17<10> a_17{};
+        EXPECT_TRUE(a_17.GetVal() == 10);
     }
 
 }
