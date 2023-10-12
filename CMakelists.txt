@@ -130,6 +130,9 @@ set(TestFiles
    test/Test_MordernCpp_InlineVariable2.cpp
    test/Test_MordernCpp_InlineVariable3.cpp
    test/Test_MordernCpp_StructuredBinding.cpp
+   test/Test_MordernCpp_Any.cpp
+   test/Test_MordernCpp_Optional.cpp
+   test/Test_MordernCpp_Variant.cpp
    test/Test_CppPattern_IncludeGuard.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp

@@ -10,6 +10,11 @@ namespace Tuple_2 {
         return std::make_tuple(10, "Name", 'a');
     }
 }
+namespace Tuple_3 {
+    int Sum(int a, int b, int c) {
+        return a + b + c;
+    }
+}        
 
 TEST(TestMordern, Tuple) {
 
@@ -126,5 +131,35 @@ TEST(TestMordern, Tuple) {
             std::get<std::string>(result) == "Name" &&
             std::get<char>(result) == 'a' 
         );
+    }
+    // C++17 apply()
+    {
+        using namespace Tuple_3;
+
+        std::tuple<int, int, int> data{1, 2, 3};
+
+        // tuple의 각 요소를 전개해야 합니다.
+        EXPECT_TRUE(Sum(std::get<0>(data), std::get<1>(data), std::get<2>(data)) == 1 + 2 + 3);
+    }
+    {
+        using namespace Tuple_3;
+
+        std::tuple<int, int, int> data{1, 2, 3};
+
+        // tuple의 요소를 전개하지 않아도 됩니다.
+        EXPECT_TRUE(std::apply(Sum, data) == 1 + 2 + 3);
+
+    }
+    // (C++17~) make_from_tuple
+    {
+        class T{
+        public:
+            T(int a, int b, int c) {}
+        };
+
+        std::tuple<int, int, int> data{1, 2, 3};
+
+        // tuple의 요소를 전개하지 않아도 됩니다.
+        T t{std::make_from_tuple<T>(std::move(data))};
     }
 }
