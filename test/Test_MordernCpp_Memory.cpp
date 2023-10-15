@@ -35,4 +35,27 @@ TEST(TestMordern, Memory) {
         // 요소 3개의 소멸자 호출
         std::destroy(begin, end);
     }
+    // C++17 launder
+    {
+        class A {
+        public: 
+            const int m_X;  // const 멤버 입니다. 
+            int m_Y;
+            A(int x, int y) : m_X{x}, m_Y{y} {}
+        };
+
+        A* ptr = new A{1, 2};
+        EXPECT_TRUE(ptr->m_X == 1 && ptr->m_Y == 2);
+
+        // 위치 지정 생성으로 ptr 위치에 다시 생성합니다.
+        A* newPtr = new(ptr) A{3, 4};
+        EXPECT_TRUE(newPtr->m_X == 3 && newPtr->m_Y == 4);
+
+        // 이전 포인터인 ptr로 다루려면, launder를 사용합니다.
+        EXPECT_TRUE((ptr->m_X == 1 || ptr->m_X == 3)); // (△) 비권장. 컴파일러 최적화에 의해 const 변수는 이전값 1을 가질 수도 있습니다.
+        EXPECT_TRUE(ptr->m_Y == 4); // (△) 비권장. 불법입니다만, 잘 동작합니다.
+        EXPECT_TRUE(std::launder(ptr)->m_X); // launder를 이용하여 합법적으로 사용할 수 있습니다.
+
+        delete std::launder(ptr);
+    }
 }
