@@ -75,9 +75,9 @@ TEST(TestClassicCpp, Literals) {
     // ----
     {
         // 0x25B3(△)
-        std::cout<<"\u25B3"<<std::endl;
+        std::cout << "\u25B3" << std::endl;
 
         // 0x0103A0(𐎠)
-        std::cout<<"\U000103A0"<<std::endl;
+        std::cout << "\U000103A0" << std::endl;
     }
 }

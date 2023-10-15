@@ -17,9 +17,9 @@ namespace UniformInitialization_1 {
 namespace UniformInitialization_2 {
     class T {
     public:
-        T() {std::cout<<"T : Default Constructor"<<std::endl;}
-        T(const T&) {std::cout<<"T : Copy Constructor"<<std::endl;}
-        T& operator =(const T&) {std::cout<<"T : operator =()"<<std::endl;return *this;}
+        T() {std::cout << "T : Default Constructor" << std::endl;}
+        T(const T&) {std::cout << "T : Copy Constructor" << std::endl;}
+        T& operator =(const T&) {std::cout << "T : operator =()" << std::endl;return *this;}
     };
     void f(T param) {}
 }
@@ -106,9 +106,9 @@ TEST(TestMordern, UniformInitialization) {
     {
         class T {
         public:
-            T() {std::cout<<"T : Default Constructor"<<std::endl;}
-            T(const T&) {std::cout<<"T : Copy Constructor"<<std::endl;}
-            T& operator =(const T&) {std::cout<<"T : operator =()"<<std::endl;return *this;}
+            T() {std::cout << "T : Default Constructor" << std::endl;}
+            T(const T&) {std::cout << "T : Copy Constructor" << std::endl;}
+            T& operator =(const T&) {std::cout << "T : operator =()" << std::endl;return *this;}
         };
 
         T a_11{}; // 기본 생성자 호출
@@ -118,9 +118,9 @@ TEST(TestMordern, UniformInitialization) {
     {
         class T {
         public:
-            T() {std::cout<<"T : Default Constructor"<<std::endl;}
-            T(const T&) {std::cout<<"T : Copy Constructor"<<std::endl;}
-            T& operator =(const T&) {std::cout<<"T : operator =()"<<std::endl;return *this;}
+            T() {std::cout << "T : Default Constructor" << std::endl;}
+            T(const T&) {std::cout << "T : Copy Constructor" << std::endl;}
+            T& operator =(const T&) {std::cout << "T : operator =()" << std::endl;return *this;}
         };
 
         T t_11;

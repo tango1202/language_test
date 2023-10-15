@@ -7,10 +7,10 @@ namespace {
         int m_Y;
     public:
         A(int x, int y) : m_X(x), m_Y(y) {
-            std::cout<<"A : Constructor"<<std::endl;
+            std::cout << "A : Constructor" << std::endl;
         }
         ~A() {
-            std::cout<<"A : Destructor"<<std::endl;    
+            std::cout << "A : Destructor" << std::endl;    
         }
         int GetX() const {return m_X;}
         int GetY() const {return m_Y;}
@@ -25,10 +25,10 @@ namespace {
     public:
         
         explicit B(const char* str) : m_Str(str) {
-            std::cout<<"B : Constructor"<<std::endl;    
+            std::cout << "B : Constructor" << std::endl;    
         }
         ~B() {
-            std::cout<<"B : Destructor"<<std::endl;       
+            std::cout << "B : Destructor" << std::endl;       
         }
         const std::string& GetString() const {return m_Str;}
     };
@@ -42,10 +42,10 @@ namespace {
     class Derived : public Base {
     public:
         Derived() {
-            std::cout<<"Derived : Constructor"<<std::endl;    
+            std::cout << "Derived : Constructor" << std::endl;    
         }
         ~Derived() {
-            std::cout<<"Derived : Destructor"<<std::endl;  
+            std::cout << "Derived : Destructor" << std::endl;  
         }
         
         virtual int Func() override {return 2;} // #2        
@@ -56,10 +56,10 @@ namespace {
         B m_B; // non-trivial 타입입니다.
         Derived m_Derived; // non-trivial 타입입니다.
         MyUnion_11() {
-            std::cout<<"MyUnion_11 : Constructor"<<std::endl;  
+            std::cout << "MyUnion_11 : Constructor" << std::endl;  
         }
         ~MyUnion_11() {
-            std::cout<<"MyUnion_11 : Destructor"<<std::endl;  
+            std::cout << "MyUnion_11 : Destructor" << std::endl;  
         }
     };
 }

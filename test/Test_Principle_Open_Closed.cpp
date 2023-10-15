@@ -20,10 +20,10 @@ namespace {
     class ScaleVisitor : public IVisitor {
     public:
         virtual void VisitRectangle(Shape* object) override {
-            std::cout<<"Scale Rectangle"<<std::endl; 
+            std::cout << "Scale Rectangle" << std::endl; 
         };
         virtual void VisitCircle(Shape* object) override {
-            std::cout<<"Scale Circle"<<std::endl; 
+            std::cout << "Scale Circle" << std::endl; 
         }
     };
 
@@ -31,10 +31,10 @@ namespace {
     class RotateVisitor : public IVisitor {
     public:
         virtual void VisitRectangle(Shape* object) override {
-            std::cout<<"Rotate Rectangle"<<std::endl; 
+            std::cout << "Rotate Rectangle" << std::endl; 
         };
         virtual void VisitCircle(Shape* object) override {
-            std::cout<<"Rotate Circle"<<std::endl; 
+            std::cout << "Rotate Circle" << std::endl; 
         }
     };
 

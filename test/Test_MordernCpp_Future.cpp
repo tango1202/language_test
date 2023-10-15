@@ -127,7 +127,7 @@ TEST(TestMordern, Future) {
             EXPECT_TRUE(Sync() == 11); 
         }
         catch(const char* err) {
-            std::cout<<"Task Exception : "<<err<<std::endl;
+            std::cout << "Task Exception : " << err << std::endl;
             EXPECT_TRUE(err == "MyError");
         }
     } 

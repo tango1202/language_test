@@ -10,7 +10,7 @@ TEST(TestMordern, UniquePtr) {
     {
         class T {
         public:
-            ~T() {std::cout<<"T : Destructor"<<std::endl;}    
+            ~T() {std::cout << "T : Destructor" << std::endl;}    
         };
 
         std::unique_ptr<T> a{new T}; // 단일 개체. delete를 호출하여 1개가 소멸됩니다.

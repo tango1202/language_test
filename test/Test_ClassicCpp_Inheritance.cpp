@@ -554,7 +554,7 @@ TEST(TestClassicCpp, Inheritance) {
             Shape(const Shape& other) {
                 if (typeid(*this) != typeid(other)) {
                     const std::type_info& ti = typeid(other);
-                    std::cout<<ti.name()<<std::endl;  
+                    std::cout << ti.name() << std::endl;  
                 } 
             }
             
@@ -622,7 +622,7 @@ TEST(TestClassicCpp, Inheritance) {
             Shape& operator =(const Shape& other) { //  (△) 비권장. 자식 개체가 복사 대입될 수 있습니다.
                 if (typeid(*this) != typeid(other)) {
                     const std::type_info& ti = typeid(other);
-                    std::cout<<ti.name()<<std::endl;  
+                    std::cout << ti.name() << std::endl;  
                 } 
                 return *this; 
             }

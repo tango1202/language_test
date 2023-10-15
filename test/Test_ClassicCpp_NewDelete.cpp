@@ -8,10 +8,10 @@ TEST(TestClassicCpp, NewDelete) {
         class T {
         public:
             T() {
-                std::cout<<"New-Delete Test : T::T()"<<std::endl;
+                std::cout << "New-Delete Test : T::T()" << std::endl;
             }
             ~T() {
-                std::cout<<"New-Delete Test : T::~T()"<<std::endl;
+                std::cout << "New-Delete Test : T::~T()" << std::endl;
             }
         };
 
@@ -154,12 +154,12 @@ TEST(TestClassicCpp, NewDelete) {
                 return ::operator new(sz);
             }        
             static void operator delete(void* ptr) {
-                std::cout<<"T::delete(void* ptr)"<<std::endl;
+                std::cout << "T::delete(void* ptr)" << std::endl;
                 ::operator delete(ptr); 
             }
             // sz : 해제할 byte 수
             static void operator delete(void* ptr, std::size_t sz) {
-                std::cout<<"delete(void* ptr, std::size_t sz)"<<std::endl;
+                std::cout << "delete(void* ptr, std::size_t sz)" << std::endl;
                 ::operator delete(ptr); 
             }            
         }; 

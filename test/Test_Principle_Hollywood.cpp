@@ -58,7 +58,7 @@ namespace {
     public:
         // MyApp의 문서 내용을 저장합니다.
         virtual void SaveDoc() override {
-            std::cout <<"MyApp::SaveDoc()"<<std::endl;  
+            std::cout << "MyApp::SaveDoc()" << std::endl;  
         }
     };
 }

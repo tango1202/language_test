@@ -115,10 +115,10 @@ TEST(TestClassicCpp, Preprocessor) {
     // ----
     { 
         // Line Number:118 Filename:C:\Data\language_test\test\Test_ClassicCpp_Preprocessor.cpp
-        std::cout<<"Line Number:"<<__LINE__<<" Filename:"<<__FILE__<<std::endl; 
+        std::cout << "Line Number:" << __LINE__ << " Filename:" << __FILE__ << std::endl; 
 
 #line 1234 "test.cpp" 
-        std::cout<<"Line Number:"<<__LINE__<<" Filename:"<<__FILE__<<std::endl;  // Line Number:1234 Filename:test.cpp      
+        std::cout << "Line Number:" << __LINE__ << " Filename:" << __FILE__ << std::endl;  // Line Number:1234 Filename:test.cpp      
     }
     {
 // #define OS_WIN

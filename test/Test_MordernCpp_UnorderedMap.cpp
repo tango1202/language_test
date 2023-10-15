@@ -6,31 +6,31 @@ TEST(TestMordern, UnorderedMap) {
         std::unordered_map<int, std::string> m;
 
         // 예약된 요소 수에 맞게 버킷은 자동 조정 됩니다.
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 1개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 1개
         m.reserve(2);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 2개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 2개
         m.reserve(3);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 3개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 3개
         m.reserve(4);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 5개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 5개
         m.reserve(5);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 5개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 5개
         m.reserve(6);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 7개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 7개
         m.reserve(7);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 7개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 7개
         m.reserve(8);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 11개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 11개
         m.reserve(9);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 11개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 11개
         m.reserve(100);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 103개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 103개
         m.reserve(1000);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 1031개
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 1031개
         m.reserve(10000);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 10273개        
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 10273개        
          m.reserve(100000);
-        std::cout<<"bucket count : "<<m.bucket_count()<<std::endl; // 107897개  
+        std::cout << "bucket count : " << m.bucket_count() << std::endl; // 107897개  
     }
     {
         std::unordered_map<int, std::string> m;

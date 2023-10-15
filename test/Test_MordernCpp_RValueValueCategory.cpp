@@ -45,19 +45,19 @@ TEST(TestMordern, RValue) {
             explicit Big(size_t size) : 
                 m_Size(size), 
                 m_Ptr(new char[size]) {
-                std::cout<<"Big : Default Constructor"<<std::endl; 
+                std::cout << "Big : Default Constructor" << std::endl; 
             }
 
             // 소멸자
             ~Big() {
-                std::cout<<"Big : Destructor"<<std::endl; 
+                std::cout << "Big : Destructor" << std::endl; 
                 delete[] m_Ptr;
             }
 
             // 복사 생성자
             Big(const Big& other) :
                 m_Size(other.m_Size) {
-                std::cout<<"Big : Copy Constructor"<<std::endl; 
+                std::cout << "Big : Copy Constructor" << std::endl; 
 
                 // 메모리 공간 할당
                 m_Ptr = new char[m_Size];
@@ -68,7 +68,7 @@ TEST(TestMordern, RValue) {
 
             // 복사 대입 연산자
             Big& operator =(const Big& other) {
-                std::cout<<"Big : operator ="<<std::endl; 
+                std::cout << "Big : operator =" << std::endl; 
 
                 Big temp(other); // 복사 생성
                 std::swap(m_Size, temp.m_Size); // 바꿔치기
@@ -94,19 +94,19 @@ TEST(TestMordern, RValue) {
             explicit Big(size_t size) : 
                 m_Size(size), 
                 m_Ptr(new char[size]) {
-                std::cout<<"Big : Default Constructor"<<std::endl; 
+                std::cout << "Big : Default Constructor" << std::endl; 
             }
 
             // 소멸자
             ~Big() {
-                std::cout<<"Big : Destructor"<<std::endl; 
+                std::cout << "Big : Destructor" << std::endl; 
                 delete[] m_Ptr;
             }
 
             // 복사 생성자
             Big(const Big& other) :
                 m_Size(other.m_Size) {
-                std::cout<<"Big : Copy Constructor"<<std::endl; 
+                std::cout << "Big : Copy Constructor" << std::endl; 
 
                 // 메모리 공간 할당
                 m_Ptr = new char[m_Size];
@@ -117,7 +117,7 @@ TEST(TestMordern, RValue) {
 
             // 복사 대입 연산자
             Big& operator =(const Big& other) {
-                std::cout<<"Big : operator ="<<std::endl; 
+                std::cout << "Big : operator =" << std::endl; 
 
                 Big temp(other);
                 std::swap(m_Size, temp.m_Size);
@@ -127,7 +127,7 @@ TEST(TestMordern, RValue) {
 
             // 이동 함수
             Big& Move(Big& other) {
-                std::cout<<"Big : Move()"<<std::endl; 
+                std::cout << "Big : Move()" << std::endl; 
 
                 delete[] m_Ptr; // 기존 것은 삭제하고,
                 m_Size = other.m_Size; // other 것을 저장한뒤
@@ -252,15 +252,15 @@ TEST(TestMordern, RValue) {
         public:
             A_11() {}
             // noexcept가 없어서 예외가 발생할 수도 있습니다.
-            A_11(const A_11&) {std::cout<<"A_11 : Copy Constructor"<<std::endl;}
-            A_11(A_11&&) {std::cout<<"A_11 : Move Constructor"<<std::endl;;} 
+            A_11(const A_11&) {std::cout << "A_11 : Copy Constructor" << std::endl;}
+            A_11(A_11&&) {std::cout << "A_11 : Move Constructor" << std::endl;;} 
         };
         class B_11 {
         public:
             B_11() {}
             // nothrow 보증합니다.
-            B_11(const B_11&) noexcept {std::cout<<"B_11 : Copy Constructor"<<std::endl;;}
-            B_11(B_11&&) noexcept {std::cout<<"B_11 : Move Constructor"<<std::endl;;} 
+            B_11(const B_11&) noexcept {std::cout << "B_11 : Copy Constructor" << std::endl;;}
+            B_11(B_11&&) noexcept {std::cout << "B_11 : Move Constructor" << std::endl;;} 
         };
 
         A_11 a1;

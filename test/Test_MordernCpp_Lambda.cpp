@@ -9,11 +9,11 @@ namespace {
 
     class T {
     public: 
-        T() {std::cout<<"T::Default Constructor"<<std::endl;}
-        T(const T&) {std::cout<<"T::Copy Constructor"<<std::endl;}
-        T(T&&) {std::cout<<"T::Move Constructor"<<std::endl;}
-        ~T() {std::cout<<"T::Destructor"<<std::endl;}
-        void operator =(const T&) {std::cout<<"T::operator =()"<<std::endl;}
+        T() {std::cout << "T::Default Constructor" << std::endl;}
+        T(const T&) {std::cout << "T::Copy Constructor" << std::endl;}
+        T(T&&) {std::cout << "T::Move Constructor" << std::endl;}
+        ~T() {std::cout << "T::Destructor" << std::endl;}
+        void operator =(const T&) {std::cout << "T::operator =()" << std::endl;}
     };   
 }
 TEST(TestMordern, Lambda) {
@@ -135,20 +135,20 @@ TEST(TestMordern, Lambda) {
     // 클로저 개체 복사 부하
     {
         T t;
-        [=]() {std::cout<<"Run Lambda"<<std::endl;}(); // t를 사용하지 않았습니다.        
+        [=]() {std::cout << "Run Lambda" << std::endl;}(); // t를 사용하지 않았습니다.        
     }
     {
         T t;
         [=]() {
             t; // t;로 사용합니다. 캡쳐시 복사 부하가 있습니다.    
-            std::cout<<"Run Lambda"<<std::endl;
+            std::cout << "Run Lambda" << std::endl;
         }();    
     }
     {
         T t;
         auto f_11{[=]() { // auto 변수에 저장하고, 호출합니다.   
             t; 
-            std::cout<<"Run Lambda"<<std::endl;
+            std::cout << "Run Lambda" << std::endl;
         }};      
         f_11();
     }
@@ -156,7 +156,7 @@ TEST(TestMordern, Lambda) {
         T t;
         auto f1_11{[=]() {
             t; 
-            std::cout<<"Run Lambda"<<std::endl;
+            std::cout << "Run Lambda" << std::endl;
         }}; 
         auto f2_11{f1_11}; // 복사 부하가 발생합니다.
         f1_11();
@@ -165,7 +165,7 @@ TEST(TestMordern, Lambda) {
 
     {
         T t;
-        auto f1_11{[&]() {t; std::cout<<"Run Lambda"<<std::endl;}}; // 캡쳐시 복사 부하가 없습니다.
+        auto f1_11{[&]() {t; std::cout << "Run Lambda" << std::endl;}}; // 캡쳐시 복사 부하가 없습니다.
         auto f2_11{f1_11}; // 대입시 복사 부하가 없습니다.
         f1_11();
         f2_11();

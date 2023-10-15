@@ -41,7 +41,7 @@ namespace {
     }  
 
     template<typename Func>
-    std::chrono::microseconds CheckMicrosecond(Func f) {
+    std::chrono::microseconds Measure(Func f) {
         std::chrono::system_clock::time_point start{std::chrono::system_clock::now()};    
  
         f();
@@ -72,14 +72,14 @@ TEST(TestMordern, Array) {
     {
         // !! 테스트 시간이 오래걸려 주석
         // 생성/소멸 테스트
-        // std::cout<<"CStyleArray : "<<CheckMicrosecond(CStyleArrayConstruct).count()<<std::endl;
-        // std::cout<<"STLArray : "<<CheckMicrosecond(STLArrayConstruct).count()<<std::endl;
-        // std::cout<<"STLVector : "<<CheckMicrosecond(STLVectorConstruct).count()<<std::endl;
+        // std::cout << "CStyleArray : " << Measure(CStyleArrayConstruct).count() << std::endl;
+        // std::cout << "STLArray : " << Measure(STLArrayConstruct).count() << std::endl;
+        // std::cout << "STLVector : " << Measure(STLVectorConstruct).count() << std::endl;
 
         // 접근 테스트
-        std::cout<<"CStyleArray : "<<CheckMicrosecond(CStyleArrayAccess).count()<<std::endl;
-        std::cout<<"STLArray : "<<CheckMicrosecond(STLArrayAccess).count()<<std::endl;
-        std::cout<<"STLVector : "<<CheckMicrosecond(STLVectorAccess).count()<<std::endl;
+        std::cout << "CStyleArray : " << Measure(CStyleArrayAccess).count() << std::endl;
+        std::cout << "STLArray : " << Measure(STLArrayAccess).count() << std::endl;
+        std::cout << "STLVector : " << Measure(STLVectorAccess).count() << std::endl;
     }
 
 }

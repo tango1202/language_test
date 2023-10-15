@@ -192,7 +192,7 @@ TEST(TestClassicCpp, MemberVariable) {
             char m_X;
         };
         EXPECT_TRUE(sizeof(Derived) == 8 * 2); 
-        std::cout<<sizeof(Derived)<<std::endl;        
+        std::cout << sizeof(Derived) << std::endl;        
     }
     // 메모리 접근 편의를 위해 4byte단위로 멤버 변수를 할당. 4byte 단위로 읽을 수 있도록 빈공간 할당(패딩)
     {   

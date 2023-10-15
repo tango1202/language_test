@@ -2,7 +2,7 @@
 #include <exception>
 
 void TerminateHandler() {
-    std::cout << "TerminateHandler 호출"<< std::endl;
+    std::cout << "TerminateHandler 호출" << std::endl;
     std::abort(); // 프로그램 종료
 }
 int main() {

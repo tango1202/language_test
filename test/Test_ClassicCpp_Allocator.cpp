@@ -3,7 +3,7 @@
 namespace {
 
     template<typename T>
-    class Allocator {
+    class MyAllocator {
     public:
         typedef size_t    size_type;
         typedef ptrdiff_t difference_type;
@@ -13,25 +13,25 @@ namespace {
         typedef const T&  const_reference;
         typedef T         value_type;
 
-        Allocator() {}
-        Allocator(const Allocator&) {}
+        MyAllocator() {}
+        MyAllocator(const MyAllocator&) {}
 
         // T를 n개 만큼 저장할 수 있는 메모리 영역을 할당합니다.
         pointer allocate(size_type n, const void * = 0) {
             T* t = (T*) malloc(n * sizeof(T));
-            std::cout<<"Allocator::allocate()"<<std::endl;
+            std::cout << "MyAllocator::allocate()" << std::endl;
             return t;
         }
     
         // allocate에서 할당한 메모리를 해제합니다.
         void deallocate(void* p, size_type) {
             free(p);
-            std::cout<<"Allocator::deallocate()"<<std::endl;
+            std::cout << "MyAllocator::deallocate()" << std::endl;
         }
 
         pointer address(reference x) const {return &x;}
         const_pointer address(const_reference x) const {return &x;}
-        Allocator<T>& operator =(const Allocator&) {return *this;}
+        MyAllocator<T>& operator =(const MyAllocator&) {return *this;}
 
         // p 메모리 위치에 val을 복사 생성합니다. 
         void construct(pointer p, const T& val) { 
@@ -51,13 +51,13 @@ namespace {
         // 다른 타입인 U 타입용 컨테이너를 할당할 수 있게 합니다.
         // T::rebind<U>::other(another).allocate(10, static_cast<U*>(0));
         template<class U>
-        struct rebind {typedef Allocator<U> other;};
+        struct rebind {typedef MyAllocator<U> other;};
 
         template<class U>
-        Allocator(const Allocator<U>&) {}
+        MyAllocator(const MyAllocator<U>&) {}
 
         template<class U>
-        Allocator& operator =(const Allocator<U>&) {return *this;}
+        MyAllocator& operator =(const MyAllocator<U>&) {return *this;}
     };
 }
 
@@ -68,17 +68,17 @@ TEST(TestClassicCpp, Allocator) {
         class A {
         public:
             A() {
-                std::cout<<"A()"<<std::endl;
+                std::cout << "A()" << std::endl;
             }
             A(const A& other) {
-                std::cout<<"A(const A& other)"<<std::endl;        
+                std::cout << "A(const A& other)" << std::endl;        
             }
             ~A() {
-                std::cout<<"~A()"<<std::endl;     
+                std::cout << "~A()" << std::endl;     
             }
         };
 
-        std::vector<A, Allocator<A>> v;
+        std::vector<A, MyAllocator<A>> v;
 
         v.push_back(A());
     }

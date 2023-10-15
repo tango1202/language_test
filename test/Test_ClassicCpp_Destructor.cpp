@@ -18,38 +18,38 @@ TEST(TestClassicCpp, Destructor) {
     {
         class BaseMemberObj {
         public:
-            BaseMemberObj() {std::cout<<"1. BaseMemberObj::BaseMemberObj()"<<std::endl;}
-            ~BaseMemberObj() {std::cout<<"10. BaseMemberObj::~BaseMemberObj()"<<std::endl;}
+            BaseMemberObj() {std::cout << "1. BaseMemberObj::BaseMemberObj()" << std::endl;}
+            ~BaseMemberObj() {std::cout << "10. BaseMemberObj::~BaseMemberObj()" << std::endl;}
         };
         class BaseLocalObj {
         public:
-            ~BaseLocalObj() {std::cout<<"9. BaseLocalObj::~BaseLocalObj()"<<std::endl;}
+            ~BaseLocalObj() {std::cout << "9. BaseLocalObj::~BaseLocalObj()" << std::endl;}
         };
         class Base {
             BaseMemberObj m_BaseMemberObj;
         public:
-            Base() {std::cout<<"2. Base::Base()"<<std::endl;}
+            Base() {std::cout << "2. Base::Base()" << std::endl;}
             ~Base() {
                 BaseLocalObj baseLocalObj;
-                std::cout<<"8. Base::~Base()"<<std::endl;
+                std::cout << "8. Base::~Base()" << std::endl;
             }
         };
         class DerivedMemberObj {
         public:
-            DerivedMemberObj() {std::cout<<"3. DerivedMemberObj::DerivedMemberObj()"<<std::endl;}
-            ~DerivedMemberObj() {std::cout<<"7. DerivedMemberObj::~DerivedMemberObj()"<<std::endl;}
+            DerivedMemberObj() {std::cout << "3. DerivedMemberObj::DerivedMemberObj()" << std::endl;}
+            ~DerivedMemberObj() {std::cout << "7. DerivedMemberObj::~DerivedMemberObj()" << std::endl;}
         };
         class DerivedLocalObj {
         public:
-            ~DerivedLocalObj() {std::cout<<"6. DerivedLocalObj::~DerivedLocalObj()"<<std::endl;}
+            ~DerivedLocalObj() {std::cout << "6. DerivedLocalObj::~DerivedLocalObj()" << std::endl;}
         };        
         class Derived : public Base {
             DerivedMemberObj m_DerivedMemberObj;
         public:
-            Derived() {std::cout<<"4. Derived::Derived()"<<std::endl;}
+            Derived() {std::cout << "4. Derived::Derived()" << std::endl;}
             ~Derived() {
                 DerivedLocalObj derivedLocalObj;
-                std::cout<<"5. Derived::~Derived()"<<std::endl;
+                std::cout << "5. Derived::~Derived()" << std::endl;
             }
         };
 
@@ -75,13 +75,13 @@ TEST(TestClassicCpp, Destructor) {
     {
         class Base {
         public:
-            // ~Base() {std::cout<<"2. Base::~Base()"<<std::endl;} // (△) 비권장. 그냥 public non-virtual 이어서 다형 소멸을 지원하지 않습니다.
-            virtual ~Base() {std::cout<<"2. Base::~Base()"<<std::endl;} // (O) 다형 소멸을 지원함
+            // ~Base() {std::cout << "2. Base::~Base()" << std::endl;} // (△) 비권장. 그냥 public non-virtual 이어서 다형 소멸을 지원하지 않습니다.
+            virtual ~Base() {std::cout << "2. Base::~Base()" << std::endl;} // (O) 다형 소멸을 지원함
         };
 
         class Derived : public Base {
         public:
-            ~Derived() {std::cout<<"1. Derived::~Derived()"<<std::endl;}
+            ~Derived() {std::cout << "1. Derived::~Derived()" << std::endl;}
         };
 
         Derived* d = new Derived;
@@ -143,28 +143,28 @@ TEST(TestClassicCpp, Destructor) {
     {
         class BaseMemberObj {
         public:
-            ~BaseMemberObj() {std::cout<<"4. BaseMemberObj::~BaseMemberObj()"<<std::endl;}
+            ~BaseMemberObj() {std::cout << "4. BaseMemberObj::~BaseMemberObj()" << std::endl;}
         };
         class Base {
             BaseMemberObj m_BaseMemberObj;
         public:
             virtual ~Base() {
-                std::cout<<"3. Base::~Base()"<<std::endl;
+                std::cout << "3. Base::~Base()" << std::endl;
 
                 f(); // (X) 오동작. 가상 함수를 소멸자에서 호출합니다. Derived는 이미 소멸되었고, Base::f()가 호출됩니다.
             }
-            virtual void f() {std::cout<<"*** Base::f() ***"<<std::endl;}
+            virtual void f() {std::cout << "*** Base::f() ***" << std::endl;}
         };
         class DerivedMemberObj {
         public:
-            ~DerivedMemberObj() {std::cout<<"2. DerivedMemberObj::~DerivedMemberObj()"<<std::endl;}
+            ~DerivedMemberObj() {std::cout << "2. DerivedMemberObj::~DerivedMemberObj()" << std::endl;}
         };
     
         class Derived : public Base {
             DerivedMemberObj m_DerivedMemberObj;
         public:
-            ~Derived() { std::cout<<"1. Derived::~Derived()"<<std::endl;}
-            virtual void f() {std::cout<<"*** Derived::f() ***"<<std::endl;}
+            ~Derived() { std::cout << "1. Derived::~Derived()" << std::endl;}
+            virtual void f() {std::cout << "*** Derived::f() ***" << std::endl;}
         };
 
         Derived d; // (X) 오동작. 소멸자에서 가상 함수 호출

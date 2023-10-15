@@ -6,12 +6,12 @@
 namespace {
     void Message1() {
         for(int i{0};i < 100; ++i) {
-            std::cout<<"Message1 : "<<i<<std::endl;
+            std::cout << "Message1 : " << i << std::endl;
         }        
     }
      void Message2() {
         for(int i{0};i < 100; ++i) {
-            std::cout<<"Message2 : "<<i<<std::endl;
+            std::cout << "Message2 : " << i << std::endl;
         }        
     }   
     void Sum(std::vector<int>::iterator itr, std::vector<int>::iterator endItr, int& result) {
@@ -51,7 +51,7 @@ namespace {
     }    
 
     template<typename Func, typename... Params>
-    std::chrono::microseconds CheckMicrosecond(Func func, Params... params) {
+    std::chrono::microseconds Measure(Func func, Params... params) {
         std::chrono::system_clock::time_point start{std::chrono::system_clock::now()};    
  
         func(params...);
@@ -68,6 +68,7 @@ namespace {
             *itr = 1;
             //!! 테스트 속도 때문에 임시 주석
             //!! std::this_thread::sleep_for(std::chrono::milliseconds{1}); 
+            lock.unlock();
         }
     }
     void UniqueFunc(std::vector<int>::iterator itr, std::vector<int>::iterator endItr) {
@@ -89,6 +90,7 @@ namespace {
             *itr = 1;
             //!! 테스트 속도 때문에 임시 주석
             //!! std::this_thread::sleep_for(std::chrono::milliseconds{1}); 
+            lock.unlock();
         }
     }
     void SharedFunc_14(std::vector<int>::iterator itr, std::vector<int>::iterator endItr) {
@@ -124,20 +126,20 @@ TEST(TestMordern, Thread) {
         }
 
         int result{0};
-        std::chrono::microseconds duration{CheckMicrosecond(
+        std::chrono::microseconds duration{Measure(
             Sum, 
             v.begin(), v.end(), 
             std::ref(result) // 인수의 참조성 유지
         )};
-        std::cout<<"Sum : "<<result<<" Duration : "<<duration.count()<<std::endl; 
+        std::cout << "Sum : " << result << " Duration : " << duration.count() << std::endl; 
 
         int threadResult{0};
-        std::chrono::microseconds threadDuration{CheckMicrosecond(
+        std::chrono::microseconds threadDuration{Measure(
             ThreadSum, 
             v.begin(), v.end(), 
             std::ref(threadResult) // 인수의 참조성 유지
         )};
-        std::cout<<"ThreadSum : "<<threadResult<<" Duration : "<<threadDuration.count()<<std::endl; 
+        std::cout << "ThreadSum : " << threadResult << " Duration : " << threadDuration.count() << std::endl; 
     }
     // mutex
     {
@@ -164,7 +166,7 @@ TEST(TestMordern, Thread) {
         worker1.join(); 
         worker2.join(); 
 
-        std::cout<<"Non Mutex : "<<a.GetVal()<<std::endl;
+        std::cout << "Non Mutex : " << a.GetVal() << std::endl;
     }
     {
         class A {
@@ -192,7 +194,7 @@ TEST(TestMordern, Thread) {
         worker1.join(); 
         worker2.join(); 
 
-        std::cout<<"Mutex : "<<a.GetVal()<<std::endl;
+        std::cout << "Mutex : " << a.GetVal() << std::endl;
         EXPECT_TRUE(a.GetVal() == 200);
     }
     {
@@ -305,7 +307,7 @@ TEST(TestMordern, Thread) {
                 std::call_once(m_OnceFlag, std::mem_fn(&A::Func), std::ref(*this));
             } 
             void Func() {
-                std::cout<<"A : Func()"<<std::endl;
+                std::cout << "A : Func()" << std::endl;
             }
         };
 
@@ -326,24 +328,59 @@ TEST(TestMordern, Thread) {
             v.push_back(i);
         }
 
-        std::chrono::microseconds uniqueDuration{CheckMicrosecond(
+        std::chrono::microseconds uniqueDuration{Measure(
             UniqueFunc, 
             v.begin(), v.end()
         )};
-        std::cout<<"UniqueFunc : "<<uniqueDuration.count()<<std::endl; 
+        std::cout << "UniqueFunc : " << uniqueDuration.count() << std::endl; 
         for (int i = 0; i < 100; ++i) {
             EXPECT_TRUE(v[i] == 1);
             v[i] = i; // 다시 값을 초기화 해둡니다.
         }
 
-        std::chrono::microseconds sharedDuration{CheckMicrosecond(
+        std::chrono::microseconds sharedDuration{Measure(
             SharedFunc_14, 
             v.begin(), v.end() 
         )};
-        std::cout<<"SharedFunc : "<<sharedDuration.count()<<std::endl;
+        std::cout << "SharedFunc : " << sharedDuration.count() << std::endl;
         for (int i = 0; i < 100; ++i) {
             EXPECT_TRUE(v[i] == 1);
         } 
     }
+    // (C++17~) scoped_lock
+    {
+        class A {
+        public:
+            void Init(std::mutex& myMutex, std::mutex& yourMutex) {
+                for (int i{0}; i < 100; ++i) {
+                   std::scoped_lock{myMutex, yourMutex}; // 내부적으로 데드락을 방지합니다. 
+                    // Todo
+                    //!! 테스트 속도 때문에 임시 주석
+                    //!! std::this_thread::sleep_for(std::chrono::milliseconds{1});
+                }
+            }
+            void Reset(std::mutex& myMutex, std::mutex& yourMutex) {
+
+                for (int i{0}; i < 100; ++i) {
+                    std::scoped_lock{myMutex, yourMutex}; // 내부적으로 데드락을 방지합니다. 
+                    // Todo
+                    //!! 테스트 속도 때문에 임시 주석
+                    //!! std::this_thread::sleep_for(std::chrono::milliseconds{1});
+                }
+            }
+        };
+
+        A a{};
+        std::mutex myMutex; // mutex 개체
+        std::mutex yourMutex; 
+
+        std::thread worker1{std::mem_fn(&A::Init), std::ref(a), std::ref(myMutex), std::ref(yourMutex)};
+        std::thread worker2{std::mem_fn(&A::Reset), std::ref(a), std::ref(myMutex), std::ref(yourMutex)};
+    
+        worker1.join(); 
+        worker2.join(); 
+    }
+
+
 
 }

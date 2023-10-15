@@ -49,8 +49,8 @@ TEST(TestMordern, Template) {
     {
         // 동일한 값을 타입에 따라 서로 다른 정밀도로 사용할 수 있습니다.
         std::cout << "pi_14<double> : " << std::setprecision(10) << pi_14<double> << std::endl;
-        std::cout << "pi_14<float> : " << std::setprecision(10) <<pi_14<float> << std::endl;
-        std::cout << "pi_14<int> : " << std::setprecision(10) <<pi_14<int> << std::endl;
+        std::cout << "pi_14<float> : " << std::setprecision(10) << pi_14<float> << std::endl;
+        std::cout << "pi_14<int> : " << std::setprecision(10) << pi_14<int> << std::endl;
     } 
     // C++14 변수 템플릿. 팩토리얼 
     {

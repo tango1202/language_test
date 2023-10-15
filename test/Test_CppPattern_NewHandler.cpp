@@ -174,9 +174,9 @@ TEST(TestCppPattern, NewHandler) {
 
                 // 내부적으로는 메모리를 할당하고, 실패하면 handler를 실행하는 과정을 무한히 반복합니다.
                 // handler가 std::bad_alloc이나 std::abort()를 할때 까지요.
-                std::cout<<"----## ::operator new : Start"<<std::endl;  
+                std::cout << "----## ::operator new : Start" << std::endl;  
                 void* ptr = ::operator new(sz); 
-                std::cout<<"----## ::operator new : End"<<std::endl; 
+                std::cout << "----## ::operator new : End" << std::endl; 
                 return ptr;
             } 
         };
@@ -185,7 +185,7 @@ TEST(TestCppPattern, NewHandler) {
             // new가 실패할때까지 반복해서 재귀 할당 합니다.
             // Holder에 생성된 개체를 담습니다.
             static void Recursive() {
-                std::cout<<"## Recursive"<<std::endl;
+                std::cout << "## Recursive" << std::endl;
                 Holder<T> holder(new T);
                 Recursive();
             }
@@ -201,7 +201,7 @@ TEST(TestCppPattern, NewHandler) {
         //         Tester::Recursive();
         //     }
         //     catch (std::bad_alloc& e) {
-        //         std::cout<<"## [UsingReserved] catch (std::bad_alloc& e)"<<std::endl;    
+        //         std::cout << "## [UsingReserved] catch (std::bad_alloc& e)" << std::endl;    
         //     }
         // }
         // {
@@ -211,7 +211,7 @@ TEST(TestCppPattern, NewHandler) {
         //         Tester::Recursive();
         //     }
         //     catch (std::bad_alloc& e) {
-        //         std::cout<<"## [Remove] catch (std::bad_alloc& e)"<<std::endl;    
+        //         std::cout << "## [Remove] catch (std::bad_alloc& e)" << std::endl;    
         //     }
         // }
         // {

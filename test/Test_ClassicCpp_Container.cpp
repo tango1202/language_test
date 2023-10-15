@@ -303,7 +303,7 @@ TEST(TestClassicCpp, Container) {
 
         for (int i = 0; i < 16; ++i) {
             v.push_back(0);
-            std::cout<<"size:"<<v.size()<<" capacity:"<<v.capacity()<<std::endl;
+            std::cout << "size:" << v.size() << " capacity:" << v.capacity() << std::endl;
         }
     }
     // ----

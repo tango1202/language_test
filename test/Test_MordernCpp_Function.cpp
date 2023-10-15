@@ -1,7 +1,16 @@
 #include "gtest/gtest.h" 
 #include <algorithm>
 
-namespace {
+namespace Invoke {
+    class T {
+    public:
+        int Sum(int a, int b, int c) {return a + b + c;} // 멤버 함수
+    };
+
+    int Sum(int a, int b) {return a + b;} // 일반 함수
+}
+
+namespace Function_1 {
     int Sum(int a, int b, int c) {return a + b + c;}
 
     // 인자들의 값을 1씩 증가시킵니다.
@@ -204,6 +213,7 @@ TEST(TestMordern, Function) {
     }
     // bind()
     {
+        using namespace Function_1;
         // Sum 함수의 인자를 1, 2, 3으로 고정합니다.
         std::function<int()> func1{
             std::bind(Sum, 1, 2, 3)
@@ -224,12 +234,14 @@ TEST(TestMordern, Function) {
         EXPECT_TRUE(func3(4, 5) == 1 + 4 + 5);
     }
     {
+        using namespace Function_1;
         auto func3{
             std::bind(Sum, 1, std::placeholders::_1, std::placeholders::_2)
         };
         EXPECT_TRUE(func3(4, 5) == 1 + 4 + 5);
     }
     {
+        using namespace Function_1;
         int a{1};
         int b{2};
         int c{3};
@@ -242,6 +254,7 @@ TEST(TestMordern, Function) {
         EXPECT_TRUE(a == 1 && b == 2 && c == 3);        
     }
     {
+        using namespace Function_1;
         int a{1};
         int b{2};
         int c{3};
@@ -255,6 +268,7 @@ TEST(TestMordern, Function) {
     }    
     // is_bind_expression
     {
+        using namespace Function_1;
         EXPECT_TRUE(IsBind(std::bind(Sum, 1, 2, 3)) == true);  
 
         auto func1{std::bind(Sum, 1, 2, 3)}; 
@@ -265,6 +279,7 @@ TEST(TestMordern, Function) {
     }
     // is_placeholder
     {
+        using namespace Function_1;
         EXPECT_TRUE(IsPlaceholder(std::bind(Sum, 1, std::placeholders::_1, 3)) == true);  
 
         auto func1{std::bind(Sum, 1, std::placeholders::_1, 3)}; 
@@ -273,5 +288,14 @@ TEST(TestMordern, Function) {
         std::function<int(int)> func2{std::bind(Sum, 1, std::placeholders::_1, 3)}; // (X) 오동작. function 개체에 저장하면, bind에 대한 관련 속성을 잃어버립니다.
         EXPECT_TRUE(IsPlaceholder(func2) == false);        
     }    
+
+    // C++ 17 invoke
+    {
+        using namespace Invoke;
+        T t;
+        EXPECT_TRUE(std::invoke(T::Sum, t, 1, 2, 3) == 1 + 2 + 3); // 멤버 함수를 호출합니다.
+
+        EXPECT_TRUE(std::invoke(Sum, 1, 2) == 1 + 2); // 일반 함수를 호출합니다.
+    }
 
 }

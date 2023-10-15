@@ -49,7 +49,7 @@ TEST(TestClassicCpp, Polymorphism) {
             Base& operator =(const Base& other) {
                 if (typeid(*this) != typeid(other)) {
                     const std::type_info& ti = typeid(other);
-                    std::cout<<ti.name()<<std::endl;  
+                    std::cout << ti.name() << std::endl;  
                 } 
                 return *this; 
             }
