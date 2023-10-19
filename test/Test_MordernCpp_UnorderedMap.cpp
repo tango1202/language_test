@@ -29,7 +29,7 @@ TEST(TestMordern, UnorderedMap) {
         std::cout << "bucket count : " << m.bucket_count() << std::endl; // 1031개
         m.reserve(10000);
         std::cout << "bucket count : " << m.bucket_count() << std::endl; // 10273개        
-         m.reserve(100000);
+        m.reserve(100000);
         std::cout << "bucket count : " << m.bucket_count() << std::endl; // 107897개  
     }
     {

@@ -132,7 +132,7 @@ TEST(TestMordern, Constexpr) {
         // T<size> t; // (X) 컴파일 오류. size는 런타임 상수 입니다.
     }
     {
-        constexpr int size_11{20}; // 컴파일 타입 상수 입니다.
+        constexpr int size_11{20}; // 컴파일 타임 상수 입니다.
 
         enum class MyEnum_11 {Val = size_11}; // (O)
         T<size_11> t; // (O) 

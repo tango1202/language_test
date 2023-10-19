@@ -51,7 +51,7 @@ TEST(TestMordern, UniquePtr) {
     {
         class T {};
         std::unique_ptr<T> a{new T}; 
-        std::unique_ptr<T> b{new T[2]}; // (△) 비권장. 실수로 빼먹었지만 컴파일 됩니다.
+        std::unique_ptr<T> b{new T[2]}; // (△) 비권장. unique_ptr<T[]>인데, 실수로 []을 빼먹었지만 컴파일 됩니다.
         //std::unique_ptr<T> c{std::make_unique<T>(2)};  // (X) 컴파일 오류
         std::unique_ptr<T[]> d{std::make_unique<T[]>(2)};
     }

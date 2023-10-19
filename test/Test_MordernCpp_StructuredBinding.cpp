@@ -5,7 +5,7 @@ TEST(TestMordern, StructuredBinding) {
     {
         int arr[]{1, 2, 3};
         
-        auto [a_17, b_17, c_17]{arr}; // auto [a_17, b_17, c_!7] = arr;
+        auto [a_17, b_17, c_17]{arr}; // auto [a_17, b_17, c_17] = arr; 과 동일
         EXPECT_TRUE(a_17 == 1 && b_17 == 2 && c_17 == 3); // arr을 임시 개체에 복제하고, 복제본에 a_17 = &temp[0], b_17 = &temp[1], c_17 = &temp[2] 바인딩
 
         auto& [x_17, y_17, z_17]{arr};
@@ -22,10 +22,10 @@ TEST(TestMordern, StructuredBinding) {
     {
         auto data_11{std::make_tuple(10, "John")};
        
-        auto [id_17, name_17]{data_11};
+        auto [id_17, name_17]{data_11}; // 복제본에 바인딩
         EXPECT_TRUE(id_17 == 10 && name_17 == "John");
 
-        auto& [idRef_17, nameRef_17]{data_11};
+        auto& [idRef_17, nameRef_17]{data_11}; // 원본에 바인딩
         EXPECT_TRUE(idRef_17 == 10 && nameRef_17 == "John");
 
         std::get<0>(data_11) = 20;
@@ -43,10 +43,10 @@ TEST(TestMordern, StructuredBinding) {
         };
         T data_11;
 
-        auto [id_17, name_17]{data_11};
+        auto [id_17, name_17]{data_11}; // 복제본에 바인딩
         EXPECT_TRUE(id_17 == 10 && name_17 == "John");
 
-        auto& [idRef_17, nameRef_17]{data_11};
+        auto& [idRef_17, nameRef_17]{data_11}; // 원본에 바인딩
         EXPECT_TRUE(idRef_17 == 10 && nameRef_17 == "John");
 
         data_11.m_Id_11 = 20;
