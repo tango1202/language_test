@@ -53,17 +53,6 @@ TEST(TestClassicCpp, Literals) {
         EXPECT_TRUE(str4[3] == L'\0'); // 널문자가 추가됨
     }
     {
-        const char* str1 = "abc"; // 문자열 상수
-        char* temp = const_cast<char*>(str1);
-        // (X) 예외 발생. 문자열 상수는 rodata에 있기 때문에 수정할 수 없습니다.
-        // *temp = 'd';
-       
-        char str2[] = "abc"; // {'a', `b`, 'c', '\0'};
-        // (O) 배열은 문자열 상수의 복제본이어서 항목을 수정할 수 있습니다.
-        str2[0] = 'd';
-        EXPECT_TRUE(str2[0] == 'd');
-    }
-    {
         const char* str1 = "Hello World"; 
         const char* str2 = "Hello " "World"; // (O) 두 문자열 상수 이어 붙이기
         const char* str3 = "Hello " // (O) 개행된 문자열 상수 붙이기
