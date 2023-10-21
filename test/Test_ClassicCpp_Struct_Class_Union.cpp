@@ -22,7 +22,7 @@ namespace {
         operator int() const {return 0;} // 형변환 연산자
 
         void f1(int) {} // 멤버 함수
-        void f2(int) {} // 상수 멤버 함수
+        void f2(int) const {} // 상수 멤버 함수
 
         virtual void f3(int) {} // 가상 함수    
         virtual void f4(int) = 0; // 순가상 함수
@@ -41,43 +41,6 @@ namespace {
         // 타입 재정의
         typedef NestedClass Inner; 
     }; 
-    // ----
-    // 전방 선언
-    // ----
-    // 1. YourClass 전방 선언
-    class YourClass; 
-
-    // 2. MyClass 선언
-    class MyClass {
-        // (O) 전방 선언을 통해 YourClass가 대충 클래스라는 걸 압니다. 
-        // 반드시 포인터나 참조자와 같은 참조 형식이어야 합니다.
-        YourClass* m_Your; 
-
-        // YourClass의 구체 정의가 필요하여 선언만 합니다.
-        void f(); 
-    };
-
-    // 3. YourClass 선언
-    class YourClass {
-        // MyClass는 상위에 정의되어 사용할 수 있습니다.
-        MyClass m_My; 
-
-    public:
-        void g() {}
-    }; 
-
-    // 4. MyClass 정의 - YourClass를 사용하고 있어 YourClass 선언 후 작성합니다.
-    void MyClass::f() {
-        m_Your->g(); 
-    } 
-    // 중첩 클래스의 전방 선언
-    // class T; // (O)
-    // class T::Nested; // (X) 컴파일 오류. 중첩 클래스는 전방 선언을 할 수 없습니다.
-    // class T {
-    // public:
-    //     class Nested {};
-    // };
-
     // ----
     // friend
     // ----
@@ -174,7 +137,7 @@ TEST(TestClassicCpp, StructClassUnion) {
             int y;
         };
 
-        S s = {10, 20}; // 구조체는 중괄호 초기화 지원
+        S s = {10, 20}; // 구조체는 집합 중괄호 초기화 지원
 
         class C {
             int m_X; // 기본적으로 private
@@ -182,7 +145,7 @@ TEST(TestClassicCpp, StructClassUnion) {
         public:
             C(int x, int y) {} // 값 생성자 정의
         };
-        C c(10, 20); // 클래스는 값 생성자만 가능. 중괄호 초기화 미지원      
+        C c(10, 20); // 클래스는 값 생성자만 가능. 중괄호 집합 초기화 미지원      
     }
     // ----
     // using 선언
@@ -200,17 +163,6 @@ TEST(TestClassicCpp, StructClassUnion) {
         Derived d;
         d.m_Val = 10;
         EXPECT_TRUE(d.m_Val == 10); // 이제 public이라 접근 가능합니다.
-    }
-    // 중첩 클래스의 전방 선언
-    {
-        class T {
-        private:
-            class Nested;
-        private:
-            class Nested {}; // (O)
-        public:
-            // class Nested {}; // (X) 컴파일 오류. 전방 선언에선 private이고 실제 선언은 public 입니다.
-        };  
     }
     // ----
     // 공용체
@@ -342,13 +294,12 @@ TEST(TestClassicCpp, StructClassUnion) {
     }
     {
         class T {
-            int m_X;
-            int m_Y;
+            int m_Val;
         public:
-            T(int x, int y) :
-                // this->m_X(x), // (X) 컴파일 오류. 초기화 리스트에서 사용 불가능
-                m_Y(this->m_X) { // (O) 초기화 리스트에서 대입값으로는 사용 가능 
-                this->m_X; // (O) 생성자 본문에서 사용 가능
+            explicit T(int val) :
+                // this->m_Val(val), // (X) 컴파일 오류. 초기화 리스트에서 사용 불가능
+                m_Val(this->m_Val) { // (O) 초기화 리스트에서 대입값으로는 사용 가능 
+                this->m_Val; // (O) 생성자 본문에서 사용 가능
             }
         };        
     }

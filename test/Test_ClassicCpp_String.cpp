@@ -111,17 +111,16 @@ TEST(TestClassicCpp, String) {
     // 와이드 문자열
     {
         wchar_t* wstr = L"abc가나다"; // abc[0x61 0x62 0x63] 가[0xAC00] 나[0xB098] 다[0xB2E4] 가 저장된 영역을 가리키는 포인터 입니다.
-        EXPECT_TRUE(wcslen(wstr) == 6); 
+        EXPECT_TRUE(wcslen(wstr) == 6); // Windows에서는 2byte 단위로 저장합니다.
 
-        EXPECT_TRUE(wstr[0] == 0x0061); // 0x0061. 아스키 코드 a
-        EXPECT_TRUE(wstr[1] == 0x0062); // 0x0062. 아스키 코드 b
-        EXPECT_TRUE(wstr[2] == 0x0063); // 0x0063. 아스키 코드 c
-        EXPECT_TRUE(wstr[3] == 0xAC00); // 0xAC00. 유니코드 가
-        EXPECT_TRUE(wstr[4] == 0xB098); // 0xB098. 유니코드 나
-        EXPECT_TRUE(wstr[5] == 0xB2E4); // 0xB2E4. 유니코드 다
-        EXPECT_TRUE(wstr[6] == 0x0000); // 널문자        
+        EXPECT_TRUE(wstr[0] == 0x0061); // 0x0061. UTF-16 인코딩. 아스키 코드 a
+        EXPECT_TRUE(wstr[1] == 0x0062); // 0x0062. UTF-16 인코딩. 아스키 코드 b
+        EXPECT_TRUE(wstr[2] == 0x0063); // 0x0063. UTF-16 인코딩. 아스키 코드 c
+        EXPECT_TRUE(wstr[3] == 0xAC00); // 0xAC00. UTF-16 인코딩. 유니코드 가
+        EXPECT_TRUE(wstr[4] == 0xB098); // 0xB098. UTF-16 인코딩. 유니코드 나
+        EXPECT_TRUE(wstr[5] == 0xB2E4); // 0xB2E4. UTF-16 인코딩. 유니코드 다
+        EXPECT_TRUE(wstr[6] == 0x0000); // 널문자  
     }
-
     {
         std::string s1("OK"); // 문자열 상수는 새로운 메모리 공간에 복제되어 저장됩니다.
         std::string s2 = "OK"; // s2("OK") 와 동일합니다.
