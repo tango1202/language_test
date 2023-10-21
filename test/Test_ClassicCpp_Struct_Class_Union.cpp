@@ -33,7 +33,7 @@ namespace {
         // 열거형 상수
         enum {Left, Top, Right, Bottom}; 
     
-        // 중첩 클래스(구조체)
+        // 중첩 클래스/구조체
         class NestedClass { 
             int m_D3;
         };

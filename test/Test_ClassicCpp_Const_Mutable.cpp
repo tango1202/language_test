@@ -1,5 +1,22 @@
 #include "gtest/gtest.h" 
 
+namespace {
+    // 비 상수성 전파
+    class A {
+    public:
+        void f() const {} // 상수 멤버 함수 입니다.
+        void g() {} // 비 상수 맴버 함수 입니다.
+    };   
+    void Func1(const A& a) {
+        a.f(); // (O)
+        // a.g(); // (X) 컴파일 오류. a가 const 이므로 바 상수 멤버 함수를 호출할 수 없습니다.
+    }
+    void Func2(A& a) { // g()를 호출하려면 a는 non-const 이어야 합니다.
+        a.f(); // (O)
+        a.g(); // (O) 
+    }
+}
+
 TEST(TestClassicCpp, Const) {
     // ----
     // 상수 변수
@@ -56,11 +73,11 @@ TEST(TestClassicCpp, Const) {
         void f(int x); // (O) 인수를 x에 복사해서 사용함.
         void f(const int x); // (△) 비권장. 인수를 x에 복사해서 쓰되 f에서 수정하지 않음. 호출하는 쪽에선 무의미
 
-        void f(int* x); // (O) 인수를 f에서 수정함.
+        void f(int* x); // (O) x가 가리키는 값을 f에서 수정함.
         void f(int& x); 
 
-        void f(const int* x); // (O) 인수를 f에서 수정하지 않음.  
-        void f(const int& x); 
+        void f(const int* x); // (O) x가 가리키는 값을 f에서 수정하지 않음.
+        void f(const int& x);  
     }
     // 상수 함수
     {

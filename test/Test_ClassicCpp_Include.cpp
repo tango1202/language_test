@@ -1,9 +1,41 @@
 #include "gtest/gtest.h" 
 
-namespace {
-
+namespace Forward_1 {
     // ----
     // 전방 선언
+    // ----
+    class MyClass; // 전방 선언
+
+    class A {
+        MyClass* m_MyClass; // MyClass 선언을 include 하지 않고 전방 선언만 해도 됩니다.
+    public:
+        A();
+        ~A();
+        int f() const;
+    };
+
+
+    class MyClass {
+    private:
+        int m_Val;
+    public:
+        int Func() const; // Func() 멤버 함수 선언   
+    };
+
+    A::A() : m_MyClass(new MyClass()) {} // 생성합니다.
+    A::~A() {delete m_MyClass;} // 소멸합니다.
+    int A::f() const {return m_MyClass->Func();} // MyClass를 사용합니다.
+
+    // Func 함수 정의 
+    int MyClass::Func() const {
+        return m_Val;
+    }
+}
+namespace Forward_2 {
+
+
+    // ----
+    // 전방 선언 상호 참조
     // ----
     // 1. YourClass 전방 선언
     class YourClass; 
