@@ -1,11 +1,14 @@
 #include "gtest/gtest.h" 
 
 namespace {
+#if 201402L <= __cplusplus // C++14~        
     // C++14 변수 템플릿
     template<class T>
     // constexpr T pi_14{3.1415926535897932385L}; // 중괄호 초기화는 암시적 형변환이 안되서 = 로 초기화 합니다.
     constexpr T pi_14 = 3.1415926535897932385L; 
+#endif
 
+#if 201402L <= __cplusplus // C++14~    
     // C++14 변수 템플릿. 팩토리얼 
     
     // 1을 뺀 값을 재귀 호출합니다.
@@ -15,7 +18,7 @@ namespace {
     // 1일때 특수화 버전. 더이상 재귀 호출을 안합니다.
     template<>
     constexpr int factorial_14<1> = 1;
-
+#endif
 }
 namespace Template_1 { 
     // (C++17~) 클래스 템플릿 인자 추론
@@ -47,6 +50,7 @@ namespace Template_2 {
 }
 
 TEST(TestMordern, Template) {
+#if 201402L <= __cplusplus // C++14~        
     // C++14 변수 템플릿
     {
         // 동일한 값을 타입에 따라 서로 다른 정밀도로 사용할 수 있습니다.
@@ -54,10 +58,15 @@ TEST(TestMordern, Template) {
         std::cout << "pi_14<float> : " << std::setprecision(10) << pi_14<float> << std::endl;
         std::cout << "pi_14<int> : " << std::setprecision(10) << pi_14<int> << std::endl;
     } 
+#endif 
+
+#if 201402L <= __cplusplus // C++14~    
     // C++14 변수 템플릿. 팩토리얼 
     {
         EXPECT_TRUE(factorial_14<5> == 5 * 4 * 3 * 2 * 1);
     }
+#endif
+    
     // (C++17~) 클래스 템플릿 인자 추론
     {
         using namespace Template_1;

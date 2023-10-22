@@ -11,7 +11,7 @@ namespace {
         // 마지막으로 1에 도달하면 재귀호출 안함
         return val == 1 ? val : val * Factorial_11(val - 1);
     }
-
+#if 201402L <= __cplusplus // C++14~    
     // C++14 `constexpr` 함수 제약 완화
     constexpr int Factorial_14(int val) {
         int result{1}; // 초기화된 지역 변수 정의
@@ -26,6 +26,7 @@ namespace {
 
         return result;
     }   
+#endif    
 }
 
 namespace Constexpr_1 {
@@ -171,12 +172,14 @@ TEST(TestMordern, Constexpr) {
         enum class MyEnum_11 {Val = area.GetVal_11()}; // constexpr 함수 호출
         EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 2 * 5);       
     }
+#if 201402L <= __cplusplus // C++14~        
     // (C++14~) constexpr 함수 제약 완화
     {
         // 컴파일 타임에 계산된 120이 Val에 대입됩니다.
         enum class MyEnum {Val = Factorial_14(5)};
         EXPECT_TRUE(static_cast<int>(MyEnum::Val) == 1 * 2 * 3 * 4 * 5);       
     }
+#endif    
     // C++17 if constexpr
     {
         using namespace Constexpr_1;

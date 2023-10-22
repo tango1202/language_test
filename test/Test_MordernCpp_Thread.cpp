@@ -84,6 +84,7 @@ namespace {
         worker3.join();
         worker4.join();
     }
+#if 201402L <= __cplusplus // C++14~        
     void SharedWrite_14(std::vector<int>::iterator itr, std::vector<int>::iterator endItr, std::shared_timed_mutex& mutex) {
         for(int i = 0; itr != endItr; ++itr, i++) {
             std::shared_lock<std::shared_timed_mutex> lock(mutex); // mutex를 공유합니다.
@@ -105,7 +106,7 @@ namespace {
         worker3.join();
         worker4.join();
     }    
-
+#endif
 };
 
 
@@ -320,6 +321,7 @@ TEST(TestMordern, Thread) {
 
         a.OnceFunc(); // 더이상 Func()을 호출하지 않습니다.
     }
+#if 201402L <= __cplusplus // C++14~        
     // C++14 shared_timed_mutex 와 shared_lock
     {
         std::vector<int> v;
@@ -347,6 +349,8 @@ TEST(TestMordern, Thread) {
             EXPECT_TRUE(v[i] == 1);
         } 
     }
+#endif
+
 #if 201703L <= __cplusplus // C++17~    
     // (C++17~) scoped_lock
     {

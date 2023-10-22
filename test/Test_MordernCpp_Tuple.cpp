@@ -118,6 +118,7 @@ TEST(TestMordern, Tuple) {
             data.second.GetVal() == 1 + 2 + 3 + 4
         );
     }
+#if 201402L <= __cplusplus // C++14~        
     // C++14~ 타입 기반 get()
     {
         using namespace Tuple_1;
@@ -132,6 +133,7 @@ TEST(TestMordern, Tuple) {
             std::get<char>(result) == 'a' 
         );
     }
+#endif    
     // C++17 apply()
     {
         using namespace Tuple_3;

@@ -170,7 +170,7 @@ TEST(TestMordern, Lambda) {
         f1_11();
         f2_11();
     }
-
+#if 201402L <= __cplusplus // C++14~  
     // C++14 람다 캡쳐 초기화
     {
         // 클로저 개체 생성시 람다 내에서 사용할 수 있는 val_14 변수를 만들어 캡쳐 합니다.
@@ -181,7 +181,9 @@ TEST(TestMordern, Lambda) {
         EXPECT_TRUE(f_14() == 1);
         EXPECT_TRUE(f_14() == 2);
         EXPECT_TRUE(f_14() == 3);
-    }    
+    } 
+#endif     
+#if 201402L <= __cplusplus // C++14~          
     // C++14~ 일반화된 람다 함수
     {
         auto add_14{[](auto a, auto b) {return a + b;}}; 
@@ -189,6 +191,7 @@ TEST(TestMordern, Lambda) {
         EXPECT_TRUE(add_14(1, 2) == 3);
         EXPECT_TRUE(add_14(std::string{"hello"}, std::string{"world"}) == "helloworld");
     }
+#endif    
 #if 201703L <= __cplusplus // C++17~
     // (C++17~) constexpr 람다 함수
     {

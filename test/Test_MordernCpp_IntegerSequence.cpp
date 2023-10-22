@@ -3,13 +3,16 @@
 #include <array>
 
 namespace {
+#if 201402L <= __cplusplus // C++14~        
     template<size_t N, std::size_t... params>
     auto ArrayToTuple_14(const std::array<int, N>& arr, std::integer_sequence<size_t, params...>) {
         return std::make_tuple(arr[params]...); // arr[params#1], arr[params#2], arr[params#3] 등으로 전개됨 
     }
+#endif    
 }
 
 TEST(TestMordern, IntergerSequence) {
+    
     // C++14 IntergerSequence
     {
 
@@ -20,6 +23,8 @@ TEST(TestMordern, IntergerSequence) {
             std::get<1>(data) == 20 
         ); 
     } 
+
+#if 201402L <= __cplusplus // C++14~    
     {
         std::array<int, 5> arr{10, 20, 30, 40, 50};    
 
@@ -38,5 +43,5 @@ TEST(TestMordern, IntergerSequence) {
             std::get<2>(data2) == 50 
         ); 
     }
-
+#endif    
 }

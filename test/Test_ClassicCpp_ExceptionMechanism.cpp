@@ -85,7 +85,11 @@ TEST(TestClassicCpp, ExceptionMechanism) {
     }
     {
         try {
+#if 201103L <= __cplusplus // C++11~        
+            std::unique_ptr<int> a(new int(10));    
+#else
             std::auto_ptr<int> a(new int(10)); // (O) 
+#endif
             int b = f(*a);
             int c = g(*a);
         }

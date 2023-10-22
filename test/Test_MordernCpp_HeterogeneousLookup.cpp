@@ -37,6 +37,7 @@ TEST(TestMordern, HeterogeneousLookup) {
 
         EXPECT_TRUE((*result).m_Name == "Lee" && (*result).m_Val == 10);
     }
+ #if 201402L <= __cplusplus // C++14~       
     // 연관 컨테이너의 이종 탐색
     {
         // find() 에서 키 타입외에 다른 것을 사용하려면 std::less<>를 사용합니다.
@@ -52,4 +53,5 @@ TEST(TestMordern, HeterogeneousLookup) {
 
         EXPECT_TRUE((*result).m_Name == "Lee" && (*result).m_Val == 10);
     }
+#endif    
 }

@@ -47,6 +47,7 @@ TEST(TestMordern, UniquePtr) {
     {
         std::unique_ptr<int> a{new int{10}, std::default_delete<int>{}};
     }
+#if 201402L <= __cplusplus // C++14~        
     // C++14 make_unique
     {
         class T {};
@@ -59,6 +60,6 @@ TEST(TestMordern, UniquePtr) {
         Func(std::unique_ptr<T>{new T}, std::unique_ptr<U>{new U}); // (△) 비권장. new T, new U 호출 순서에 따라 예외가 발생합니다.
         Func(std::make_unique<T>(), std::make_unique<U>()); // (O) 
     }
-    
+#endif    
 }
 

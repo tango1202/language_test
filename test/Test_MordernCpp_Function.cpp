@@ -63,7 +63,13 @@ namespace Assign_4{
 TEST(TestMordern, Function) {
     {
         // 7보다 작은지 검사하는 함수
+#if 201103L <= __cplusplus // C++11~
+        class Less_7 {
+            using argument_type = int;
+            using result_type = bool;
+#else
         class Less_7 : std::unary_function<int, bool> {
+#endif
         public:
             result_type operator ()(argument_type val) {
                 return val < 7 ? true : false;

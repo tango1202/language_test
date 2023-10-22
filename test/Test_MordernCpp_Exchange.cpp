@@ -26,6 +26,7 @@ TEST(TestMordern, Exchange) {
             }   
         };
     }
+#if 201402L <= __cplusplus // C++14~        
     // C++14 exchange
     {
         class Big_14 {
@@ -46,5 +47,5 @@ TEST(TestMordern, Exchange) {
             }   
         };
     }
-
+#endif    
 }

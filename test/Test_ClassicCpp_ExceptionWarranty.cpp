@@ -50,10 +50,19 @@ namespace ExceptionWarranty_2 {
     };
 
     class T {
+#if 201103L <= __cplusplus // C++11~
+        std::unique_ptr<A> m_A; // 스마트 포인터
+        std::unique_ptr<B> m_B;
+#else        
         std::auto_ptr<A> m_A; // 스마트 포인터
         std::auto_ptr<B> m_B;
+#endif        
     public:
+#if 201103L <= __cplusplus // C++11~
+        T(std::unique_ptr<A> a, std::unique_ptr<B> b) : m_A(std::move(a)), m_B(std::move(b)) { // 소유권 이전
+ #else   
         T(std::auto_ptr<A> a, std::auto_ptr<B> b) : m_A(a), m_B(b) {  // 소유권 이전
+#endif        
             std::cout << "Construct T" << std::endl;
         } 
         ~T() {
@@ -79,7 +88,11 @@ TEST(TestClassicCpp, ExceptionWarranty) {
         using namespace ExceptionWarranty_2;
         try {
             // (O) 인자 전달을 위해 인수 생성시 예외가 발생해도 스마트 포인터여서 예외에 안전합니다.
+#if 201103L <= __cplusplus // C++11~
+            T t(std::unique_ptr<A>(new A), std::unique_ptr<B>(new B));
+#else            
             T t(std::auto_ptr<A>(new A), std::auto_ptr<B>(new B)); 
+#endif
             const A* other = t.GetA();
         }
         catch (...) {

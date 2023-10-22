@@ -27,6 +27,7 @@ TEST(TestMordern, UserLiteral) {
     }
 }
 TEST(TestMordern, BineryLiteral) {
+#if 201402L <= __cplusplus // C++14~        
     // C++14 이진 리터럴
     {
         int val1_14{0b11};
@@ -37,8 +38,10 @@ TEST(TestMordern, BineryLiteral) {
         EXPECT_TRUE(val2_14 == 0x0F);
         EXPECT_TRUE(val3_14 == 0xFF);
     }
+#endif    
 }
 TEST(TestMordern, DigitSeperator) {
+#if 201402L <= __cplusplus // C++14~        
     // C++14 숫자 구분자
     {
         int val{1000000};
@@ -46,7 +49,7 @@ TEST(TestMordern, DigitSeperator) {
 
         EXPECT_TRUE(val == val_14);
     }
-
+#endif   
 }
 TEST(TestMordern, HexFloatingPointLiteral) {
 #if 201703L <= __cplusplus // C++17~    

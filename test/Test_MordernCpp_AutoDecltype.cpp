@@ -26,6 +26,7 @@ namespace Decltype_3 {
     } 
 }
 namespace Decltype_4 {
+#if 201402L <= __cplusplus // C++14~    
     // C++14 리턴 타입 추론
     auto Add1_14(int a, int b) {
         return a + b;
@@ -64,6 +65,7 @@ namespace Decltype_4 {
     //     // (X) 컴파일 오류. 가상 함수는 리턴 타입 추론을 할 수 없습니다.
     //     virtual auto Add_14(int a) {return a;}
     // };
+#endif    
 }
 TEST(TestMordern, Auto) {
     {
@@ -142,6 +144,7 @@ TEST(TestMordern, Decltype) {
         // T::Func(int) 함수의 리턴 타입
         decltype(std::declval<T>().Func_11(10)) val_11 = t.Func_11(10); 
     }
+#if 201402L <= __cplusplus // C++14~        
     // C++14 decltype(auto)
     {
         using namespace Decltype_3;
@@ -166,4 +169,5 @@ TEST(TestMordern, Decltype) {
         auto result3 = Add3_14(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
         // auto result4 = Add4(10, 20); // const int& 리턴. 리턴하는 (result) 표현식과 동일. 
     }
+#endif
 }

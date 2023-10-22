@@ -36,8 +36,15 @@ namespace Functor_1 {
 }
 namespace Functor_2 {
     // 인자 1개를 사용하는 함수자 정의
+#if 201103L <= __cplusplus // C++11~
+    class Adder {
+        using argument_type = int&;
+        using result_type = void;
+#else    
     class Adder : std::unary_function<int&, void> {
+#endif        
         argument_type m_Val;
+
     public:
         explicit Adder(argument_type val) : m_Val(val) {}
         result_type operator ()(argument_type val) {
@@ -62,7 +69,13 @@ namespace Functor_2 {
     }
 
     // 7보다 작은지 검사하는 함수
+#if 201103L <= __cplusplus // C++11~
+    class Less_7 {
+        using argument_type = int;
+        using result_type = bool;
+#else
     class Less_7 : std::unary_function<int, bool> {
+#endif        
     public:
         result_type operator ()(argument_type val) {
             return val < 7 ? true : false;
@@ -141,7 +154,11 @@ TEST(TestClassicCpp, Functor) {
         itr = std::find_if( 
             v.begin(),
             v.end(),
+#if 201103L <= __cplusplus // C++11~
+            std::bind(std::less<int>(), std::placeholders::_1, 7)
+#else            
             std::bind2nd(std::less<int>(), 7)
+#endif
         );  
 
         EXPECT_TRUE(*itr == 4);  
@@ -160,7 +177,10 @@ TEST(TestClassicCpp, Functor) {
         for (; itr != endItr; ++itr) {
             (*itr).Func();
         }
-
+#if 201103L <= __cplusplus // C++11~
+        std::for_each(v.begin(), v.end(), std::mem_fn(&A::Func));
+#else
         std::for_each(v.begin(), v.end(), std::mem_fun_ref(&A::Func));
+#endif
     }
 }

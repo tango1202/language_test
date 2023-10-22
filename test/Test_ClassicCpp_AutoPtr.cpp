@@ -39,10 +39,15 @@ namespace AutoPtr_4 {
     class T {};
     class U {
     private:
+
         // T의 포인터를 auto_ptr로 관리합니다.
         // 복사 생성자, 복사 대입 연산자에서 소유권을 이전합니다.
         // auto_ptr 소멸시 T를 알아서 소멸시킵니다. 
+#if 201103L <= __cplusplus // C++11~ 
+        std::unique_ptr<T> m_T;
+#else       
         std::auto_ptr<T> m_T;
+#endif
     public:
         explicit U(T* t) : m_T(t) {}
     };
@@ -109,8 +114,11 @@ TEST(TestClassicCpp, AutoPtr) {
    
         U u1(new T); // (O)명시적으로 T를 delete하지 않아도 auto_ptr 자동 소멸시 소멸됩니다.
         U u2(new T);
-
+#if 201103L <= __cplusplus // C++11~
+        u1 = std::move(u2);
+#else
         u1 = u2; //(O) 소유권을 u1으로 이전합니다. 
+#endif
     }   
     {
         using namespace AutoPtr_5;
