@@ -1,7 +1,11 @@
 #include "gtest/gtest.h" 
 
-#include <execution>
+#if 201703L <= __cplusplus // C++17~
+    #include <execution>
+#endif
 #include <thread>
+#include <algorithm>
+#include <numeric>
 
 namespace {
     template<typename Func, typename... Params>
@@ -33,7 +37,7 @@ namespace {
 
         EXPECT_TRUE(total == 100);       
     }
-
+#if 201703L <= __cplusplus // C++17~
     void SumPararell() { 
         std::vector<int> v(100, 1); // 100 개를 생성하고 1로 초기화 합니다.
 
@@ -55,6 +59,7 @@ namespace {
 
         EXPECT_TRUE(total == 100);       
     }
+#endif
 }
 
 TEST(TestMordern, Algorithm) {
@@ -65,8 +70,11 @@ TEST(TestMordern, Algorithm) {
         int init{0};
 
         EXPECT_TRUE(std::accumulate(v.begin(), v.end(), init) == init + v[0] + v[1] + v[2] + v[3]); // 왼쪽에서 오른쪽으로 순서대로 계산합니다.
+#if 201703L <= __cplusplus // C++17~
         EXPECT_TRUE(std::reduce(v.begin(), v.end(), init) == init + v[3] + v[2] + v[0] + v[1]); // (C++17~) 순서는 뒤죽박죽이지만 계산 결과는 같습니다.
+#endif
     }
+   
     // C++17 병렬 알고리즘과 실행 정책
     {
         // 일반 알고리즘
@@ -75,11 +83,13 @@ TEST(TestMordern, Algorithm) {
         )};
         std::cout << "Sum Duration : " << duration1.count() << std::endl; 
   
-
+#if 201703L <= __cplusplus // C++17~
         // parallel_policy
         std::chrono::microseconds duration3{Measure(
             SumPararell
         )};
         std::cout << "SumPararell Duration : " << duration3.count() << std::endl; 
+#endif        
     }
+  
 }

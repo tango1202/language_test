@@ -49,12 +49,14 @@ TEST(TestMordern, DigitSeperator) {
 
 }
 TEST(TestMordern, HexFloatingPointLiteral) {
+#if 201703L <= __cplusplus // C++17~    
     // (C++17~) 16진수 부동 소수점 리터럴
     {
         // A(10진수 10), 9(1/16 * 9 = 0.5625), (p11은 2의 11승 == 2048)
         // 즉, 10.5625 * 2 ^ 11 =  21632
         float floatVal_17 = 0xA.9p11; // 21632 
     }
+#endif
 }
 
 

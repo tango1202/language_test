@@ -189,7 +189,7 @@ TEST(TestMordern, Lambda) {
         EXPECT_TRUE(add_14(1, 2) == 3);
         EXPECT_TRUE(add_14(std::string{"hello"}, std::string{"world"}) == "helloworld");
     }
-
+#if 201703L <= __cplusplus // C++17~
     // (C++17~) constexpr 람다 함수
     {
         // 명시적 constexpr 람다 함수 입니다.
@@ -210,6 +210,7 @@ TEST(TestMordern, Lambda) {
         int d{2};
         EXPECT_TRUE(add_17(c, d) == 3);
     }
+#endif    
 
 }
 

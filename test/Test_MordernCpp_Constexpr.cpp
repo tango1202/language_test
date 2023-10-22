@@ -94,7 +94,7 @@ namespace Constexpr_2 {
     public:
         enum {Val = sizeof(Test(static_cast<D*>(0))) == sizeof(Yes)};
     };
-
+#if 201703L <= __cplusplus // C++17~
     // C++17
     template<typename T>
     class CloneTraits {
@@ -112,7 +112,8 @@ namespace Constexpr_2 {
                 return ptr->Clone();
             }
         } 
-    };    
+    }; 
+#endif       
 }
 
 TEST(TestMordern, Constexpr) {
@@ -184,11 +185,13 @@ TEST(TestMordern, Constexpr) {
         // int* ptr{CloneTraits<int>::Clone(&val)}; // (X) 컴파일 오류. int에 Clone() 함수가 없습니다.       
         // delete ptr;
     }
+#if 201703L <= __cplusplus // C++17~    
     {
         using namespace Constexpr_2;
 
         int val;
         int* ptr{CloneTraits<int>::Clone_17(&val)}; // (O)
         delete ptr; 
-    }    
+    } 
+#endif       
 }

@@ -42,6 +42,7 @@ namespace NoExcept_5 {
     void FuncTrue_11() noexcept(true) {}
     void FuncFalse_11() noexcept(false) {}
 }
+#if 201703L <= __cplusplus // C++17~
 namespace NoExcept_6 {
     // C++17
     typedef void (*MyFunc_17)(void) noexcept; 
@@ -49,6 +50,7 @@ namespace NoExcept_6 {
     void FuncTrue_11() noexcept(true) {}
     void FuncFalse_11() noexcept(false) {}
 }
+#endif
 
 TEST(TestMordern, NoExcept) {
     {
@@ -73,11 +75,13 @@ TEST(TestMordern, NoExcept) {
         MyFunc f1{FuncTrue_11}; 
         MyFunc f2{FuncFalse_11};    
     }
+#if 201703L <= __cplusplus // C++17~    
     {
         using namespace NoExcept_6;
 
         // C++17~ 이후에는 noexcept를 고려하여 대입할 수 있습니다.
         MyFunc_17 f3_17{FuncTrue_11}; 
         // MyFunc_17 f4_17{FuncFalse_11}; // (X) 컴파일 오류. noexcept가 다릅니다.  
-    }    
+    } 
+#endif   
 }

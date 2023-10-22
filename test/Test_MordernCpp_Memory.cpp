@@ -2,6 +2,7 @@
 #include <memory>
 
 TEST(TestMordern, Memory) {
+#if 201703L <= __cplusplus // C++17~    
     // C++17 메모리 유틸리티 작업
     {
         class T {
@@ -35,6 +36,9 @@ TEST(TestMordern, Memory) {
         // 요소 3개의 소멸자 호출
         std::destroy(begin, end);
     }
+#endif
+
+#if 201703L <= __cplusplus // C++17~
     // C++17 launder
     {
         class A {
@@ -58,4 +62,5 @@ TEST(TestMordern, Memory) {
 
         delete std::launder(ptr);
     }
+#endif    
 }

@@ -370,10 +370,11 @@ TEST(TestMordern, SharedPtr) {
             std::cout << "bad_weak_ptr" << std::endl;
         }
     }
-    
+#if 201703L <= __cplusplus // C++17~    
     // C++17 배열 지원
     {
         std::unique_ptr<int[]> ptr{new int[3]{0, 1, 2}}; // 배열 개체. delete[] 를 호출하여 2개가 소멸됩니다.
         EXPECT_TRUE(ptr[0] == 0 && ptr[1] == 1 && ptr[2] == 2);
     }
+#endif    
 }

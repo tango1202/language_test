@@ -6,8 +6,8 @@ namespace {
 }
 
 TEST(TestMordern, Variant) {
-
-    // C++ 17 Variant
+#if 201703L <= __cplusplus // C++17~
+    // C++17 Variant
     {
         // 기본 생성하면 0번째 타입의 기본 생성값으로 초기화 합니다.
         std::variant<int, std::string> var{};
@@ -94,4 +94,5 @@ TEST(TestMordern, Variant) {
             std::visit([](auto&& val){Func(val);}, element);
         }  
     }
+#endif    
 }

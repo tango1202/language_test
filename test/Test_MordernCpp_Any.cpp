@@ -10,7 +10,8 @@ TEST(TestMordern, Any) {
         data = new T; // T 타입을 사용합니다.
         delete reinterpret_cast<T*>(data);        
     }
-    // c++17 any
+#if 201703L <= __cplusplus // C++17~    
+    // C++17 any
     {
         std::any data{10}; // 정수 타입을 사용합니다.
         EXPECT_TRUE(std::any_cast<int>(data) == 10); // 데이터를 사용할때 any_cast를 이용합니다.
@@ -27,5 +28,6 @@ TEST(TestMordern, Any) {
 
         EXPECT_TRUE(data.has_value() == false);
     }
+#endif    
 
 }

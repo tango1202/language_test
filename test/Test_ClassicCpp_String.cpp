@@ -40,54 +40,54 @@ TEST(TestClassicCpp, String) {
     // 소스 코드와 인코딩
     {
         // UTF-8
-        char* str = "가"; // UTF-8 가[0xEA 0xB0 0x80] 가 저장된 곳을 가리키는 포인터 입니다.
+        const char* str = "가"; // UTF-8 가[0xEA 0xB0 0x80] 가 저장된 곳을 가리키는 포인터 입니다.
 
         EXPECT_TRUE(strlen(str) == 3); // UTF-8에서 한글 1글자는 3byte 입니다.
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 0) == 0xEA);
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 1) == 0xB0);
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 2) == 0x80);
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 0) == 0xEA);
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 1) == 0xB0);
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 2) == 0x80);
     }
     {
         // euc-kr
-        // char* str = "가"; // 완성형 가[0xB0 0xA1] 가 저장된 곳을 가리키는 포인터 입니다.
+        // const char* str = "가"; // 완성형 가[0xB0 0xA1] 가 저장된 곳을 가리키는 포인터 입니다.
 
         // EXPECT_TRUE(strlen(str) == 2); // euc-kr에서 한글 1글자는 2byte 입니다.
-        // EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 0) == 0xB0);
-        // EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 1) == 0xA1);
+        // EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 0) == 0xB0);
+        // EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 1) == 0xA1);
     
     }
     // 바이트 문자열
     {
-        char* str = "abc"; // 0x61 0x62 0x63 가 저장된 영역을 가리키는 포인터 입니다.
+        const char* str = "abc"; // 0x61 0x62 0x63 가 저장된 영역을 가리키는 포인터 입니다.
 
         EXPECT_TRUE(strlen(str) == 3); // UTF-8에서 영문 3글자는 3byte입니다.
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 0) == 0x61); // 0x61. 아스키 코드 a
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 1) == 0x62); // 0x62. 아스키 코드 b
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 2) == 0x63); // 0x63. 아스키 코드 c
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 3) == 0x00); // 널문자        
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 0) == 0x61); // 0x61. 아스키 코드 a
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 1) == 0x62); // 0x62. 아스키 코드 b
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 2) == 0x63); // 0x63. 아스키 코드 c
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 3) == 0x00); // 널문자        
     }
     // 멀티 바이트 문자열
     {
-        char* str = "abc가나다"; // abc[0x61 0x62 0x63] 가[0xEA 0xB0 0x80] 나[0xEB 0x82 0x98] 다[0xEB 0x8B 0xA4] 가 저장된 영역을 가리키는 포인터 입니다.
+        const char* str = "abc가나다"; // abc[0x61 0x62 0x63] 가[0xEA 0xB0 0x80] 나[0xEB 0x82 0x98] 다[0xEB 0x8B 0xA4] 가 저장된 영역을 가리키는 포인터 입니다.
         EXPECT_TRUE(strlen(str) == 12); // UTF-8에서 한글 1글자는 12byte입니다. a(1) + b(1) + c(1) + 가(3) + 나(3) + 다(3) 1 + 1 + 1 + 3 + 3 + 3 = 12 
 
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 0) == 0x61); // 0x61. 아스키 코드 a
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 1) == 0x62); // 0x62. 아스키 코드 b
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 2) == 0x63); // 0x63. 아스키 코드 c
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 0) == 0x61); // 0x61. 아스키 코드 a
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 1) == 0x62); // 0x62. 아스키 코드 b
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 2) == 0x63); // 0x63. 아스키 코드 c
   
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 3) == 0xEA); // 가
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 4) == 0xB0); 
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 5) == 0x80); 
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 3) == 0xEA); // 가
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 4) == 0xB0); 
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 5) == 0x80); 
 
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 6) == 0xEB); // 나
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 7) == 0x82); 
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 8) == 0x98); 
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 6) == 0xEB); // 나
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 7) == 0x82); 
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 8) == 0x98); 
 
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 9) == 0xEB); // 다
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 10) == 0x8B); 
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 11) == 0xA4); 
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 9) == 0xEB); // 다
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 10) == 0x8B); 
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 11) == 0xA4); 
 
-        EXPECT_TRUE(*reinterpret_cast<unsigned char*>(str + 12) == 0x00); // 널문자  
+        EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 12) == 0x00); // 널문자  
 
         std::setlocale(LC_ALL, "en_US.utf8");
         EXPECT_TRUE(mblen(str + 0, MB_CUR_MAX) == 1); // a 문자는 1byte 크기임
@@ -110,7 +110,7 @@ TEST(TestClassicCpp, String) {
     }
     // 와이드 문자열
     {
-        wchar_t* wstr = L"abc가나다"; // abc[0x61 0x62 0x63] 가[0xAC00] 나[0xB098] 다[0xB2E4] 가 저장된 영역을 가리키는 포인터 입니다.
+        const wchar_t* wstr = L"abc가나다"; // abc[0x61 0x62 0x63] 가[0xAC00] 나[0xB098] 다[0xB2E4] 가 저장된 영역을 가리키는 포인터 입니다.
         EXPECT_TRUE(wcslen(wstr) == 6); // Windows에서는 2byte 단위로 저장합니다.
 
         EXPECT_TRUE(wstr[0] == 0x0061); // 0x0061. UTF-16 인코딩. 아스키 코드 a

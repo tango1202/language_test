@@ -1,9 +1,11 @@
 #include "gtest/gtest.h" 
 
-#include <memory_resource>
+#if 201703L <= __cplusplus // C++17~
+    #include <memory_resource>
+#endif
 
 TEST(TestMordern, PolymorphicAllocator) {
-
+#if 201703L <= __cplusplus // C++17~
     // C++17 polymorphic_allocator
     {
         unsigned char data[100]; // 100 byte 공간을 할당합니다.
@@ -16,4 +18,5 @@ TEST(TestMordern, PolymorphicAllocator) {
         v.push_back(2);
         EXPECT_TRUE(v[0] == 1 && v[1] == 2); 
     }
+#endif    
 }

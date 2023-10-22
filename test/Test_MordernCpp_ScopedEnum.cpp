@@ -61,7 +61,7 @@ TEST(TestMordern, ScopedEnum) {
         // Func_11('c'); // (△) 컴파일 오류
         Func_11(MyInt_11(10)); // MyInt_11 타입만 가능합니다.       
     }
-
+#if 201703L <= __cplusplus // C++17~
     // C++17 열거형의 중괄호 직접 초기화 허용
     {
         MyInt_11 val1(MyInt_11(10));
@@ -73,5 +73,6 @@ TEST(TestMordern, ScopedEnum) {
         MyInt_11 val6_17{10}; // (O) C++17~ 중괄호 직접 초기화를 지원합니다.
         // MyInt_11 val7 = {10}; // (X) 컴파일 오류. 중괄호 복사 초기화는 지원하지 않습니다.    
     }
+#endif
 
 }

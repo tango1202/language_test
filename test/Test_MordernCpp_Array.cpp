@@ -1,5 +1,7 @@
 #include "gtest/gtest.h" 
 
+#include <array>
+
 namespace {
     // 생성/소멸 테스트
     void CStyleArrayConstruct() {

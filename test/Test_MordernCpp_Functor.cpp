@@ -11,6 +11,7 @@ namespace {
 }
 
 TEST(TestMordern, Functor) {
+#if 201703L <= __cplusplus // C++17~    
     // C++17 Searcher
     {
         std::string data{"Hello world."};
@@ -30,10 +31,14 @@ TEST(TestMordern, Functor) {
             EXPECT_TRUE(std::distance(data.begin(), itr) == 6);
         }
     }
+#endif
+
+#if 201703L <= __cplusplus // C++17~
     // C++17 not_fn
     {
         // IsSame을 부정하는 함수자를 만듭니다.
         auto IsDifferent{std::not_fn(IsSame)};
         EXPECT_TRUE(IsDifferent(1, 1, 1) == false); // 인자가 여러개여도 됩니다. 
     }
+#endif    
 }

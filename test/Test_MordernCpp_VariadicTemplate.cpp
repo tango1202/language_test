@@ -39,6 +39,7 @@ namespace VariadicTemplate_2 {
         return Sum((params + 1)...); // 파라메터 팩의 각 요소에 1을 더해 배포합니다.
     }        
 }
+#if 201703L <= __cplusplus // C++17~
 // (C++17~) Fold 표현식
 namespace VariadicTemplate_3 {
     template<typename... Params>
@@ -76,6 +77,7 @@ namespace VariadicTemplate_3 {
         return (init +...+ params); 
     }   
 }
+#endif
 
 TEST(TestMordern, VariadicTemplate) {
     {
@@ -97,6 +99,7 @@ TEST(TestMordern, VariadicTemplate) {
         using namespace VariadicTemplate_2;
         EXPECT_TRUE(Func_11(1, 2, 3) == 2 + 3 + 4);
     }
+#if 201703L <= __cplusplus // C++17~    
     // (C++17~) Fold 표현식
     {
         using namespace VariadicTemplate_3;
@@ -106,4 +109,5 @@ TEST(TestMordern, VariadicTemplate) {
         EXPECT_TRUE(UnaryLeftFold_17(1, 2, 3) == 1 + 2 + 3);
         EXPECT_TRUE(BinaryLeftFold_17(10, 1, 2, 3) == 10 + 1 + 2 + 3); 
     }
+#endif    
 }

@@ -1,6 +1,7 @@
 #include "gtest/gtest.h" 
 
 TEST(TestMordern, StructuredBinding) {
+#if 201703L <= __cplusplus // C++17~    
     // C++17~ 구조화된 바인딩 - 배열
     {
         int arr[]{1, 2, 3};
@@ -54,6 +55,7 @@ TEST(TestMordern, StructuredBinding) {
         EXPECT_TRUE(id_17 == 10 && name_17 == "John");
         EXPECT_TRUE(idRef_17 == 20 && nameRef_17 == "John");
     }  
+#endif    
     // / C++17~ 구조화된 바인딩 - 컨테이너 활용 
     {
         // 고전 C++ 스타일
@@ -96,6 +98,7 @@ TEST(TestMordern, StructuredBinding) {
             std::cout << "insert fail" << std::endl;
         }        
     }
+#if 201703L <= __cplusplus // C++17~    
     {
         // C++17 스타일
 
@@ -115,5 +118,6 @@ TEST(TestMordern, StructuredBinding) {
             std::cout << "insert fail" << std::endl;
         } 
     }
+#endif    
  
 }

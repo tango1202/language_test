@@ -37,11 +37,13 @@ namespace Template_2 {
         T GetVal() {return val;} 
     };
 
+#if 201703L <= __cplusplus // C++17~
     template<auto val> // 타입이 아닌 개체인 경우 auto를 사용할 수 있습니다.
     class A_17 {
     public:
         auto GetVal() const {return val;}
     };   
+#endif    
 }
 
 TEST(TestMordern, Template) {
@@ -63,18 +65,21 @@ TEST(TestMordern, Template) {
        
         A<int> a{10}; // ~C++17 이전에는 타입을 명시해야 합니다.
         EXPECT_TRUE(a.Func(1, 2) == 3);
-       
+#if 201703L <= __cplusplus // C++17~       
         A a_17{10}; // C++17 이후부터는 인수로부터 추론합니다.
-        EXPECT_TRUE(a_17.Func(1, 2) == 3);     
+        EXPECT_TRUE(a_17.Func(1, 2) == 3);    
+#endif         
     }
     {
         using namespace Template_2;
 
         A<int, 10> a{};
         EXPECT_TRUE(a.GetVal() == 10);
-
+        
+#if 201703L <= __cplusplus // C++17~
         A_17<10> a_17{};
         EXPECT_TRUE(a_17.GetVal() == 10);
+#endif
     }
 
 }

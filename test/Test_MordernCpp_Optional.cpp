@@ -1,7 +1,7 @@
 #include "gtest/gtest.h" 
 
 TEST(TestMordern, Optional) {
-
+#if 201703L <= __cplusplus // C++17~
     // C++ Optional
     {
         std::optional<std::string> option{"Kim"};
@@ -34,4 +34,5 @@ TEST(TestMordern, Optional) {
         // 값이 없으면 사용할 기본값을 전달합니다.
         EXPECT_TRUE(option.value_or("empty") == "empty");    
     }
+#endif
 }

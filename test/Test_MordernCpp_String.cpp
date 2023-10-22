@@ -13,11 +13,13 @@ namespace StringView_2 {
         return i;
     }  
 }
+#if 201703L <= __cplusplus // C++17~
 namespace StringView_3 {
     std::size_t Func(std::string_view sv) {
         return sv.length();
     }    
 }
+#endif
 
 TEST(TestMordern, String) {
     {
@@ -75,6 +77,7 @@ TEST(TestMordern, StringView) {
         EXPECT_TRUE(Func(str1.c_str()) == 5); // (△) 비권장. 널종료 문자열을 만듭니다.
         EXPECT_TRUE(Func(str2) == 5); // (△) 비권장. 문자열의 길이는 매번 다시 '\0'까지 카운팅해야 합니다.          
     }
+#if 201703L <= __cplusplus // C++17~    
     {
         using namespace StringView_3;
 
@@ -84,9 +87,13 @@ TEST(TestMordern, StringView) {
         EXPECT_TRUE(Func(str1) == 5); // (O) 불필요하게 string 개체를 생성하지 않습니다.
         EXPECT_TRUE(Func(str2) == 5); // (O) 불필요하게 string 개체를 생성하지 않습니다.
     }
+#endif    
 }
 
 TEST(TestMordern, Convert) {
+
+#if 201703L <= __cplusplus // C++17~
+    // C++17 숫자, 문자열 변환
     {
         char buf[10];
         {      
@@ -111,6 +118,7 @@ TEST(TestMordern, Convert) {
         }
         EXPECT_TRUE(ptr == &str[2]); // year는 숫자가 아니므로 첫 문자 주소를 리턴합니다.
     }
+#endif    
 }
 
 

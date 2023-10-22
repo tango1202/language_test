@@ -288,8 +288,8 @@ TEST(TestMordern, Function) {
         std::function<int(int)> func2{std::bind(Sum, 1, std::placeholders::_1, 3)}; // (X) 오동작. function 개체에 저장하면, bind에 대한 관련 속성을 잃어버립니다.
         EXPECT_TRUE(IsPlaceholder(func2) == false);        
     }    
-
-    // C++ 17 invoke
+#if 201703L <= __cplusplus // C++17~
+    // C++17 invoke
     {
         using namespace Invoke;
         T t;
@@ -297,5 +297,6 @@ TEST(TestMordern, Function) {
 
         EXPECT_TRUE(std::invoke(Sum, 1, 2) == 1 + 2); // 일반 함수를 호출합니다.
     }
+#endif
 
 }

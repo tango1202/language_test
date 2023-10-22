@@ -34,11 +34,11 @@ TEST(TestMordern, UniformInitialization) {
             T() {}
             T(int a, char b) : m_A(a), m_B(b) {}    
         };
-        T obj(); //(△) 비권장. T를 리턴하는 obj 함수 선언
+        // T obj(); // (△) 비권장. T를 리턴하는 obj 함수 선언
 
         T obj1; // 기본 생성자로 T 개체 생성
-        T obj2(T()); // 기본 생성자인 T()로 생성한 개체를 obj의 복사 생성자로 복사 생성
-        T obj3 = T(); // T obj(T());와 동일
+        // T obj2(T()); // (△) 비권장. T 타입의 기본 생성자로 생성한 것을 T obj2에 복사 생성하고 싶지만, T 타입을 리턴하고, T(*)()함수 포인터를 인자로 전달받는 함수 obj2를 선언합니다. 
+        T obj3 = T(); // T obj(T());와 유사. T()로 기본 생성된 것을 T obj3에 복사 생성. 단 컴파일러 최적화로 1회만 생성될 수 있음
         T obj4(10, 'b'); // m_A == 10, m_B == `b`인 T 개체 생성
 
         T arr[] = {T(), T(10, 'b')}; // T 요소 2개인 배열 생성
@@ -59,8 +59,8 @@ TEST(TestMordern, UniformInitialization) {
         };
 
         T obj1_11{}; // 기본 생성자로 T 개체 생성
-        T obj2_11{T{}}; // 기본 생성자인 T()로 생성한 개체를 obj의 복사 생성자로 복사 생성
-        T obj3_11 = T{}; // T obj = T();와 동일
+        T obj2_11{T{}}; // 기본 생성자인 T()로 생성한 개체를 obj2_11의 복사 생성자로 복사 생성
+        T obj3_11 = T{}; // T obj2_11{T{}}와 유사. T{}로 기본 생성된 것을 T obj2_11 복사 생성. 단 컴파일러 최적화로 1회만 생성될 수 있음
         T obj4_11{10, 'b'}; // T(int a, char b) 생성자 호출. m_A == 10, m_B == `b`인 T 개체 생성
 
         T arr_11[]{T{}, T{10, 'b'}}; // T 요소 2개인 배열 생성
@@ -113,7 +113,7 @@ TEST(TestMordern, UniformInitialization) {
 
         T a_11{}; // 기본 생성자 호출
         T b_11 = {}; // T b_11 = T{};와 동일
-        T c_11 = T{}; // T c_11{T{}} 와 동일. 즉 T 기본 생성자를 호출하고, 복사 생성자를 호출. 컴파일러 최적화에 의해 2개의 생성을 1개의 생성으로 바꿈    }
+        T c_11 = T{}; // T 기본 생성자를 호출하고, 복사 생성자를 호출. 컴파일러 최적화에 의해 2개의 생성을 1개의 생성으로 바꿈   
     }
     {
         class T {
@@ -270,15 +270,19 @@ TEST(TestMordern, UniformInitialization) {
         T_11 t{{1, 2, 3}}; // {1, 2, 3} 은 initializer_list를 생성해서 전달합니다.
     }
     {
-        std::initializer_list<int> data_11;
-        data_11 = {1, 2, 3}; // {1, 2, 3} 은 initializer_list를 생성해서 전달합니다.         
-        
-        std::vector<int> v;
-        auto itr = data_11.begin();
-        auto endItr = data_11.end();
-        for (;itr != endItr; ++itr) {
-            v.push_back(*itr);
-        }
+        class T_11 {
+        public:
+            void operator =(std::initializer_list<int> data_11) { // 복사 대입 연산자가 initializer_list를 전달받습니다.
+                std::vector<int> v;
+                auto itr = data_11.begin();
+                auto endItr = data_11.end();
+                for (;itr != endItr; ++itr) {
+                    v.push_back(*itr);
+                }
+            }    
+        };
+        T_11 t;
+        t = {1, 2, 3}; // {1, 2, 3} 은 initializer_list를 생성해서 전달합니다.         
     }
     {
         std::vector<int> v;
@@ -310,7 +314,7 @@ TEST(TestMordern, UniformInitialization) {
         std::vector<int> v_11{2};
         EXPECT_TRUE(v_11.size() == 1 && v_11[0] == 2);        
     }
-
+#if 201703L <= __cplusplus // C++17~
     // (C++17~) 중괄호 초기화에서 auto 추론의 새로운 규칙
     {
         int a_17{1}; // a는 int
@@ -319,6 +323,6 @@ TEST(TestMordern, UniformInitialization) {
         auto d_17 = {1, 2}; // d는 initializer_list<int>  
         // auto e_11{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
     }
-
+#endif    
 
 }

@@ -1,5 +1,7 @@
 #include "gtest/gtest.h" 
 
+#include <array>
+
 namespace {
     template<size_t N, std::size_t... params>
     auto ArrayToTuple_14(const std::array<int, N>& arr, std::integer_sequence<size_t, params...>) {

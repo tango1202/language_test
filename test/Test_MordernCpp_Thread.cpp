@@ -347,6 +347,7 @@ TEST(TestMordern, Thread) {
             EXPECT_TRUE(v[i] == 1);
         } 
     }
+#if 201703L <= __cplusplus // C++17~    
     // (C++17~) scoped_lock
     {
         class A {
@@ -380,7 +381,7 @@ TEST(TestMordern, Thread) {
         worker1.join(); 
         worker2.join(); 
     }
-
+#endif
 
 
 }

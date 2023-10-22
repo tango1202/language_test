@@ -141,6 +141,7 @@ TEST(TestMordern, Tuple) {
         // tuple의 각 요소를 전개해야 합니다.
         EXPECT_TRUE(Sum(std::get<0>(data), std::get<1>(data), std::get<2>(data)) == 1 + 2 + 3);
     }
+#if 201703L <= __cplusplus // C++17~    
     {
         using namespace Tuple_3;
 
@@ -150,6 +151,9 @@ TEST(TestMordern, Tuple) {
         EXPECT_TRUE(std::apply(Sum, data) == 1 + 2 + 3);
 
     }
+#endif    
+
+#if 201703L <= __cplusplus // C++17~
     // (C++17~) make_from_tuple
     {
         class T{
@@ -162,4 +166,5 @@ TEST(TestMordern, Tuple) {
         // tuple의 요소를 전개하지 않아도 됩니다.
         T t{std::make_from_tuple<T>(std::move(data))};
     }
+#endif    
 }
