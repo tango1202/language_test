@@ -1,6 +1,7 @@
 #include "gtest/gtest.h" 
 #include <typeinfo> 
 
+
 TEST(TestClassicCpp, MemberFunction) {
     // ----
     // 멤버 함수
@@ -76,6 +77,19 @@ TEST(TestClassicCpp, MemberFunction) {
         };
     }
     // ----
+    // 정적 멤버 함수
+    // ----
+    {
+        class T {
+        public:
+            static int f() {return 10;} // 정적 멤버 함수
+        };
+
+        EXPECT_TRUE(T::f() == 10); // (O) T의 정적 멤버 함수 호출
+        T obj;
+        EXPECT_TRUE(obj.f() == 10); // (△) 비권장. T의 정적 멤버 함수 호출. 되기는 합니다만 일반 멤버 함수 호출과 구분이 안되어 가독성이 떨어집니다.
+    }   
+    // ----
     // 가상 함수
     // ----
     {
@@ -88,7 +102,7 @@ TEST(TestClassicCpp, MemberFunction) {
         class Derived : public Base {
         public:
             int f() {return 20;} // (△) 비권장. Base의 동일한 이름의 비 가상 함수를 가림
-            virtual int v() {return 20;} // (O) Base의 가상 함수 재구현
+            virtual int v() {return 20;} // (O) Base의 가상 함수 재구현(오버라이딩)  굳이 virtual을 붙일 필요는 없습니다.
         };
 
         Derived d;

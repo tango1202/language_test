@@ -73,8 +73,17 @@ TEST(TestMordern, Auto) {
         const int b = 0;
 
         auto c_11 = a; // int로 추론됨
-        auto d_11 = b; // 최상위 const는 무시되므로 const int 가 아닌 int로 추론됨
-        d_11 = 10;   
+
+        int arr[] = {1, 2, 3};
+        auto d_11 = arr; // 배열이 아니라 int*로 추론됨
+
+        auto e_11 = b; // 최상위 const는 무시되므로 const int 가 아닌 int로 추론됨
+        e_11 = 10; // const가 아니여서 값을 대입받을 수 있습니다.  
+
+        int x = 10;
+        int& ref = x;
+        auto f_11 = ref; // 참조성이 제거되어 int로 추론됩니다.
+        auto& g_11 = ref; // auto&을 이용하여 억지로 참조자로 받을 수 있습니다.
 
         std::vector<int> v;
 
@@ -84,14 +93,67 @@ TEST(TestMordern, Auto) {
         auto itr_11 = v.begin(); // 템플릿 사용에 따른 긴 타입명 간소화
         auto endItr_11 = v.end();
     }
+    // 중괄호 초기화와 auto
+    {
+        // 모두 int 10으로 초기화됩니다.
+        {
+            int a = 10;
+        }
+        {
+            int a(10);
+        }
+        {
+            int a{10};
+        }
+
+        {
+            auto b_11 = 10; // int 10으로 초기화됩니다.
+        }
+        {
+            auto b_11(10); // int 10으로 초기화 됩니다.
+        }
+        {
+            auto b_11{10}; // int 10으로 초기화 됩니다.
+        }
+        {
+            auto b_11 = {10}; // (△) 비권장. initializer_list로 초기화됩니다.  
+        }      
+    }
+    // 암시적 형변환과 auto
+    {
+        class MyInt {
+            int m_Val;
+        public:
+            explicit MyInt(int val) : m_Val(Clamp(val, 0, 10)) {}
+            operator int() {return m_Val;} // int로 형변환 됩니다.
+
+        private:
+            int Clamp(int val, int min, int max) { // 최대/최소값으로 변경합니다.
+                if (val < min) {return min;}
+                if (max < val) {return max;}
+
+                return val;
+            }
+        };
+
+        int val = MyInt(11); // (△) 비권장. 암시적으로 int로 변경됩니다. 
+        EXPECT_TRUE(val == 10);
+        EXPECT_TRUE(val + 1 == 10 + 1);
+
+        // auto val_11 = MyInt(11); // MyInt입니다.
+        // int& ref = val_11; // (X) 컴파일 오류. 참조자로 변환될 수 없습니다.
+
+        auto val_11 = static_cast<int>(MyInt(11)); // 명시적으로 int 입니다.
+        int& ref = val_11; // (△) 비권장. 참조자로 변환될 수 있습니다만, 근본적으로는 암시적 형변환을 사용하지 마세요.
+     }
 }
 TEST(TestMordern, Decltype) {
     {
         int a = 0;
         const int b = 0;
 
-        decltype(a) c_11 = a; // a와 동일한 int로 추론됨
-        decltype(b) d_11 = a; // auto와는 다르게 b와 동일한 const int로 추론됨
+        decltype(a) c_11 = a; // int. a와 동일한 int로 추론됨
+        decltype(b) d_11 = a; // const int. auto와는 다르게 b와 동일한 const int로 추론됨
         // d_11 = 10; // (X) 컴파일 오류. const int이므로 값대입 안됨
     }
     {
@@ -103,6 +165,29 @@ TEST(TestMordern, Decltype) {
 
         decltype(t->m_Val) a_11 = 10; // 멤버 엑세스로 평가됩니다. double
         decltype((t->m_Val)) b_11 = 10; // 괄호를 추가하면 좌측값 표현식으로 처리합니다. t가 const 이므로 const double&
+    }
+    // auto 와 decltype()의 차이점
+    {
+        // 배열
+        {
+            int arr[] = {1, 2, 3};
+            auto a_11 = arr; // int*
+            decltype(arr) d_11 = {1, 2, 3}; // int d_11[3] 
+        }
+        // 최상위 const
+        {
+            const int constInt = 10;
+            auto a_11 = constInt; // int
+            decltype(constInt) d_11 = constInt; // const int
+        }
+        // 참조성
+        {
+            int x = 10;
+            int& ref = x;
+
+            auto a_11 = ref; // int
+            decltype(ref) d_11 = ref; // int&
+        }
     }
     // 함수 인자
     {
@@ -156,18 +241,40 @@ TEST(TestMordern, Decltype) {
     // C++14 decltype(auto)
     {
         
-        const int val = 1;
-        auto c_11 = val; // int로 추론됨. 최상위 const는 제거됨
-        decltype(auto) d_14 = val; // const int로 추론됨. 
+        // 배열
+        {
+            int arr[] = {1, 2, 3};
+            auto a_11 = arr; // int*
+            decltype(arr) d_11 = {1, 2, 3}; // int d_11[3] 
+            // decltype(auto) d_14 = {1, 2, 3}; // (X) 컴파일 오류. 중괄호 복사 초기화로 배열 요소의 타입까지는 추론하지 못합니다.
+        }
+        // 최상위 const
+        {
+            const int constInt = 10;
+            auto a_11 = constInt; // int
+            decltype(constInt) d_11 = constInt; // const int
+            decltype(auto) d_14 = constInt; // const int
+
+        }
+        // 참조성
+        {
+            int x = 10;
+            int& ref = x;
+
+            auto a_11 = ref; // int
+            decltype(ref) d_11 = ref; // int&
+            decltype(auto) d_14 = ref; // int&
+        }
+
     }
     // C++14 리턴 타입 추론
     {
         using namespace Decltype_4;
 
-        auto result1 = Add1_14(10, 20); // int를 리턴
-        auto result2 = Add2_14(10, 20); // const int를 리턴했지만 템플릿 함수 인수 추론 규칙에 따라 int를 리턴
-        auto result3 = Add3_14(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
-        // auto result4 = Add4(10, 20); // const int& 리턴. 리턴하는 (result) 표현식과 동일. 
+        int result1 = Add1_14(10, 20); // int를 리턴
+        int result2 = Add2_14(10, 20); // const int를 리턴했지만 템플릿 함수 인수 추론 규칙에 따라 int를 리턴
+        const int result3 = Add3_14(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
+        // const int& result4 = Add4_14(10, 20); // const int& 리턴. 리턴하는 (result) 표현식과 동일. 
     }
 #endif
 }

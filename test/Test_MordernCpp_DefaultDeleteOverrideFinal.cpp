@@ -1,6 +1,15 @@
 #include "gtest/gtest.h" 
 
+namespace {
 
+    // delete를 이용한 템플릿 인스턴스화 차단
+    template<typename T> 
+    void Func_11(T) {}
+
+    template<> 
+    void Func_11<char>(char) = delete; // char 버전 함수 삭제
+
+}
 TEST(TestMordern, DefaultDeleteOverrideFinal) {
     // default와 delete
     {
@@ -9,6 +18,23 @@ TEST(TestMordern, DefaultDeleteOverrideFinal) {
             T_11() = default; // 암시적 버전의 기본 생성자 사용
             T_11(const T_11&) = delete; // 암시적 버전의 복사 생성자 막음    
         };
+    }
+    // delete를 이용한 암시적 형변환 차단
+    {
+        class T_11 {
+        public:
+            void Func_11(int) {}
+            void Func_11(char) = delete;
+        };
+
+        T_11 t;
+        t.Func_11(10);
+        // t.Func_11('a'); // (X) 컴파일 오류. delete된 함수입니다.
+    }
+    // delete를 이용한 템플릿 인스턴스화 차단
+    {
+        Func_11(10);
+        // Func_11('a'); // (X) 컴파일 오류. delete된 함수입니다.
     }
     // override
     {
@@ -26,12 +52,12 @@ TEST(TestMordern, DefaultDeleteOverrideFinal) {
     {
         class Base {
         public:
-            virtual void Func1() {};
-            virtual void Func2() {};
+            virtual void Func1_11() {};
+            virtual void Func2_11() {};
         };
         class Derived : public Base {
-            virtual void Func1() override {}; // (O)
-            virtual void Func2() override {}; // (O)
+            virtual void Func1_11() override {}; // (O)
+            virtual void Func2_11() override {}; // (O)
             // virtual void Func_2_11() override {}; // (X) 컴파일 오류. 부모 개체에 해당 멤버 없음
         };       
     }

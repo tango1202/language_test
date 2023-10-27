@@ -15,6 +15,13 @@ namespace Deduction_2 {
     void f(T) {}
 }
 
+namespace Deduction_2_1 {
+    template<typename T, size_t N>
+    std::size_t f(T(&arr)[N]) { // 배열에 대한 참조
+        return N;
+    }
+}
+
 namespace Deduction_3 {
     template<typename T>
     void f(T) {}
@@ -94,6 +101,14 @@ TEST(TestClassicCpp, TemplateDeduction) {
         // T : int* 
         // Parameter : int*        
         f(arr); // f<int*>(int*)
+    }
+
+    {
+        using namespace Deduction_2_1;
+
+        int arr[3];
+        EXPECT_TRUE(sizeof(arr) == 3 * sizeof(int)); // 배열의 전체 용량
+        EXPECT_TRUE(f(arr) == 3); // 배열 요소 갯수
     }
     // 함수는 함수 포인터로 추론합니다.
     {

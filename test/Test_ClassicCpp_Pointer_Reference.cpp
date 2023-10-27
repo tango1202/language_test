@@ -178,7 +178,7 @@ TEST(TestClassicCpp, PointerReference) {
     // ----
     {
         int a[2];
-        int(& r5)[2] = a; // 괄호로 감쌈
+        int(&r5)[2] = a; // 괄호로 감쌈
         r5[0] = 10;
         EXPECT_TRUE(a[0] == 10);
     }

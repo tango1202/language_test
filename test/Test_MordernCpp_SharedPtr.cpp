@@ -1,6 +1,6 @@
 #include "gtest/gtest.h" 
 
-namespace {
+namespace SharedPtr_1 {
     class T {};
     class U {};
     void Func(std::shared_ptr<T> t, std::shared_ptr<U> u) {}
@@ -44,6 +44,23 @@ TEST(TestMordern, SharedPtr) {
         std::shared_ptr<T> a{new T{}};
         std::shared_ptr<T> b{a};        
     }
+    {
+        // 올바른 예
+        std::shared_ptr<int> a{new int{}};
+        EXPECT_TRUE(a.use_count() == 1); 
+
+        std::shared_ptr<int> b{a};
+        EXPECT_TRUE(a.use_count() == 2 && b.use_count() == 2); // a, b 가 같은 제어 블록을 공유합니다.
+
+        // 잘못된 예
+        // int* p = new int{10};
+        // std::shared_ptr<int> a{p}; // p를 관리하는 제어 블록을 생성합니다.
+        // std::shared_ptr<int> b{p}; // (X) 오동작. p를 관리하는 제어 블록을 생성합니다.
+
+        // EXPECT_TRUE(a.use_count() == 1); // a, b가 각각의 제어 블록을 사용하기 때문에 참조 카운트는 각각 1입니다.
+        // EXPECT_TRUE(b.use_count() == 1); 
+    }
+
     // make_shared
     {
         class T {
@@ -54,8 +71,25 @@ TEST(TestMordern, SharedPtr) {
         std::shared_ptr<T> b = std::make_shared<T>(10); // T + 제어 블록 크기만큼 할당
     }
     {
+        using namespace SharedPtr_1;
         Func(std::shared_ptr<T>{new T}, std::shared_ptr<U>{new U}); // (△) 비권장. new T, new U 호출 순서에 따라 예외가 발생합니다.
         Func(std::make_shared<T>(), std::make_shared<U>()); // (O) 
+    }
+    // make_shared() 와 initializer_list
+    {
+        std::vector<int> v(2); // 요소 갯수가 2개인 vector 생성
+        EXPECT_TRUE(v.size() == 2 && v[0] == 0 && v[1] == 0);
+
+        std::vector<int> v_11{2}; // initializer_list 버전 호출. 요소값이 2인 vector 생성
+        EXPECT_TRUE(v_11.size() == 1 && v_11[0] == 2);          
+    }
+    {
+        auto v{std::make_shared<std::vector<int>>(2)}; // 요소 갯수가 2개인 vector 생성
+        EXPECT_TRUE(v->size() == 2 && (*v)[0] == 0 && (*v)[1] == 0);
+
+        std::initializer_list<int> list{2};
+        auto v_11{std::make_shared<std::vector<int>>(list)}; // initializer_list 버전 호출. 요소값이 2인 vector 생성
+        EXPECT_TRUE((*v_11).size() == 1 && (*v_11)[0] == 2); 
     }
     {
         class T {

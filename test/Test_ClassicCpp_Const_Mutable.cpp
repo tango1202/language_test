@@ -1,21 +1,5 @@
 #include "gtest/gtest.h" 
 
-namespace {
-    // 비 상수성 전파
-    class A {
-    public:
-        void f() const {} // 상수 멤버 함수 입니다.
-        void g() {} // 비 상수 맴버 함수 입니다.
-    };   
-    void Func1(const A& a) {
-        a.f(); // (O)
-        // a.g(); // (X) 컴파일 오류. a가 const 이므로 바 상수 멤버 함수를 호출할 수 없습니다.
-    }
-    void Func2(A& a) { // g()를 호출하려면 a는 non-const 이어야 합니다.
-        a.f(); // (O)
-        a.g(); // (O) 
-    }
-}
 
 TEST(TestClassicCpp, Const) {
     // ----
@@ -105,7 +89,7 @@ TEST(TestClassicCpp, Mutable) {
         // 하지만 내부에서 m_Lazy를 세팅하기 때문에 mutable을 사용합니다.
         const std::wstring& GetString() const {
             if (m_Lazy.empty()) {
-                m_Lazy = L"Lazy String";
+                m_Lazy = L"Lazy String"; // 예외가 발생할 수 있습니다.
             }
             return m_Lazy;
         }

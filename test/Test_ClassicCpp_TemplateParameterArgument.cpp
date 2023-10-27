@@ -201,7 +201,7 @@ TEST(TestClassicCpp, TemplateParameterArgument) {
     // 불완전한 형식의 인스턴스화 
     {
         using namespace Parameter_6;
-        C<A> x1;  // (O) A는 전방선언만 한 클래스 개체
+        C<A> x1;  // (O) A는 전방 선언만 한 클래스 개체
         C<A*> x2; // (O)
         C<B> x3;  // (O) B는 이름 없는 클래스의 typedef  
     }

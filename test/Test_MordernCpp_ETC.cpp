@@ -5,6 +5,7 @@ namespace {
     #define MY_SUM(count, ...) T::Sum(count, __VA_ARGS__)
     #define MY_SUM2(count, ...) T::Sum(count, ##__VA_ARGS__)
 }
+
 TEST(TestMordern, Align) {
     // 4byte 단위로 정렬합니다.
     class alignas(alignof(int)) A_11 {
@@ -43,7 +44,7 @@ TEST(TestMordern, VariadicMacro) {
             for (int i{0}; i < count; ++i) {
                 result += va_arg(paramList, int); // 가변 인자 추출
             }
-            va_end(paramList); // 가변인자 처리 끝
+            va_end(paramList); // 가변 인자 처리 끝
             return result;       
         }
     };

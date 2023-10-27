@@ -20,6 +20,34 @@ namespace RValue_2 {
     int g_11(T&& val) {return f_11(std::forward<T>(val)) + 2;} // 값 카테고리를 유지한채 전달한다는 의미로 forward 사용
 }
 
+namespace RValue_3 {
+
+    // 관리하는 개체를 복사 생성이나 이동 생성 합니다.
+    template<typename T>
+    class CopyableMoveable_11 {
+        T* m_Data;
+    public:
+        CopyableMoveable_11() : m_Data(nullptr) {}
+
+        explicit CopyableMoveable_11(T* data) : m_Data(data) {}
+        
+        // 복사 생성
+        CopyableMoveable_11(const CopyableMoveable_11& other) : 
+            m_Data(other.m_Data != nullptr ? new T(*other.m_Data) : nullptr) {
+            std::cout << "CopyableMoveable_11 : Copy Constructor" << std::endl;       
+        } 
+
+        // 이동 생성
+        CopyableMoveable_11(CopyableMoveable_11&& other) : 
+            m_Data(other.m_Data) {
+            std::cout << "CopyableMoveable_11 : Move Constructor" << std::endl;   
+
+            other.m_Data = nullptr; // other는 초기화 합니다.
+        }  
+
+        ~CopyableMoveable_11() {delete m_Data;}
+    };
+}
 TEST(TestMordern, RValue) {
 
     // 왼쪽값(lvalue, left Value)과 우측값(rvalue, right value)
@@ -223,6 +251,53 @@ TEST(TestMordern, RValue) {
         EXPECT_TRUE(d.GetSize() == 0); // d는 이동되어 더이상 쓸 수 없음  
         EXPECT_TRUE(e.GetSize() == 50); 
     }
+    // 암시적 이동 생성자와 암시적 이동 대입 연산자의 default 정의
+    {
+        using namespace RValue_3;
+
+        class A_11 {
+        private:
+            CopyableMoveable_11<int> m_Data;
+        public:
+            explicit A_11(int* data) : m_Data(data) {}
+        };
+
+        A_11 a(new int(10));
+        A_11 b(a); // 복사 생성자 호출
+        A_11 c(std::move(a)); // 이동 생성자 호출
+    } 
+    {
+        using namespace RValue_3;
+
+        class A_11 {
+        private:
+            CopyableMoveable_11<int> m_Data;
+        public:
+            explicit A_11(int* data) : m_Data(data) {}
+            ~A_11() {} // 암시적 이동 생성자와 암시적 이동 대입 연산자가 만들어 지지 않습니다.
+        };
+
+        A_11 a(new int(10));
+        A_11 b(a); // 복사 생성자 호출
+        A_11 c(std::move(a)); // (△) 비권장. 복사 생성자 호출
+    }    
+    {
+        using namespace RValue_3;
+
+        class A_11 {
+        private:
+            CopyableMoveable_11<int> m_Data;
+        public:
+            explicit A_11(int* data) : m_Data(data) {}
+            A_11(A_11&) = default; // 암시적 복사 생성자를 사용합니다.
+            A_11(A_11&&) = default; // 암시적 이동 생성자를 사용합니다.
+            ~A_11() {} // 암시적 이동 생성자와 암시적 이동 대입 연산자가 만들어 지지 않습니다.
+        };
+
+        A_11 a(new int(10));
+        A_11 b(a); // 복사 생성자 호출
+        A_11 c(std::move(a)); // 이동 생성자 호출
+    }   
     // move
     {
         class A{};
@@ -290,4 +365,5 @@ TEST(TestMordern, RValue) {
         // g_11(T&& val)와 f_11(T&& val)가 호출되어 22입니다.
         EXPECT_TRUE(g_11(std::move(t)) == 22);   
     }
+    
 }

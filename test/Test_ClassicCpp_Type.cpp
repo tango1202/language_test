@@ -34,6 +34,7 @@ namespace {
 TEST(TestClassicCpp, Type) {
     EXPECT_TRUE(sizeof(wchar_t) == 2);  
     EXPECT_TRUE(sizeof(long double) == 16);  
+    EXPECT_TRUE(sizeof(int*) == 8);
    
     EXPECT_TRUE(sizeof(BOOL) == 4);
 

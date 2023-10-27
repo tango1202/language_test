@@ -166,12 +166,38 @@ TEST(TestMordern, Constexpr) {
             constexpr int GetVal_11() const {return m_X * m_Y;}
         };
 
-        constexpr Area_11 area(2, 5); // 컴파일 타임 상수로 정의
+        {
+            constexpr Area_11 area(2, 5); // 컴파일 타임 상수로 정의
 
-        // 컴파일 타임에 계산된 면적이 Val에 대입됩니다.
-        enum class MyEnum_11 {Val = area.GetVal_11()}; // constexpr 함수 호출
-        EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 2 * 5);       
+            // 컴파일 타임에 계산된 면적이 Val에 대입됩니다.
+            enum class MyEnum_11 {Val = area.GetVal_11()}; // constexpr 함수 호출
+            EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 2 * 5);   
+        }
+
+        {
+            int x = 10;
+            // constexpr Area_11 area(x, 5); // (X) 컴파일 오류. x는 컴파일 타임 상수가 아닙니다.
+            Area_11 area(x, 5); // 런타임 함수로 동작합니다.
+        }
     }
+    {
+ 
+        class Area_11 {
+        private:
+            int m_X;
+            int m_Y;
+        public:
+            constexpr Area_11(int x, int y) : // 컴파일 타임 상수로 사용 가능
+                m_X(x),
+                m_Y(y) {} 
+            constexpr int GetVal_11() const {return m_X * m_Y;}
+#if 201402L <= __cplusplus // C++14~               
+            constexpr void SetX_14(int val) {m_X = val;}
+            constexpr void SetY_14(int val) {m_Y = val;}    
+#endif                    
+        }; 
+         
+    } 
 #if 201402L <= __cplusplus // C++14~        
     // (C++14~) constexpr 함수 제약 완화
     {

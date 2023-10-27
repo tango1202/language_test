@@ -1,7 +1,7 @@
 #include "gtest/gtest.h" 
 
 namespace {
-    class Shape; // 상호 참조가 되어 전방선언이 필요합니다.
+    class Shape; // 상호 참조가 되어 전방 선언이 필요합니다.
 
     // 개체를 방문하여 개체별로 작업합니다.
     class IVisitor {

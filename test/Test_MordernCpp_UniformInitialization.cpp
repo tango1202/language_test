@@ -25,6 +25,20 @@ namespace UniformInitialization_2 {
 }
 
 TEST(TestMordern, UniformInitialization) {
+    // 개요
+    {
+        int a = 10;
+
+        int b(10); // 괄호 초기화
+        int b_11{10}; // 중괄호 직접 초기화
+
+        int c = int(10); // (△) 비권장. int(10)로 생성한 개체를 int c에 복사합니다.
+        int c_11 = int{10}; // 중괄호 복사 초기화. int c_11 = {10} 과 동일
+
+        int d(int(10)); // (△) 비권장. int(10)로 생성한 개체를 int d에 복사합니다.
+        int d_11{int{10}}; // int{10}으로 생성한 개체를 int d_11에 복사합니다.
+        // int d_11{{10}}; // (X) 컴파일 오류. 기본 타입은 중괄호 중첩을 지원하지 않습니다.     
+    }
     // 중괄호 초기화
     {
         class T {
@@ -106,6 +120,18 @@ TEST(TestMordern, UniformInitialization) {
     {
         class T {
         public:
+            T() {}
+            explicit T(int) {}
+        private:
+            T(const T&) {} // 복사 생성자를 사용할 수 없습니다.
+        };       
+
+        T a_11{10};
+        // T b_11 = {10}; // (X) 컴파일 오류. 복사 생성자를 사용합니다.
+    }    
+    {
+        class T {
+        public:
             T() {std::cout << "T : Default Constructor" << std::endl;}
             T(const T&) {std::cout << "T : Copy Constructor" << std::endl;}
             T& operator =(const T&) {std::cout << "T : operator =()" << std::endl;return *this;}
@@ -130,6 +156,8 @@ TEST(TestMordern, UniformInitialization) {
         using namespace UniformInitialization_2;  
         f({}); // f(T{}); 와 동일   
     }
+
+    // 중괄호 집합 초기화
     {
         int arr[] = {0, 1, 2}; // 초기화 갯수 만큼 배열 할당
         int arr_11[]{0, 1, 2}; // 초기화 갯수 만큼 배열 할당     
@@ -301,18 +329,31 @@ TEST(TestMordern, UniformInitialization) {
             T_11(std::initializer_list<int>) {}
             T_11(std::initializer_list<int>, int, int) {}
         };
-        T_11 a{1, 2, 3, 4, 5}; // T_11(std::initializer_list<int>)
+        T_11 a{1, 2, 3, 4, 5}; // T_11(std::initializer_list<int>) 
         T_11 b{ {1, 2, 3}, 4, 5}; // T_11(std::initializer_list<int>, int, int)
     } 
     // 기존 생성자와 initializer_list 생성자와의 충돌
     {
-        // 요소가 2개인 vector를 생성합니다.
-        std::vector<int> v(2);
-        EXPECT_TRUE(v.size() == 2 && v[0] == 0 && v[1] == 0);
+        // std::vector<int> v1(); // 함수 선언
+        std::vector<int> v1_11{}; // 기본 생성자
 
-        // 요소값이 2인 vector를 생성합니다.
-        std::vector<int> v_11{2};
-        EXPECT_TRUE(v_11.size() == 1 && v_11[0] == 2);        
+        std::vector<int> v2_11{{}}; // 빈 initializer_list로 vector 생성
+
+        std::vector<int> v3(2); // 요소 갯수가 2개인 vector 생성
+        EXPECT_TRUE(v3.size() == 2 && v3[0] == 0 && v3[1] == 0);
+
+        std::vector<int> v3_11{2}; // 요소값이 2인 vector 생성
+        EXPECT_TRUE(v3_11.size() == 1 && v3_11[0] == 2);      
+    }
+    // 중괄호 초기화와 auto
+    {
+        // 중괄호 직접 초기화
+        auto a_11{1}; // a는 int
+        // auto b_11{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
+
+        // 중괄호 복사 초기화
+        auto c_11 = {1}; // c는 initializer_list<int>
+        auto d_11 = {1, 2}; // d는 initializer_list<int>  
     }
 #if 201703L <= __cplusplus // C++17~
     // (C++17~) 중괄호 초기화에서 auto 추론의 새로운 규칙
@@ -321,7 +362,7 @@ TEST(TestMordern, UniformInitialization) {
         auto b_17{1}; // b는 int
         auto c_17 = {1}; // c는 initializer_list<int>
         auto d_17 = {1, 2}; // d는 initializer_list<int>  
-        // auto e_11{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
+        // auto e_17{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
     }
 #endif    
 

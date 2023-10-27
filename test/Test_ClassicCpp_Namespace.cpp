@@ -111,6 +111,23 @@ namespace MyModule { // 여러개의 네임스페이스를 합성할 수 있음
    using namespace G;
    using namespace H;
 }
+
+namespace MyLib {
+    namespace Windows {
+        int f() {return 1;} // #1
+    }
+    namespace Linux {
+        int f() {return 2;} // #2
+    }
+};
+
+namespace YourLib {
+    using namespace MyLib::Windows; // Windows 버전을 사용합니다.
+
+    int g() {
+        return f(); // MyLib::Windows::f() 가 호출됩니다.
+    }
+};
 TEST(TestClassicCpp, Namespace) {
     {
         EXPECT_TRUE(A::f() == 10); // 네임스페이스 A의 f() 호출
@@ -127,5 +144,9 @@ TEST(TestClassicCpp, Namespace) {
     {
         MyLib::Parser::Tokenizer();
         MyLib::File::Load();    
+    }
+    // 네임스페이스를 이용한 코드 관리
+    {
+        EXPECT_TRUE(YourLib::g() == 1);    
     }
 }

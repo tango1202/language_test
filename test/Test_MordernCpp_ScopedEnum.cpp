@@ -37,7 +37,29 @@ TEST(TestMordern, ScopedEnum) {
         };
         Week_11 week{Week_11::Sunday}; // 범위명을 지정하여 이름 충돌 회피       
     }
+    // 열거형의 암시적 형변환
     {
+
+        enum Week {
+            Sunday, Monday, Tuesday, Wednesday, 
+            Thursday, Friday, Saturday
+        };
+        Week week = Sunday;
+        int val = week; // int형으로 형변환 됩니다.
+
+        enum class Week_11 {
+            Sunday, Monday, Tuesday, Wednesday, 
+            Thursday, Friday, Saturday    
+        };
+
+        Week_11 week_11 = Week_11::Sunday;
+        // int val_11 = week_11; // (X) 컴파일 오류. 형변환되지 않습니다.
+    }
+    {
+
+enum Test {a_, b_, c_};
+EXPECT_TRUE(sizeof(Test) == sizeof(int));
+
         enum MyEnum1_11 : int {a, b, c}; // int 형을 기반 타입으로 사용합니다.
         enum class MyEnum2_11 : char {i, j, k}; // char 형을 기반 타입으로 사용합니다.
     }
