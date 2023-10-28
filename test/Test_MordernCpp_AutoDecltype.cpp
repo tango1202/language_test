@@ -72,26 +72,21 @@ TEST(TestMordern, Auto) {
         int a = 0;
         const int b = 0;
 
-        auto c_11 = a; // int로 추론됨
+        auto c_11 = a; // int
 
+        // 배열은 포인터로 추론됩니다.
         int arr[] = {1, 2, 3};
-        auto d_11 = arr; // 배열이 아니라 int*로 추론됨
+        auto d_11 = arr; // int*
 
-        auto e_11 = b; // 최상위 const는 무시되므로 const int 가 아닌 int로 추론됨
+        // 최상위 const는 무시됩니다.
+        auto e_11 = b; // int
         e_11 = 10; // const가 아니여서 값을 대입받을 수 있습니다.  
 
+        // 참조성은 제거됩니다.
         int x = 10;
         int& ref = x;
-        auto f_11 = ref; // 참조성이 제거되어 int로 추론됩니다.
+        auto f_11 = ref; // int
         auto& g_11 = ref; // auto&을 이용하여 억지로 참조자로 받을 수 있습니다.
-
-        std::vector<int> v;
-
-        // std::vector<int>::iterator itr = v.begin(); 
-        // std::vector<int>::iterator endItr = v.end();
-
-        auto itr_11 = v.begin(); // 템플릿 사용에 따른 긴 타입명 간소화
-        auto endItr_11 = v.end();
     }
     // 중괄호 초기화와 auto
     {
@@ -104,6 +99,9 @@ TEST(TestMordern, Auto) {
         }
         {
             int a{10};
+        }
+        {
+            int a = {10};
         }
 
         {

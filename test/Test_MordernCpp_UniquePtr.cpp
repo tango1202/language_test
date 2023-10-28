@@ -119,6 +119,7 @@ TEST(TestMordern, UniquePtr) {
         std::unique_ptr<T[]> d{std::make_unique<T[]>(2)};
     }
     {
+        using namespace UniquePtr_1;
         Func(std::unique_ptr<T>{new T}, std::unique_ptr<U>{new U}); // (△) 비권장. new T, new U 호출 순서에 따라 예외가 발생합니다.
         Func(std::make_unique<T>(), std::make_unique<U>()); // (O) 
     }

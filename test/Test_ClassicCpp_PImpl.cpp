@@ -91,46 +91,42 @@ namespace {
     // int T::GetVal1() const {return *(m_Impl->m_Val1);}
     // int T::GetVal2() const {return *(m_Impl->m_Val2);}
 
-    // --------
+    // ----
     // 선언에서
-    // --------
-
     // ----
-    // T클래스의 Impl 전방 선언
-    // ----
-    class TImpl; // 중첩 클래스는 전방 선언이 안되어 별도 클래스로 선언하고, 전방 선언합니다.
-    
-    // ----    
-    // TImplPtr 선언
-    // ----
-    class TImplPtr {
-    private:
-        TImpl* m_Ptr; 
-    public: 
-        explicit TImplPtr(TImpl* ptr);
-        TImplPtr(const TImplPtr& other);
-        ~TImplPtr();
-
-        TImplPtr& operator =(const TImplPtr& other);
-        void Swap(TImplPtr& other);
-
-        const TImpl* operator ->() const;
-        TImpl* operator ->();
-
-        const TImpl& operator *() const;
-        TImpl& operator *();
-
-        bool IsValid() const;  
-    };
 
     // ----    
     // (O) T 선언 : 복사 생성자, 소멸자, swap을 이용한 복사 대입 연산자, Swap 불필요
     // ----
     class T {
-        // 중첩 클래스는 전방 선언이 안되어 별도 클래스로 선언하고, 전방 선언합니다.
+
+        class Impl; // 전방 선언
+        // ----    
+        // ImplPtr 선언
+        // ----
+        class ImplPtr {
+        private:
+            Impl* m_Ptr; // 포인터형 변수로 사용합니다.
+        public: 
+            explicit ImplPtr(Impl* ptr);
+            ImplPtr(const ImplPtr& other);
+            ~ImplPtr();
+
+            ImplPtr& operator =(const ImplPtr& other);
+            void Swap(ImplPtr& other);
+
+            const Impl* operator ->() const;
+            Impl* operator ->();
+
+            const Impl& operator *() const;
+            Impl& operator *();
+
+            bool IsValid() const;  
+        };       
+
         // (O) 스마트 포인터를 사용하여, 복사 생성자, 소멸자를 구현할 필요가 없고, 
         // (O) 멤버 변수도 1개여서 Swap으로 복사 대입 연산자를 구현할 필요가 없습니다.
-        TImplPtr m_Impl; 
+        ImplPtr m_Impl; 
     public:
         // val1, val2 : new 로 생성된 것을 전달하세요.
         T(int* val1, int* val2);
@@ -139,9 +135,9 @@ namespace {
         int GetVal2() const;
     };
 
-    // --------
+    // ----
     // 정의에서
-    // --------
+    // ----
 
     // 복사 생성시 m_Ptr을 복제하고, 소멸시 delete 합니다.
     // 복사 대입 연산은 임시 개체 생성 후 swap 합니다.
@@ -174,52 +170,52 @@ namespace {
     };
 
     // ----
-    // TImpl 정의
+    // Impl 정의
     // ----
-    class TImpl {
+    class T::Impl {
     public: // T 에서 멤버 변수를 자유롭게 쓰도록 public 입니다.
         // 스마트 포인터를 사용합니다. 암시적 복사 생성자에서 복제본을 만들고, 소멸자에서 잘 소멸합니다.
         IntPtr m_Val1;
         IntPtr m_Val2;
-        TImpl(int* val1, int* val2) : 
+        Impl(int* val1, int* val2) : 
             m_Val1(val1),
             m_Val2(val2) {}
     private:        
         // 복사 대입 연산자는 사용하지 않으므로 private로 못쓰게 만듭니다.
-        TImpl& operator =(const TImpl& other) {return *this;}  
+        Impl& operator =(const Impl& other) {return *this;}  
     };
 
     // ----
-    // TImplPtr 정의
+    // ImplPtr 정의
     // ----
-    TImplPtr::TImplPtr(TImpl* ptr) :
+    T::ImplPtr::ImplPtr(T::Impl* ptr) :
         m_Ptr(ptr) {}
-    TImplPtr::TImplPtr(const TImplPtr& other) :
-        m_Ptr(other.IsValid() ? new TImpl(*other.m_Ptr) : NULL) {} // TImpl의 복사 생성자를 호출합니다.
-    TImplPtr::~TImplPtr() {delete m_Ptr;} // TImpl을 소멸시킵니다.
+    T::ImplPtr::ImplPtr(const T::ImplPtr& other) :
+        m_Ptr(other.IsValid() ? new T::Impl(*other.m_Ptr) : NULL) {} // Impl의 복사 생성자를 호출합니다.
+    T::ImplPtr::~ImplPtr() {delete m_Ptr;} // Impl을 소멸시킵니다.
 
-    TImplPtr& TImplPtr::operator =(const TImplPtr& other) {
-        TImplPtr temp(other); 
+    T::ImplPtr& T::ImplPtr::operator =(const T::ImplPtr& other) {
+        ImplPtr temp(other); 
         Swap(temp); 
         return *this;
     }
-    void TImplPtr::Swap(TImplPtr& other) {
+    void T::ImplPtr::Swap(T::ImplPtr& other) {
         std::swap(this->m_Ptr, other.m_Ptr);  
     }
 
-    const TImpl* TImplPtr::operator ->() const {return m_Ptr;}
-    TImpl* TImplPtr::operator ->() {return m_Ptr;}
+    const T::Impl* T::ImplPtr::operator ->() const {return m_Ptr;}
+    T::Impl* T::ImplPtr::operator ->() {return m_Ptr;}
 
-    const TImpl& TImplPtr::operator *() const {return *m_Ptr;}
-    TImpl& TImplPtr::operator *() {return *m_Ptr;}
+    const T::Impl& T::ImplPtr::operator *() const {return *m_Ptr;}
+    T::Impl& T::ImplPtr::operator *() {return *m_Ptr;}
 
-    bool TImplPtr::IsValid() const {return m_Ptr != NULL ? true : false;}    
+    bool T::ImplPtr::IsValid() const {return m_Ptr != NULL ? true : false;}    
 
     // ----
     // T 정의
     // ----
     T::T(int* val1, int* val2) :
-        m_Impl(new TImpl(val1, val2)) {}
+        m_Impl(new T::Impl(val1, val2)) {}
  
     // TImpl의 멤버 변수를 이용합니다.
     int T::GetVal1() const {return *(m_Impl->m_Val1);}
