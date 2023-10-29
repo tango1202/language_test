@@ -162,11 +162,13 @@ TEST(TestClassicCpp, Conversions) {
         class T {};
         class U {};
 
+        // 아무 연관 관계도 없는 타입끼리는 형변환되지 않습니다.
         T t;
         // U u1 = (U)t; // (X) 컴파일 오류
         // U u2 = static_cast<U>(t); // (X) 컴파일 오류
         // U u3 = reinterpret_cast<U>(t); // (X) 컴파일 오류
 
+        // 포인터와 참조자 타입은 형변환 됩니다만, 최대한 사용하지 마세요.
         U* u4 = (U*)&t; // (△) 비권장 
         // U* u5 = static_cast<U*>(&t); // (X) 컴파일 오류
         U* u6 = reinterpret_cast<U*>(&t); // (△) 비권장 

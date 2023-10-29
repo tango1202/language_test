@@ -56,17 +56,20 @@ TEST(TestClassicCpp, Literals) {
         const char* str1 = "Hello World"; 
         const char* str2 = "Hello " "World"; // (O) 두 문자열 상수 이어 붙이기
         const char* str3 = "Hello " // (O) 개행된 문자열 상수 붙이기
-                           "World";   
+                           "World"; 
         EXPECT_TRUE(str1 == str2 && str2 == str3); // (O) 동일한 문자열 상수는 컴파일러가 1개만 생성해 줍니다.   
     }
     // ----
     // 이스케이프 문자
     // ----
     {
+        std::cout <<"mytest : HelloWorld" << std::endl; 
+        std::cout <<"H\relloWorld" << std::endl;    
+        std::cout <<"H\nelloWorld" << std::endl;           
         // 0x25B3(△)
         std::cout << "\u25B3" << std::endl;
 
-        // 0x0103A0(𐎠)
+        // // 0x0103A0(𐎠)
         std::cout << "\U000103A0" << std::endl;
     }
 }

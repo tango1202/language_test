@@ -22,7 +22,6 @@ TEST(TestClassicCpp, ImplicitDefinition) {
             Object m_Object;
         public:
             // 기본 생성자
-            // (△) 암시적으로 기본 생성자가 자동 제로 초기화된다고 하는데, GCC 디버그 모드에서는 0이 아닙니다. 
             T() {}
 
             // 복사 생성자 - 멤버별 복사 생성자 호출

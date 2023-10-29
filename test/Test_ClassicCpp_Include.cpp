@@ -65,7 +65,7 @@ namespace Forward_2 {
     } 
     // 중첩 클래스의 전방 선언
     class T; // (O)
-    // class T::Nested; // (X) 컴파일 오류. 중첩 클래스는 바깥 클래스에서 전방 선언을 할 수 없습니다.
+    // class T::Nested; // (X) 컴파일 오류. 중첩 클래스는 클래스 바깥에서 전방 선언을 할 수 없습니다.
 
     class T {
     public:

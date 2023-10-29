@@ -46,7 +46,6 @@ TEST(TestClassicCpp, Initialization) {
     // ----   
     T other;
     {
-        // T obj1 = 1; // (△) 비권장. explicit 가 아니라면 int를 전달받는 값 생성자가 호출됨
         T obj1 = other; // (O) 타입이 같다면 복사 생성자가 호출됨
         T obj2(other); // (O) 명시적으로 복사 생성자 호출됨
     }
@@ -128,7 +127,7 @@ TEST(TestClassicCpp, Initialization) {
     // 구조체 초기화
     // ----     
     {
-        struct T {int x; int y;}; 
+        struct T {int x; int y;}; // 멤버 변수가 public 입니다.
         T t = {10, 20}; // (O) 중괄호로 초기화
 
         EXPECT_TRUE(t.x == 10 && t.y == 20);

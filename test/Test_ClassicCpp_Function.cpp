@@ -86,7 +86,7 @@ TEST(TestClassicCpp, Function) {
     // 함수 포인터
     // ----
     {
-        void (*p)(int); // void 를 리턴하고 int형을 인수로 전달받는 함수의 함수 포인터 p 정의
+        void (*p)(int); // void 를 리턴하고 int형을 인수로 전달받는 함수의 함수 포인터 p 선언
 
         p = f; // 함수 포인터에 f 함수 대입. p = &f; 와 동일
         p(10); // f 함수 실행. (*p)(10); 과 동일
@@ -197,6 +197,68 @@ TEST(TestClassicCpp, Function) {
         T t1(0, 0);
         T t2(t1.f()); // T t2 = t1.f(); 와 동일
     } 
+    {
+        class T {
+            int m_X;
+            int m_Y;
+        public:
+            T() {
+                std::cout << "T : Default Constructor" << std::endl;
+            }
+            // 값 생성자
+            T(int x, int y) :
+                m_X(x),
+                m_Y(y) {
+                std::cout << "T : Value Constructor" << std::endl;
+            }
+
+            // 복사 생성자
+            T(const T& other) {
+                std::cout << "T : Copy Constructor" << std::endl;    
+            }
+            // 복사 대입 연산자
+            T& operator =(const T& other) {
+                std::cout << "T : Assign" << std::endl;    
+                return *this;
+            }    
+            
+            // 값 타입으로 생성합니다. RVO 가 적용됩니다.
+            static T Create() { 
+                T result(0, 0);
+                return result;
+            }
+
+            // 포인터를 생성해서 리턴합니다. 호출한 곳에서 delete 해줘야 합니다.
+            static T* CreatePtr() {
+                return new T(0, 0);
+            }
+
+            // 생성된 개체에 복사 대입 합니다. 포인터라서 널검사가 필요합니다. NULL 이면 예외를 방출합니다.
+            static void Create(T* ptr) {
+                if (ptr == NULL) {
+                    throw std::invalid_argument("NULL"); 
+                }
+
+                *ptr = T(0, 0);
+            }
+
+            // 생성된 개체에 복사 대입 합니다.
+            static void Create(T& ref) {
+                ref = T(0, 0);
+            }
+        };
+
+        T a = T::Create(); // 리턴값 최적화로 복사하지 않습니다.
+
+        T* b = T::CreatePtr(); // (△) 비권장. 생성한 포인터만 복사합니다. 포인터이기 때문에 나중에 delete 해야 합니다.
+        delete b;
+
+        T c; 
+        T::Create(&c); // (△) 비권장. 생성 후 대입 받으면, 기본 생성자, 값 생성자, 복사 대입 연산자가 호출됩니다.
+
+        T d;
+        T::Create(d); // (△) 비권장. 생성 후 대입 받으면, 기본 생성자, 값 생성자, 복사 대입 연산자가 호출됩니다.
+    }
     // ----
     // 가변 인자
     // ----

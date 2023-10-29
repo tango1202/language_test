@@ -23,7 +23,8 @@ TEST(TestClassicCpp, String) {
         EXPECT_TRUE(str[2] == 'c');
         EXPECT_TRUE(str[3] == '\0'); // 널문자가 추가됨
         EXPECT_TRUE(sizeof(str) == 4); // 널문자까지 포함하여 4byte 크기 입니다.
-        EXPECT_TRUE(strlen(str)); // 문자열의 길이는 널문자를 제외한 3입니다.
+        EXPECT_TRUE(sizeof(str) / sizeof(char) == 4); // 배열 갯수는 널문자를 포함하여 4 입니다.
+        EXPECT_TRUE(strlen(str) == 3); // 문자열의 길이는 널문자를 제외한 3입니다.
     }
     // 문자열 상수 수정
     {
@@ -110,7 +111,7 @@ TEST(TestClassicCpp, String) {
     }
     // 와이드 문자열
     {
-        const wchar_t* wstr = L"abc가나다"; // abc[0x61 0x62 0x63] 가[0xAC00] 나[0xB098] 다[0xB2E4] 가 저장된 영역을 가리키는 포인터 입니다.
+        const wchar_t* wstr = L"abc가나다"; // Windows는 UTF-16. abc[0x61 0x62 0x63] 가[0xAC00] 나[0xB098] 다[0xB2E4] 가 저장된 영역을 가리키는 포인터 입니다.
         EXPECT_TRUE(wcslen(wstr) == 6); // Windows에서는 2byte 단위로 저장합니다.
 
         EXPECT_TRUE(wstr[0] == 0x0061); // 0x0061. UTF-16 인코딩. 아스키 코드 a

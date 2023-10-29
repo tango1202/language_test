@@ -22,12 +22,16 @@ TEST(TestClassicCpp, Array) {
         EXPECT_TRUE(str1[1] == 'b');
         EXPECT_TRUE(str1[2] == 'c');
         EXPECT_TRUE(str1[3] == '\0'); // 널문자가 추가됨
+        EXPECT_TRUE(sizeof(str1) / sizeof(char) == 4); // 배열 갯수는 널문자를 포함하여 4
+        EXPECT_TRUE(strlen(str1) == 3); // 문자열의 길이는 3
 
         wchar_t str2[] = L"abc"; // (O) {L'a', L`b`, L'c', L'\0'};
         EXPECT_TRUE(str2[0] == L'a');
         EXPECT_TRUE(str2[1] == L'b');
         EXPECT_TRUE(str2[2] == L'c');
         EXPECT_TRUE(str2[3] == L'\0'); // 널문자가 추가됨
+        EXPECT_TRUE(sizeof(str2) / sizeof(wchar_t) == 4); // 배열 갯수는 널문자를 포함하여 4
+        EXPECT_TRUE(wcslen(str2) == 3); // 문자열의 길이는 3
     }
     // 배열 크기
     {
