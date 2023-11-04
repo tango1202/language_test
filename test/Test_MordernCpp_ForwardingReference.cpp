@@ -13,12 +13,6 @@ namespace ForwardingReference_2 {
 namespace ForwardingReference_3 {
     template<typename T>
     void f(T) {}
-
-    template<typename T>
-    class Convert_11 {
-    public:
-        using Type = T;
-    };    
 }
 namespace ForwardingReference_4 {
     template<typename T>
@@ -193,7 +187,7 @@ namespace ForwardingReference_17 {
         f(std::forward<U>(param));
     }
 
-    // param을 복새 생성하고 우측값으로 val에 이동시킵니다.
+    // param을 복사 생성하고 우측값으로 val에 이동시킵니다.
     void Forwarding2_11(A param) { // #2. 일반 버전
         f(std::forward<A>(param));
     }
@@ -275,6 +269,13 @@ namespace ForwardingReference_18_4 {
         A_11(const A_11& other) {m_Val = 2;} // 복사 생성자
     }; 
 }
+namespace ForwardingReference_18_5 {
+    int f(const std::vector<int>& v) {return v.size();}
+}
+namespace ForwardingReference_18_6 {
+    template<typename T>
+    int f_11(T&& param) {return param.size();}    
+}
 namespace ForwardingReference_19 {
 
     class A {
@@ -350,12 +351,6 @@ TEST(TestMordern, Forwarding) {
         int& ref = val;
         f(ref); // f<int>(int). 기본적으로 참조자가 제거됩니다.
         f<int&>(ref); // f<int&>(int&). 명시적으로 지정하면 참조자로 사용됨
-
-    }
-    {
-        using namespace ForwardingReference_3;
-        Convert_11<int>::Type a; // int
-        Convert_11<int&>::Type b = a; // int&입니다. 참조자 입니다.
     }
     {
         using namespace ForwardingReference_4;
@@ -481,29 +476,38 @@ TEST(TestMordern, Forwarding) {
         }; 
     }
     {
+        using namespace ForwardingReference_18; 
+        A a;
+
+        std::string str = "Hello";
+        a.SetString_11(str); // 값타입으로 전달. string&로 전달합니다.
+        a.SetString_11(std::move(str)); // 우측값 참조로 전달, string&&로 전달
+        a.SetString_11("World"); // (const char*)& 로 전달        
+    }
+    {
         using namespace ForwardingReference_18_1; 
 
         A a;
 
         EXPECT_TRUE(a.Func_11(1) == 2);
-        EXPECT_TRUE(a.Func_11((short)1) == 1); // 전달 참조 버전이 호출됩니다.
-        EXPECT_TRUE(a.Func_11((char)'a') == 1); // 전달 참조 버전이 호출됩니다.
+        EXPECT_TRUE(a.Func_11((short)1) == 1); // (△) 비권장. 전달 참조 버전이 호출됩니다.
+        EXPECT_TRUE(a.Func_11((char)'a') == 1); // (△) 비권장. 전달 참조 버전이 호출됩니다.
     }
 
     {
         using namespace ForwardingReference_18_2;      
         A a;
 
-        EXPECT_TRUE(a.Func_11(1) == 2);
-        EXPECT_TRUE(a.Func_11((short)1) == 2); 
-        EXPECT_TRUE(a.Func_11((char)'a') == 2); 
+        EXPECT_TRUE(a.Func_11(1) == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type) 이 호출됩니다.
+        EXPECT_TRUE(a.Func_11((short)1) == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type) 이 호출됩니다.
+        EXPECT_TRUE(a.Func_11((char)'a') == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type) 이 호출됩니다. 
         EXPECT_TRUE(a.Func_11("Hello") == 1);           
     }
     {
         using namespace ForwardingReference_18_3; 
         A_11 a;
 
-        A_11 b(a); // 복사 생성자를 불러봐도 A_11&로 평가되어 전달 참조 버전이 호출됩니다.
+        A_11 b(a); // (△) 비권장. 복사 생성자를 불러봐도 A_11&로 평가되어 전달 참조 버전이 호출됩니다.
         EXPECT_TRUE(b.m_Val == 1);
 
         A_11 c(const_cast<const A_11&>(a)); // 강제로 const A_11& 로 바꾸면 복사 생성자가 호출됩니다.
@@ -520,7 +524,30 @@ TEST(TestMordern, Forwarding) {
 
         int val;
         A_11 c(val); // 전달 참조 버전이 호출됩니다.
-    }   
+    } 
+    // 전달 참조와 중괄호 초기화
+    {
+        using namespace ForwardingReference_18_5;
+
+        EXPECT_TRUE(f({1, 2, 3}) == 3); // {1, 2, 3}는 암시적으로 vector<int> 입니다.
+    } 
+    {
+        using namespace ForwardingReference_18_6;
+     
+        // EXPECT_TRUE(f_11({1, 2, 3}) == 3); // (X) 컴파일 오류. 중괄호 초기화를 무슨 타입으로 생성할지 모릅니다.
+        
+        // 1. 명시적으로 vector<int> 개체를 전달합니다.
+        {
+            std::vector<int> v_11{1, 2, 3};
+            EXPECT_TRUE(f_11(v_11) == 3); 
+        }
+
+        // 2. auto로 초기화한 후 auto를 전달합니다.
+        {
+            auto v_11 = {1, 2, 3}; // initializer_list로 초기화 됩니다.
+            EXPECT_TRUE(f_11(v_11) == 3); // initializer_list로 암시적으로 vector를 생성하여 전달합니다.
+        }
+    }
     {
         using namespace ForwardingReference_19; 
 
