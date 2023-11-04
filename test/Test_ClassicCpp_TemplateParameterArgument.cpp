@@ -5,6 +5,11 @@ namespace Parameter_1 {
     template<typename T, typename U> 
     class A {};
 }
+namespace Parameter_1_1 {
+    // 인자를 사용하지 않는다면, 인자명을 생략할 수 있습니다.
+    template<typename, typename> 
+    class A {};
+}
 namespace Parameter_2 {
     template<typename T, typename U>
     class A {
@@ -163,6 +168,12 @@ TEST(TestClassicCpp, TemplateParameterArgument) {
 
         // int, char : 인자에 대응되는 인수(Argument) 집합
         A<int, char> a;     
+    }
+    {
+        using namespace Parameter_1_1;
+
+        // int, char : 인자에 대응되는 인수(Argument) 집합
+        A<int, char> a;           
     }
     // 타입
     {

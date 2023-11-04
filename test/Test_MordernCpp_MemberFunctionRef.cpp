@@ -1,43 +1,19 @@
 #include "gtest/gtest.h" 
 
 namespace {
-
     class Big_11 {
-        size_t m_Size;
-        char* m_Ptr; // 크기가 큰 데이터
-
     public:    
-        explicit Big_11(size_t size) : 
-            m_Size(size), 
-            m_Ptr(new char[size]) {}
-
-        // 소멸자
-        ~Big_11() {delete[] m_Ptr;}
+        Big_11() {}
+        ~Big_11() {}
 
         // 복사 생성자
-        Big_11(const Big_11& other) :
-            m_Size(other.m_Size) {
-
+        Big_11(const Big_11& other) {
             std::cout << "Big_11 : Copy Constructor" << std::endl;
-
-            // 메모리 공간 할당
-            m_Ptr = new char[m_Size];
-
-            // 메모리 복사
-            memcpy(m_Ptr, other.m_Ptr, m_Size);
         }
         // 이동 생성자
-        Big_11(Big_11&& other) : 
-            m_Size(other.m_Size),
-            m_Ptr(other.m_Ptr) {
-
+        Big_11(Big_11&& other) {
             std::cout << "Big_11 : Move Constructor" << std::endl;
-
-            other.m_Size = 0; // other는 초기화 합니다.
-            other.m_Ptr = nullptr;
         }  
-        
-        size_t GetSize() const {return m_Size;}
     };     
 }
 
@@ -54,71 +30,73 @@ TEST(TestMordern, MemberFunctionRef) {
         EXPECT_TRUE(std::move(t).Func_11() == 2); // move는 우측값이므로 #2 호출
         EXPECT_TRUE(T().Func_11() == 2); // T() 는 임시 개체(우측값)이므로 #2 호출   
     }
-    
     {
-
-        class A_11 {
+        class Wrapper_11 {
             Big_11 m_Data;
         public:
-            A_11() : m_Data(10) {}
+            Wrapper_11() : m_Data{} {}
             const Big_11& GetData() const {
                 return m_Data;
             }
         };
 
         {
-            // a은 좌측값. Big_11의 복사 생성자 호출
-            A_11 a;
-            Big_11 big = a.GetData(); 
+            Wrapper_11 wrapper;
+            const Big_11& big = wrapper.GetData(); // const Big_11&을 리턴하므로 참조만 합니다.
         }
         {
-             // a은 좌측값. std::move(a_11)는 우측값. Big_11의 복사 생성자 호출
-            A_11 a;
-            Big_11 big = std::move(a).GetData();            
+            Wrapper_11 wrapper;
+            Big_11 big = wrapper.GetData(); // const Big_11& 를 리턴한 것을 Big_11로 받으므로 복사 생성 합니다.         
         }
         {
-            // A_11()은 임시 개체인 우측값. Big_11의 복사 생성자 호출
-            Big_11 big = A_11().GetData(); 
+            // std::move(wrapper)로 우측값으로 만들어 봤자, std::move(a).GetData()는 const Big_11&(좌측값 참조)를 리턴
+            Wrapper_11 wrapper;
+            Big_11 big = std::move(wrapper).GetData(); // 복사 생성자를 호출합니다.
         }  
  
         {
-            // A_11().GetData()는 const Big_11&를 리턴하고, move() 는 const Big_11&& 을 리턴. 이동 생성자 인자 타입과 다르므로, 그냥 복사 생성자 호출 
-            Big_11 big = std::move(A_11().GetData()); 
+            // Wrapper_11()은 임시 개체인 우측값 이지만, 여전히 GetData()는 const Big_11&(좌측값 참조)를 리턴
+            Big_11 big = Wrapper_11().GetData(); // 복사 생성자를 호출합니다.
         }    
         {
+            // Wrapper_11().GetData()는 const Big_11&를 리턴하고, move() 는 const Big_11&& 을 리턴. 이동 생성자와 인자 타입과 다르므로, 그냥 복사 생성자 호출 
+            Big_11 big = std::move(Wrapper_11{}.GetData()); 
+        }     
+        {
             // Big_11의 이동 생성자 호출
-            Big_11 big = std::move(const_cast<Big_11&>(A_11().GetData())); 
-        }                 
+            Big_11 big = std::move(const_cast<Big_11&>(Wrapper_11{}.GetData()));             
+        }            
     }
+    // const 타입 move()
     {
-
-        class A_11 {
+        class Wrapper_11 {
             Big_11 m_Data;
         public:
-            A_11() : m_Data(10) {}
-            const Big_11& GetData() const & { // #1
+            Wrapper_11() : m_Data() {}
+            const Big_11& GetData() const & { // #1. Wrapper_11가 좌측값일때 호출됩니다.
                 return m_Data;
             }
 
             Big_11&& GetData() && {
-                return std::move(m_Data); // #2
+                return std::move(m_Data); // #2. Wrapper_11가 우측값일때 호출됩니다.
             }
         };
 
         {
-            // a은 좌측값. #1이 호출되어 const Big_11&을 리턴하고, Big_11의 복사 생성자 호출
-            A_11 a;
-            Big_11 big = a.GetData(); 
+            // wrapper은 좌측값. #1이 호출되어 const Big_11&을 리턴하고, Big_11의 복사 생성자 호출
+            Wrapper_11 wrapper;
+            Big_11 big = wrapper.GetData(); 
         }
         {
-             // a_11은 좌측값. std::move(a_11)는 우측값. #2가 호출되어 Big_11&&을 리턴하고, Big_11의 이동 생성자 호출
-            A_11 a;
-            Big_11 big = std::move(a).GetData();            
+            // wrapper은 좌측값. std::move(wrapper)는 우측값. #2가 호출되어 Big_11&&을 리턴하고, Big_11의 이동 생성자 호출
+            Wrapper_11 wrapper;
+            Big_11 big = std::move(wrapper).GetData();            
         }
         {
-            // A_11()은 임시 개체인 우측값. #2가 호출되어 Big_11&&을 리턴하고, Big_11의 이동 생성자 호출
-            Big_11 big = A_11().GetData(); 
+            // Wrapper_11()은 임시 개체인 우측값. #2가 호출되어 Big_11&&을 리턴하고, Big_11의 이동 생성자 호출
+            Big_11 big{Wrapper_11().GetData()}; 
         }        
-    }
+    } 
+    
 }
 

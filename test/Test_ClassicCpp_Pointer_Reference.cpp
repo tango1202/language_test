@@ -159,6 +159,17 @@ TEST(TestClassicCpp, PointerReference) {
         Base b;
         (b.*p11)(); // 멤버 함수 포인터는 괄호 필요. Base 출력
     } 
+    // 다차원 포인터
+    {
+        int val = 10;
+        int* p = &val; // val 의 포인터
+        int** pp = &p; // p의 포인터. 즉 val의 포인터의 포인터
+
+        EXPECT_TRUE(*p == 10);
+
+        EXPECT_TRUE(*pp == p); // pp는 p를 가리킵니다.
+        EXPECT_TRUE(**pp == 10); // *(*pp) == *(p) 이므로 **pp는 p가 가리키는 val 입니다.
+    }
     // ----
     // 참조자 사용법 - 개체 참조자
     // ----
@@ -172,6 +183,7 @@ TEST(TestClassicCpp, PointerReference) {
         
         // int& r3 = 20; // (X) 컴파일 오류. T&로 상수 참조 불가
         const int& r4 = 20; // (O) const T&로 상수 참조 가능
+
     }
     // ----
     // 참조자 사용법 - 배열 참조자

@@ -65,22 +65,43 @@ namespace Decltype_4 {
     //     // (X) 컴파일 오류. 가상 함수는 리턴 타입 추론을 할 수 없습니다.
     //     virtual auto Add_14(int a) {return a;}
     // };
+
+    int FuncInt_14() {
+        return {10};
+    }
+    auto FuncAuto_14() {
+        // return {10}; // (X) 컴파일 오류. auto의 중괄호 초기화 특수 추론 규칙은 리턴 타입 추론에서 제공하지 않습니다.
+    }
 #endif    
 }
 TEST(TestMordern, Auto) {
+    {
+        auto a_11 = 10; // int
+        auto b_11 = 10L; // long
+        auto c_11 = 10UL; // unsigned long
+
+        std::vector<int> v;
+        auto d_11 = v.begin(); // std::vector<int>::iterator
+    }
+    // auto 추론 규칙
     {
         int a = 0;
         const int b = 0;
 
         auto c_11 = a; // int
 
-        // 배열은 포인터로 추론됩니다.
-        int arr[] = {1, 2, 3};
-        auto d_11 = arr; // int*
-
-        // 최상위 const는 무시됩니다.
-        auto e_11 = b; // int
-        e_11 = 10; // const가 아니여서 값을 대입받을 수 있습니다.  
+        
+        {
+            // 배열은 포인터로 추론됩니다.
+            int arr[] = {1, 2, 3};
+            auto a_11 = arr; // int*
+        }
+        {
+            // 최상위 const는 무시됩니다.
+            const int constVal = 0;
+            auto a_11 = constVal; // int
+            a_11 = 10; // const가 아니여서 값을 대입받을 수 있습니다. 
+        } 
 
         // 참조성은 제거됩니다.
         int x = 10;
@@ -88,34 +109,15 @@ TEST(TestMordern, Auto) {
         auto f_11 = ref; // int
         auto& g_11 = ref; // auto&을 이용하여 억지로 참조자로 받을 수 있습니다.
     }
-    // 중괄호 초기화와 auto
+    // auto의 중괄호 초기화 특수 추론 규칙
     {
-        // 모두 int 10으로 초기화됩니다.
-        {
-            int a = 10;
-        }
-        {
-            int a(10);
-        }
-        {
-            int a{10};
-        }
-        {
-            int a = {10};
-        }
+        // 중괄호 직접 초기화
+        auto a_11{1}; //(△) a는 initializer_list<int> 또는 int
+        // auto b_11{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
 
-        {
-            auto b_11 = 10; // int 10으로 초기화됩니다.
-        }
-        {
-            auto b_11(10); // int 10으로 초기화 됩니다.
-        }
-        {
-            auto b_11{10}; // int 10으로 초기화 됩니다.
-        }
-        {
-            auto b_11 = {10}; // (△) 비권장. initializer_list로 초기화됩니다.  
-        }      
+        // 중괄호 복사 초기화
+        auto c_11 = {1}; // c는 initializer_list<int>
+        auto d_11 = {1, 2}; // d는 initializer_list<int>       
     }
     // 암시적 형변환과 auto
     {
@@ -273,6 +275,14 @@ TEST(TestMordern, Decltype) {
         int result2 = Add2_14(10, 20); // const int를 리턴했지만 템플릿 함수 인수 추론 규칙에 따라 int를 리턴
         const int result3 = Add3_14(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
         // const int& result4 = Add4_14(10, 20); // const int& 리턴. 리턴하는 (result) 표현식과 동일. 
+    }
+
+    {
+
+        using namespace Decltype_4;
+        
+        auto a = FuncInt_14();
+         
     }
 #endif
 }

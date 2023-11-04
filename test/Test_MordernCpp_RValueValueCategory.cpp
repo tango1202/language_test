@@ -1,26 +1,6 @@
 #include "gtest/gtest.h" 
 
 namespace RValue_1 {
-    class T {};
-
-    int f_11(T& val) {return 10;}
-    int f_11(T&& val) {return 20;}
-
-    int g_11(T& val) {return f_11(val) + 1;}
-    int g_11(T&& val) {return f_11(val) + 2;} // 여기서 val은 이름이 있으니 우측값이 아닙니다. 그래서 f_11(T& val)을 호출합니다.
-}
-namespace RValue_2 {
-    class T {};
-
-    int f_11(T& val) {return 10;}
-    int f_11(T&& val) {return 20;}
-
-    int g_11(T& val) {return f_11(val) + 1;}
-    // int g_11(T&& val) {return f_11(std::move(val)) + 2;} // (△) 비권장. 이동 연산을 수행한다는 느낌이어서 가독성이 떨어집니다.
-    int g_11(T&& val) {return f_11(std::forward<T>(val)) + 2;} // 값 카테고리를 유지한채 전달한다는 의미로 forward 사용
-}
-
-namespace RValue_3 {
 
     // 관리하는 개체를 복사 생성이나 이동 생성 합니다.
     template<typename T>
@@ -47,6 +27,38 @@ namespace RValue_3 {
 
         ~CopyableMoveable_11() {delete m_Data;}
     };
+}
+namespace RValue_2 {
+    class A {};
+
+        int f_11(A&) {return 1;} // 인자가 좌측값 참조이면 호출됩니다.
+        int f_11(A&&) {return 2;} // 인자가 우측값 참조이면 호출됩니다.
+    }
+namespace RValue_3 {
+    class A {};
+
+    int f_11(A& val) {return 10;}
+    int f_11(A&& val) {return 20;}
+
+    int g_11(A& val) {
+        return f_11(val) + 1;
+    }
+    int g_11(A&& val) {
+        return f_11(val) + 2; // 여기서 val은 이름이 있으니 우측값이 아닙니다. 그래서 f_11(A& val)을 호출합니다.
+    }
+}
+namespace RValue_4 {
+    class A {};
+
+    int f_11(A& val) {return 10;}
+    int f_11(A&& val) {return 20;}
+
+    int g_11(A& val) {
+        return f_11(val) + 1;
+    }
+    int g_11(A&& val) {
+        return f_11(std::move(val)) + 2; // 우측값을 참조하는 좌측값인 val을 다시 우측값으로 형변환 합니다.
+    }
 }
 TEST(TestMordern, RValue) {
 
@@ -253,7 +265,7 @@ TEST(TestMordern, RValue) {
     }
     // 암시적 이동 생성자와 암시적 이동 대입 연산자의 default 정의
     {
-        using namespace RValue_3;
+        using namespace RValue_1;
 
         class A_11 {
         private:
@@ -267,7 +279,7 @@ TEST(TestMordern, RValue) {
         A_11 c(std::move(a)); // 이동 생성자 호출
     } 
     {
-        using namespace RValue_3;
+        using namespace RValue_1;
 
         class A_11 {
         private:
@@ -282,7 +294,7 @@ TEST(TestMordern, RValue) {
         A_11 c(std::move(a)); // (△) 비권장. 복사 생성자 호출
     }    
     {
-        using namespace RValue_3;
+        using namespace RValue_1;
 
         class A_11 {
         private:
@@ -297,7 +309,46 @@ TEST(TestMordern, RValue) {
         A_11 a(new int(10));
         A_11 b(a); // 복사 생성자 호출
         A_11 c(std::move(a)); // 이동 생성자 호출
-    }   
+    } 
+    // 이동 연산을 이용한 리팩토링
+    {
+        class T {
+        public:
+            // 복사 생성자를 정의합니다. 이에 따라 암시적 이동 생성자는 정의되지 않습니다.
+            T& operator =(const T& other) {
+                std::cout << "T : Copy" << std::endl;
+                return *this;
+            }
+        };
+
+        T a;
+        T b;
+
+        b = a; // 복사 대입 합니다.
+        b = T(); // T()는 임시 개체인 우측값입니다. 복사 대입 연산자가 정의되어 이동 대입 연산자가 암시적으로 정의되지 않았고, 따라서 복사 대입 합니다.
+    } 
+    
+    {
+        class T_11 {
+        public:
+            // 복사 생성자를 정의합니다.
+            T_11& operator =(const T_11& other) {
+                std::cout << "T : Copy" << std::endl;
+                return *this;
+            }
+            // 이동 생성자를 정의합니다.
+            T_11& operator =(T_11&& other) noexcept {
+                std::cout << "T : Move" << std::endl;
+                return *this;        
+            }
+        };
+
+        T_11 a;
+        T_11 b;
+
+        b = a; // 복사 대입 합니다.
+        b = T_11(); // T()는 임시 개체인 우측값입니다. 이동 대입 합니다.
+    }
     // move
     {
         class A{};
@@ -321,6 +372,7 @@ TEST(TestMordern, RValue) {
         EXPECT_TRUE(T::Func_11(A()) == 2); // 임시 개체는 rvalue
         EXPECT_TRUE(T::Func_11(std::move(A())) == 2); // 임시 개체를 move 해도 rvalue
     }
+
     // move_no_except
     {
         class A_11 {
@@ -344,26 +396,35 @@ TEST(TestMordern, RValue) {
         B_11 b1;
         B_11 b2 = std::move_if_noexcept(b1); // B_11(B_11&&)가 nothrow 예외 보증이 되어 B_11(B_11&&)를 호출합니다.    }
     }
-    // forward()
-    {
-        using namespace RValue_1;
-        T t;
-
-        // g_11(T& val)와 f_11(T& val)가 호출되어 11입니다.
-        EXPECT_TRUE(g_11(t) == 11); 
-
-        // g_11(T&& val)와 f_11(T& val)가 호출되어 12입니다.
-        EXPECT_TRUE(g_11(std::move(t)) == 12); 
-    }
+    // 이름이 부여된 우측값
     {
         using namespace RValue_2;
-        T t;
-
-        // g_11(T& val)와 f_11(T& val)가 호출되어 11입니다.
-        EXPECT_TRUE(g_11(t) == 11); 
-
-        // g_11(T&& val)와 f_11(T&& val)가 호출되어 22입니다.
-        EXPECT_TRUE(g_11(std::move(t)) == 22);   
+ 
+        A lvalue;
+        A&& rvalue_11 = std::move(lvalue); // rvalue는 이름이 부여됐으므로 좌측값입니다.
+        EXPECT_TRUE(f_11(rvalue_11) == 1); // f_11(A&)를 호출합니다.
+        EXPECT_TRUE(f_11(std::move(lvalue)) == 2); // f_11(A&&)를 호출합니다.
     }
-    
+    {
+        using namespace RValue_3;
+   
+        A lvalue;
+
+        // g_11(A& val)와 f_11(A& val)가 호출되어 11입니다.
+        EXPECT_TRUE(g_11(lvalue) == 11); 
+
+        // g_11(A&& val)와 f_11(A& val)가 호출되어 12입니다.
+        EXPECT_TRUE(g_11(std::move(lvalue)) == 12); 
+    }
+    {
+        using namespace RValue_4;
+   
+        A lvalue;
+
+        // g_11(A& val)와 f_11(A& val)가 호출되어 11입니다.
+        EXPECT_TRUE(g_11(lvalue) == 11); 
+
+        // g_11(A&& val)와 f_11(A&& val)가 호출되어 22입니다.
+        EXPECT_TRUE(g_11(std::move(lvalue)) == 22); 
+    }
 }

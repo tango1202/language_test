@@ -39,7 +39,7 @@ TEST(TestMordern, SharedPtr) {
     }
     // 제어 블록
     {
-        class T{};
+        class T {};
 
         std::shared_ptr<T> a{new T{}};
         std::shared_ptr<T> b{a};        

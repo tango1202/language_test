@@ -2,7 +2,7 @@
 #include "Test_Inline.h"
 #include <cstdarg>
 
-namespace {
+namespace Function_1 {
     // (X) 컴파일 오류. 배열을 리턴값으로 사용할 수 없습니다.
     // int [] f() {
     //     int a[3] = {0,};
@@ -51,6 +51,45 @@ namespace {
         return val;
     }
 }
+
+namespace Function_2 {
+    int f(int) {return 1;} // #1
+    int f(char) {return 2;} // #2
+    int f(long) {return 3;} // #3
+}
+namespace Function_3 {
+    int f(int) {return 1;}
+    int f(double) {return 2;}
+}
+namespace Function_4 {
+    int f(int* a) {return 1;} 
+    // int f(int a[3]) {return 2;} // (X) 컴파일 오류. 배열은 f(int* a)와 동일해서 오버로딩 안됨.
+    // int f(int a[]) {return 3;} // (X) 컴파일 오류. 배열은 f(int* a)와 동일해서 오버로딩 안됨.
+}
+namespace Function_5 {
+    int f(int a) {return 1;} 
+    // int f(const int a) {return 2;} // (X) 컴파일 오류. int f(int) 와 동일해서 오버로딩 안됨.
+}
+namespace Function_6 {
+    int f(int) {return 1;}
+    // double f(int) {return 2;} // (X) 컴파일 오류. 리턴 타입은 오버로딩 함수 결정에 사용하지 않음
+}
+namespace Function_7 {
+    int f(const int& a) {return 1;} //int 타입, int& 타입, const int& 타입을 모두 받을 수 있습니다.
+}
+namespace Function_8 {
+    int f(int& a) {return 1;} //int 타입, int& 타입을 받을 수 있습니다.
+}
+namespace Function_9 {
+    int f(int& a) {return 1;} // int 타입, int& 타입을 받을 수 있습니다.
+    int f(const int& a) {return 2;} // const int 타입, const int& 타입을 받을 수 있습니다.  
+}
+namespace Function_10 {
+    int f(int a) {return 1;} // int 타입, const int 타입, int& 타입, const int& 타입을 받을 수 있습니다.
+    int f(int& a) {return 2;} // int 타입, int& 타입을 받을 수 있습니다.
+    int f(const int& a) {return 3;} // const int 타입, const int& 타입을 받을 수 있습니다.  
+}
+
 // ----
 // 이름 탐색 규칙 - ADL(Argument-dependent lookup), Keonig 
 // ----
@@ -86,12 +125,16 @@ TEST(TestClassicCpp, Function) {
     // 함수 포인터
     // ----
     {
+        using namespace Function_1;
+
         void (*p)(int); // void 를 리턴하고 int형을 인수로 전달받는 함수의 함수 포인터 p 선언
 
         p = f; // 함수 포인터에 f 함수 대입. p = &f; 와 동일
         p(10); // f 함수 실행. (*p)(10); 과 동일
     }
     {
+        using namespace Function_1;
+
         typedef void (*Func)(int); // void 를 리턴하고 int형을 인수로 전달받는 함수의 함수 포인터 타입 정의
 
         Func p; // 함수 포인터 p 정의
@@ -99,6 +142,8 @@ TEST(TestClassicCpp, Function) {
         p(10); // f 함수 실행. (*p)(10); 과 동일        
     }
     {
+        using namespace Function_1;
+
         typedef int (*Func)(int, int); // 함수 포인터 typedef
         class Button {
         private: 
@@ -279,11 +324,15 @@ TEST(TestClassicCpp, Function) {
         EXPECT_TRUE(T::Sum(3, 1, 2, 3) == 1 + 2 + 3);
     }
     {
+        using namespace Function_1;
+
         EXPECT_TRUE(f1() == 10); // 아무값도 주지 않으면 a 는 10
         EXPECT_TRUE(f1(20) == 20);
     }
     // 전역 변수 기본값
     {
+        using namespace Function_1;
+
         EXPECT_TRUE(g_Val == 10);
         EXPECT_TRUE(f4() == 10);
         g_Val = 20;
@@ -291,12 +340,13 @@ TEST(TestClassicCpp, Function) {
     }
     // 함수 기본값
     {
+        using namespace Function_1;
         g_Val = 10;
         EXPECT_TRUE(f5() == 10);
         g_Val = 20;
         EXPECT_TRUE(f5() == 20);        
     }
-    // 상속관계에서 기본값 제정의
+    // 상속관계에서 기본값 재정의
     {
         class Base {
         public:
@@ -319,67 +369,99 @@ TEST(TestClassicCpp, Function) {
         {
             Derived d;
             Base* p = &d;
-            EXPECT_TRUE(p->f6() == 10); // vtable을 참조하여 Base 의 기본값인 10을 사용합니다.   
+            EXPECT_TRUE(p->f6() == 10); // 가상 함수 테이블을 참조하여 Base 의 기본값인 10을 사용합니다.   
         }
-        // 오버로딩된 함수 호출 규칙
-        {
-            class T {
-            public:
-                int f(int) {return 1;}
-                int f(double) {return 2;}
-            };
+    }
+    // 함수 오버로딩
+    {
+        using namespace Function_2;
+        EXPECT_TRUE(f(10) == 1); // int f(int) 호출
+        EXPECT_TRUE(f('a') == 2); // int f(char) 호출
+        EXPECT_TRUE(f(10L) == 3); // int f(long) 호출
+    }
+    // 오버로딩된 함수 호출 규칙
+    {
+        using namespace Function_3;   
 
-            T t;
-            EXPECT_TRUE(t.f(1) == 1); // (O) 타입 일치. int 버전 호출
-            EXPECT_TRUE(t.f(1.) == 2); // (O) 타입 일치. double 버전 호출
-            // EXPECT_TRUE(t.f(1L) == 1); // (X) 컴파일 오류. long 버전이 없음
-            EXPECT_TRUE(t.f(1.F) == 2); // (△) 비권장. float 버전이 없지만, double로 암시적 형변환 되므로 double 버전 호출
-        }
-        // 오버로딩된 함수 호출 규칙 - 배열, 최상위 const
-        {
-            class T {
-            public:
-                
-                int f(int) {return 1;}
-                int f(int* a) {return 2;} 
+        EXPECT_TRUE(f(1) == 1); // (O) 타입 일치. int 버전 호출
+        EXPECT_TRUE(f(1.) == 2); // (O) 타입 일치. double 버전 호출
+        // EXPECT_TRUE(t.f(1L) == 1); // (X) 컴파일 오류. long 버전이 없음
+        EXPECT_TRUE(f(1.F) == 2); // (△) 비권장. float 버전이 없지만, double로 암시적 형변환 되므로 double 버전 호출
+    }
+    {
+        class T {
+        public:
+            int f() {return 1;}
+            int f() const {return 2;} // (O) 함수 상수성에 따라 선택됨 
+        };
 
-                // (X) 컴파일 오류. 배열은 f(int* a)와 동일해서 오버로딩 안됨.
-                // int f(int a[3]) {return 3;}
-                // int f(int a[]) {return 4;}
+        T val;
+        const T constVal = val;
 
-                // (X) 컴파일 오류. int f(int) 와 int f(const int) 는 동일해서 오버로딩 안됨.
-                // int f(const int) {return 5;}
+        EXPECT_TRUE(val.f() == 1);
+        EXPECT_TRUE(constVal.f() == 2);
+    }
+    // 값 타입과 참조자간의 모호성
 
-                // (X) 컴파일 오류. f(int* a)와 f(int* const a)는 동일해서 오버로딩 안됨.
-                // int f(int* const a) {return 6;}
+    {
+        using namespace Function_7;
 
-                // (O) f(int)와 f(const int) 는 동일해서 오버로딩 안되지만, 
-                // f(int* a)와 f(const int* a)는 다르므로(포인터 자체가 const가 아니라 가리키는 곳이 const임) 오버로딩 됨
-                int f(const int* a) {return 7;}
+        int val = 10;
+        int& ref = val;
+        const int& constRef = val;
 
-                // (O) 함수 상수성에 따라 선택됨
-                int f(int) const {return 8;} 
+        EXPECT_TRUE(f(val) == 1); // int를 const int&에 대입하여 호출합니다.
+        EXPECT_TRUE(f(ref) == 1); // int&를 const int&에 대입하여 호출합니다.
+        EXPECT_TRUE(f(constRef) == 1);        
+    }    
+    {
+        using namespace Function_8;
 
-                // (X) 컴파일 오류. 리턴 타입은 오버로딩 함수를 취급하는데 사용하지 않습니다.
-                // double f(int) {return 9.};
-            };
+        int val = 10;
+        int& ref = val;
+        const int& constRef = val;
 
-            T t;
-            EXPECT_TRUE(t.f(1) == 1); // (O) 타입 일치. int 버전 호출
-            int a = 10;
-            EXPECT_TRUE(t.f(&a) == 2); // (O) 타입 일치. int* 버전 호출
-            int arr[3] = {1, 2, 3};
-            EXPECT_TRUE(t.f(arr) == 2); // (O) 배열은 int* 버전 호출
-            int* const p = &a;
-            EXPECT_TRUE(t.f(p) == 2); // (O) int* const는 int* 버전 호출
-            EXPECT_TRUE(t.f(const_cast<const int*>(&a)) == 7); // (O) const int* 는 const int* 버전 호출
-            EXPECT_TRUE(const_cast<const T&>(t).f(1) == 8); // (O) 개체 상수성에 따라 상수 함수 선택됨
-        }
-        // 이름 탐색 규칙 - ADL(Argument-dependent lookup), Keonig 
-        {
-            EXPECT_TRUE(B::g() == 2); // B::MyFunc 이 채택됨
-            EXPECT_TRUE(D::g() == 1); // C::MyFunc 이 채택됨
-        }
+        EXPECT_TRUE(f(val) == 1); // int를 int&에 대입하여 호출합니다.
+        EXPECT_TRUE(f(ref) == 1); 
+        // EXPECT_TRUE(f(constRef) == 1); // (X) 컴파일 오류. const int&는 int&에 대입되지 않습니다.     
+    }
+    {
+        using namespace Function_10;
+
+        int val = 10;
+        const int constVal = 10;
+
+        int& ref = val;
+        const int& constRef = val;
+
+        // EXPECT_TRUE(f(val) == 1); // (X) 컴파일 오류. f(int)와 f(int&)와 f(const int&)가 모호합니다.
+        // EXPECT_TRUE(f(constVal) == 1); // (X) 컴파일 오류. f(int)와 f(const int&)가 모호합니다.
+
+        // EXPECT_TRUE(f(ref) == 2); // (X) 컴파일 오류. f(int)와 f(int&)와 f(const int&)가 모호합니다.
+        // EXPECT_TRUE(f(constRef) == 3); // (X) 컴파일 오류. f(int)와 f(const int&)가 모호합니다.
+    }
+
+    
+    {
+        using namespace Function_9;
+
+        int val = 10;
+        const int constVal = 10;
+
+        int& ref = val;
+        const int& constRef = val;
+
+        EXPECT_TRUE(f(val) == 1); // int를 int&에 대입하여 호출합니다.
+        EXPECT_TRUE(f(constVal) == 2); // const int를 const int&에 대입하여 호출합니다.
+
+        EXPECT_TRUE(f(ref) == 1); 
+        EXPECT_TRUE(f(constRef) == 2);        
+    }
+
+    // 이름 탐색 규칙 - ADL(Argument-dependent lookup), Keonig 
+    {
+        EXPECT_TRUE(B::g() == 2); // B::MyFunc 이 채택됨
+        EXPECT_TRUE(D::g() == 1); // C::MyFunc 이 채택됨
     }
 }
 

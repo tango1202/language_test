@@ -298,6 +298,7 @@ namespace Overloading_12 {
     int f(T, int*) {return 2;} // #2.
 }
 
+
 TEST(TestClassicCpp, TemplateOverloading) {
 
     // 오버로딩 버전에서 일반 버전을 선택함
@@ -435,5 +436,63 @@ TEST(TestClassicCpp, TemplateOverloading) {
         // #2 : T == int 이면 f(int, int*) 
         // (X) 컴파일 오류. 어느것을 호출할지 모호함.
         // EXPECT_TRUE(f(i, p) == 2);
-    }      
+    }  
+
+}
+namespace SFINAE_1 {
+
+    class A {
+    public:
+        typedef int Int; // 종속 타입
+        typedef char Char; // 종속 타입               
+    };
+    class B {
+    public:
+        typedef int Int; // 종속 타입
+    };
+
+    template<typename T>
+    typename T::Int f(typename T::Int param) {
+        return 1;
+    };
+    template<typename T>
+    typename T::Char f(typename T::Char param) {
+        return 2;
+    };
+}
+namespace SFINAE_2 {
+
+    class A {
+    public:
+        typedef int Int; // 종속 타입
+        typedef char Char; // 종속 타입
+    };
+
+    template<typename T>
+    typename T::Int f(typename T::Int param) {
+        return 1;
+    };
+    template<typename T>
+    typename T::Char f(typename T::Char param) {
+        typename T::ResultType result = 2; // A에는 ResultType이 없습니다.
+        return result;
+    };
+}
+
+TEST(TestClassicCpp, SFINAE) {
+    // SFINAE
+    {
+        using namespace SFINAE_1;
+        EXPECT_TRUE(f<A>(10) == 1);
+        EXPECT_TRUE(f<A>('a') == 2);
+
+        EXPECT_TRUE(f<B>(10) == 1);
+        EXPECT_TRUE(f<B>('a') == 1);  
+    }  
+     {
+        using namespace SFINAE_2;
+
+        EXPECT_TRUE(f<A>(10) == 1);
+        // EXPECT_TRUE(f<A>('a') == 2); // (X) 컴파일 오류. ResultType이 없습니다.
+    }     
 }

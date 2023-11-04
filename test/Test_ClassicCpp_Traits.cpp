@@ -187,6 +187,7 @@ namespace Traits_4 {
     }
 }
 
+
 TEST(TestClassicCpp, Traits) {
     {
         using namespace Traits_1;
@@ -237,4 +238,5 @@ TEST(TestClassicCpp, Traits) {
         EXPECT_TRUE(Add(c1, c2) == 2); // 내림
         EXPECT_TRUE(Add(d1, d2) == 2); // 내림         
     }
+
 }

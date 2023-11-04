@@ -1,14 +1,14 @@
 #include "gtest/gtest.h" 
 
-
 TEST(TestClassicCpp, Const) {
     // ----
-    // 상수 변수
+    // 상수 개체
     // ----
     {
         // const int x; // (X) 컴파일 오류. 초기값 없음
         const int x = 10; // (O) x의 값은 이제 변경될 수 없음
     }
+
     {
         int obj = 10;
         int* p1 = &obj; // *p1 수정 가능. p1 수정 가능
@@ -25,6 +25,35 @@ TEST(TestClassicCpp, Const) {
         const int* const p4 = &obj; // *p4 수정 불가. p4 수정 불가
         // *p4 = 20; // (X) 컴파일 오류
         // p4 = p1; // (X) 컴파일 오류
+    }
+    // 복사 대입시 최상위 const 제거
+    {
+        const int constVal = 10;
+        // constVal = 20; // (X) 컴파일 오류. 상수 개체는 수정할 수 없습니다.
+
+        int a = constVal;
+        a = 20; // (O) 상수 개체를 복사 대입하면 복제본은 수정할 수 있습니다.
+        EXPECT_TRUE(a == 20 && constVal == 10);
+
+        const int b = constVal;
+        // b = 20; // (X) 컴파일 오류. 상수 개체를 상수 개체로 복사 대입하면 수정할 수 없습니다.
+    }
+    {
+        int data = 10;
+        const int* constPtr = &data;
+        const int& constRef = data;
+
+        // int* a = constPtr; // (X) 컴파일 오류. 상수 개체 포인터는 상수 개체 포인터로 받아야 합니다.
+        const int* b = constPtr; // (O)
+
+        // int& c = *constPtr; // (X) 컴파일 오류. 상수 개체 포인터는 상수 개체 참조자로 받아야 합니다.
+        const int& d = *constPtr; // (O)
+
+        // int& e = constRef; // (X) 컴파일 오류. 상수 개체 참조자는 상수 개체 참조자로 받아야 합니다.
+        const int& f = constRef; // (O) 
+
+        // int* g = &constRef; // (X) 컴파일 오류. 상수 개체 참조자는 상수 개체 포인터로 받아야 합니다.
+        const int* h = &constRef; // (O)
     }
     // ----
     // 리턴값의 상수성
