@@ -396,7 +396,7 @@ TEST(TestClassicCpp, TemplateOverloading) {
         EXPECT_TRUE( a + 10 == 1);
     } 
 
-    // 동등한 템플릿 함수 - 최상위 const 제거
+    // 동등한 함수 템플릿 - 최상위 const 제거
     {
         using namespace Overloading_10;
         // #1 : T == int 이면 f(int) 

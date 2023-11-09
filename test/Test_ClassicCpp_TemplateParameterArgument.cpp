@@ -75,7 +75,7 @@ namespace Parameter_8 {
         static int m_Static; // 정적 멤버 변수
     };
 
-    // 템플릿 클래스
+    // 클래스 템플릿
     template<typename T>
     class C : B<T> {
         // B<T>::Type m_Val; // (X) 컴파일 오류. B<T>::Type이 static 변수인지, B<T>에 종속된 타입인지 모릅니다.
@@ -93,7 +93,7 @@ namespace Parameter_8 {
         typename T<int>::Type m_Val; // (O) 
     };
 
-    // 템플릿 함수
+    // 함수 템플릿
     template<typename T>
     // void f(B<T>::Type val) {} // (X) 컴파일 오류. B<T>::Type이 static 변수인지, B<T>에 종속된 타입인지 모릅니다. 
     void f(typename B<T>::Type val) {} // (O)

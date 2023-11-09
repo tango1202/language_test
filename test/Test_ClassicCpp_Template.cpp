@@ -1,7 +1,7 @@
 #include "gtest/gtest.h" 
 
 namespace Template_1 {
-    // 템플릿 클래스 정의부 - 코드가 생성되지 않은 상태
+    // 클래스 템플릿 정의부 - 코드가 생성되지 않은 상태
     template<typename T> 
     class MyClass {
     public:
@@ -26,7 +26,7 @@ namespace Template_3 {
 }
 
 namespace Template_4 {
-    // 템플릿 함수    
+    // 함수 템플릿    
     template<typename T>
     T Plus(T left, T right) {
         return left + right;
@@ -66,11 +66,11 @@ namespace Template_6 {
         U g(U val); // 템플릿 멤버 함수 선언
     };
 
-    // 템플릿 클래스의 멤버 함수 정의
-    template<typename T> // 템플릿 클래스
+    // 클래스 템플릿의 멤버 함수 정의
+    template<typename T> // 클래스 템플릿
     void A<T>::f() {} 
 
-    // 템플릿 클래스의 템플릿 멤버 함수 정의 - 인자 집합 2개 필요
+    // 클래스 템플릿의 템플릿 멤버 함수 정의 - 인자 집합 2개 필요
     template<typename T> // 바깥쪽 인자
     template<typename U> // 안쪽 인자
     U A<T>::g(U val) {return val + val;} 
@@ -93,7 +93,7 @@ TEST(TestClassicCpp, Template) {
         // a.g(); // (X) 컴파일 오류. 함수 정의부가 없음
     }
 
-    // 템플릿 함수 
+    // 함수 템플릿 
     {
         using namespace Template_4;
 
@@ -104,7 +104,7 @@ TEST(TestClassicCpp, Template) {
         using namespace Template_4;
 
         EXPECT_TRUE(Plus(10, 10) == 20); // (O) 인수로부터 int가 추론됨
-        EXPECT_TRUE(Plus<>(10, 10) == 20); // (O) <>를 기재하여 템플릿 함수임을 명시하고, 인수로부터 추론
+        EXPECT_TRUE(Plus<>(10, 10) == 20); // (O) <>를 기재하여 함수 템플릿임을 명시하고, 인수로부터 추론
         // EXPECT_TRUE(Plus('a', 1) == 'b'); // (X) 컴파일 오류. 인수가 int, char로 각각 다르므로 추론이 어려움 
         EXPECT_TRUE(Plus('a', static_cast<char>(1)) == 'b'); // (O) 인수로부터 char 가 추론됨
     }   

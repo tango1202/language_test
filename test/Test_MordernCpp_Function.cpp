@@ -170,6 +170,13 @@ TEST(TestMordern, Function) {
         EXPECT_TRUE(func3(4, 5) == 1 + 4 + 5);
     }
     {
+        using namespace Function_1;    
+        auto func3{
+            [](int b, int c) {return Sum(1, b, c);}
+        };
+        EXPECT_TRUE(func3(4, 5) == 1 + 4 + 5);        
+    }
+    {
         using namespace Function_1;
         int a{1};
         int b{2};

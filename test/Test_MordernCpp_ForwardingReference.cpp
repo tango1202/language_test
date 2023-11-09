@@ -9,6 +9,10 @@ namespace ForwardingReference_2 {
 
     int f_11(A&) {return 1;} // 인자가 좌측값 참조이면 호출됩니다.
     int f_11(A&&) {return 2;} // 인자가 우측값 참조이면 호출됩니다.
+
+    int Forwarding_11(A&& param) { // 함수 인자는 이름이 부여됐으므로 좌측값입니다.
+        return f_11(param); // 좌측값으로만 호출합니다. 이동 연산이 물거품이 될 수 있습니다.
+    }    
 }
 namespace ForwardingReference_3 {
     template<typename T>
@@ -84,7 +88,7 @@ namespace ForwardingReference_10 {
 
     void Forwarding_11(A param1, A& param2, A&& param3) {
         f_11(
-            std::forward<A>(param1), // A&&로 전달합니다.
+            std::forward<A>(param1), // A&&로 전달합니다. param1은 Forwarding_11 함수에서 임시로 복사 대입 받은 것이므로, 임시 개체로 취급하고, f_11에 이동 대입한 후 버립니다.
             std::forward<A&>(param2), // A&로 전달합니다.
             std::forward<A&&>(param3) // A&&로 전달합니다. std::forward<A>(param3) 도 동일합니다.
         );
@@ -97,7 +101,7 @@ namespace ForwardingReference_11 {
     template<typename U, typename V, typename W>
     void Forwarding_11(U&& param1, V&& param2, W&& param3) {
         f_11(
-            std::forward<U>(param1), // A&&로 전달합니다. param1은 Forwarding_11 함수에서 임시로 복사 대입 받은 것이므로, 임시 개체로 취급하고, f_11에 이동 대입한 후 버립니다.
+            std::forward<U>(param1), // A&로 전달합니다. 
             std::forward<V>(param2), // A&로 전달합니다.
             std::forward<W>(param3) // A&&로 전달합니다.
         );
@@ -146,9 +150,9 @@ namespace ForwardingReference_16 {
     template<typename U, typename V, typename W>
     void Forwarding_11(U&& param1, V&& param2, W&& param3) {
 
-        // 전달 참조는 값타입을 좌측값 참조로 받습니다.
-        // 따라서, U == A&, param1 == A& 이므로
-        // T == A&, param == A& 로 템플릿 인스턴스화 합니다.
+        // 전달 참조는 이름이 있는 값 타입을 좌측값 참조로 받습니다.
+        // 따라서, U == A&, param1 == A& 이며,
+        // forward<U>는 T == A&로 템플릿 인스턴스화 합니다.
         // template<typename T> 
         // A& + && forward(A + & param) {
         //    return static_cast<A& + &&>(param);
@@ -157,8 +161,8 @@ namespace ForwardingReference_16 {
         f_11(std::forward<U>(param1));
 
         // 전달 참조는 좌측값 참조 타입을 좌측값 참조로 받습니다.
-        // 따라서, V == A&, param1 == A& 이므로
-        // T == A&, param == A& 로 템플릿 인스턴스화 합니다.
+        // 따라서, V == A&, param1 == A& 이며,
+        // forward<V>는 T == A&로 템플릿 인스턴스화 합니다.
         // template<typename T> 
         // A& + && forward(A + & param) {
         //    return static_cast<A& + &&>(param);
@@ -167,8 +171,9 @@ namespace ForwardingReference_16 {
         g_11(std::forward<V>(param2));
 
         // 전달 참조는 우측값 참조 타입을 우측값 참조로 받습니다.
-        // 따라서, W == A&&, param3 == A& 이므로
-        // T == A&&, param == A& 로 템플릿 인스턴스화 합니다.
+        // 또는 이름이 없는 값 타입인 임시 개체도 우측값 참조로 받습니다.
+        // 따라서, W == A&&, param3 == A& 이며,(param3은 이름이 부여됐으므로 좌측값입니다.)
+        // forward<W>는 T == A&&로 템플릿 인스턴스화 합니다.
         // template<typename T> 
         // A&& + && forward(A + & param) {
         //    return static_cast<A&& + &&>(param);
@@ -181,15 +186,14 @@ namespace ForwardingReference_17 {
     class A {};
     void f(A val) {}
 
-    // 좌측값 참조를 받아서 전달하고, val이 값 타입 이기 때문에 임시 개체를 생성하고 복사합니다.
+    // #1. 전달 참조 버전
     template<typename U>
-    void Forwarding1_11(U&& param) { // #1. 전달 참조 버전
-        f(std::forward<U>(param));
+    void Forwarding1_11(U&& param) { // 좌측값 참조를 받아서
+        f(std::forward<U>(param));  // val이 값 타입 이기 때문에 임시 개체를 생성하고 복사합니다.
     }
-
-    // param을 복사 생성하고 우측값으로 val에 이동시킵니다.
-    void Forwarding2_11(A param) { // #2. 일반 버전
-        f(std::forward<A>(param));
+    // #2. 일반 버전
+    void Forwarding2_11(A param) { // param을 복사 생성하고
+        f(std::forward<A>(param)); // 우측값으로 val에 이동시킵니다.
     }
 }
 
@@ -334,11 +338,16 @@ TEST(TestMordern, Forwarding) {
         A&& rvalue_11 = std::move(lvalue); // rvalue는 이름이 부여됐으므로 좌측값입니다.
         EXPECT_TRUE(f_11(rvalue_11) == 1); // f_11(A&)를 호출합니다.
     }
+    {
+        using namespace ForwardingReference_2;   
+        A val;
+        EXPECT_TRUE(Forwarding_11(std::move(val)) == 1); // (△) 비권장. 우측값을 전달했지만 좌측값으로 호출됩니다.    
+    }
     // 참조 축약 
     {
         int val;
         int* p;
-        int** pp = &p; // 포인터의 포인터는 합법입니다.
+        int** pp = &p; // 포인터의 포인터는 합법입니다. 다차원적으로 구성됩니다.
 
         int& r = val;
         // int& & rr = r; // (X) 컴파일 오류. 참조자의 참조는 불법입니다.
@@ -355,23 +364,23 @@ TEST(TestMordern, Forwarding) {
     {
         using namespace ForwardingReference_4;
 
-        class T {};
-        T obj;
+        class A {};
+        A obj;
 
         // 기본 형태
         {
-            Convert_11<T>::LRef a = obj; // T&
-            Convert_11<T>::RRef b = std::move(obj); // T&& 
+            Convert_11<A>::LRef a = obj; // A&
+            Convert_11<A>::RRef b = std::move(obj); // A&& 
         }
         // & + & 과 & + &&
         {
-            Convert_11<T&>::LRef a = obj; // T&, & + &
-            Convert_11<T&>::RRef b = obj; // T&, & + &&
+            Convert_11<A&>::LRef a = obj; // A&, & + &
+            Convert_11<A&>::RRef b = obj; // A&, & + &&
         }
         // && + & 과 && + &&
         {
-            Convert_11<T&&>::LRef a = obj; // T&, && + &
-            Convert_11<T&&>::RRef b = std::move(obj);; // T&&, && + &&  
+            Convert_11<A&&>::LRef a = obj; // A&, && + &
+            Convert_11<A&&>::RRef b = std::move(obj);; // A&&, && + &&  
         } 
 
     } 
@@ -379,7 +388,28 @@ TEST(TestMordern, Forwarding) {
     {
         class A {};
         A val;
-        A&& ref_11 = std::move(val); // A&&는 우측값만 받을 수 있습니다.
+        // A& ref = val; // 좌측값을 참조할 수 있습니다.
+        // A& ref = std::move(val); // (X) 컴파일 오류. 우측값을 참조할 수 없습니다.
+        // A& ref = A(); // (X) 컴파일 오류. 임시 개체도 우측값이므로 참조할 수 없습니다.     
+    }
+    {
+        class A {};
+        A val;
+        A& ref = val;
+
+        {
+            // A&& ref_11 = val; // (X) 컴파일 오류. 좌측값을 참조할 수 없습니다.(형변환을 해야 합니다.)
+        }
+        {
+            A&& ref_11 = std::move(val); // A&&는 우측값만 받을 수 있습니다.
+        }
+
+        {
+            // A&& ref_11 = ref; // (X) 컴파일 오류, 좌측값을 참조할 수 없습니다.(형변환을 해야 합니다.)
+        }
+        {
+            A&& ref_11 = std::move(ref); // A&&는 우측값만 받을 수 있습니다.
+        }
     }   
     {
         class A {};
@@ -391,13 +421,19 @@ TEST(TestMordern, Forwarding) {
     {
         class A {};
         A val;
+
+        auto&& a_11 = val; // A&. val는 좌측값. 이를 참조로 만들면 A&인 좌측값 참조
+        auto&& b_11 = A(); // A&&. A()는 이름이 없는 임시 개체인 우측값. 이를 참조로 만들면 A&&인 우측값 참조  
+    }
+    {
+        class A {};
+        A val;
         A& ref = val;
         A&& rref_11 = static_cast<A&&>(val);   
 
-        auto&& a_11 = val; // A&. val는 좌측값. 이를 참조로 만들면 A&인 좌측값 참조
-        auto&& b_11 = ref; // A&. ref는 좌측값 참조
-        auto&& c_11 = rref_11; // A&. rref_11는 이름이 있으니 좌측값
-        auto&& d_11 = std::move(val); // A&&         
+        auto&& a_11 = ref; // A&. ref는 좌측값 참조
+        auto&& b_11 = rref_11; // A&. rref_11는 이름이 있으니 좌측값
+        auto&& c_11 = std::move(val); // A&& 
     }
     {
         class A {};

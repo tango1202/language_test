@@ -35,7 +35,7 @@ namespace Decltype_4 {
 
         const int result = a + b;
         
-        // 템플릿 함수 인수 추론에 의해 const int 대신 int가 사용됩니다.
+        // 함수 템플릿 인수 추론에 의해 const int 대신 int가 사용됩니다.
         return result;
     }
 
@@ -106,7 +106,7 @@ TEST(TestMordern, Auto) {
         // 참조성은 제거됩니다.
         int x = 10;
         int& ref = x;
-        auto f_11 = ref; // int
+        auto f_11 = ref; // int. 참조성이 제거됩니다.
         auto& g_11 = ref; // auto&을 이용하여 억지로 참조자로 받을 수 있습니다.
     }
     // auto의 중괄호 초기화 특수 추론 규칙
@@ -136,16 +136,22 @@ TEST(TestMordern, Auto) {
             }
         };
 
-        int val = MyInt(11); // (△) 비권장. 암시적으로 int로 변경됩니다. 
-        EXPECT_TRUE(val == 10);
-        EXPECT_TRUE(val + 1 == 10 + 1);
+        {
+            int val = MyInt(11); // (△) 비권장. 암시적으로 int로 변경됩니다. 
 
-        // auto val_11 = MyInt(11); // MyInt입니다.
-        // int& ref = val_11; // (X) 컴파일 오류. 참조자로 변환될 수 없습니다.
-
-        auto val_11 = static_cast<int>(MyInt(11)); // 명시적으로 int 입니다.
-        int& ref = val_11; // (△) 비권장. 참조자로 변환될 수 있습니다만, 근본적으로는 암시적 형변환을 사용하지 마세요.
-     }
+            EXPECT_TRUE(val == 10); // 최대 / 최소가 잘 한정되어 있습니다.
+            EXPECT_TRUE(val + 1 == 11); // (△) 비권장. 값 한정한게 엉망이 되버렸습니다. 이게 다 암시적 형변환으로 int 복제본을 만들었기 때문이에요. 사실 const int&를 리턴하는게 좋습니다.
+            int& ref = val; // (△) 비권장. int&로 변환될 수 있습니다.
+        }
+        {
+            // auto val_11 = MyInt(11); // MyInt입니다.
+            // int& ref = val_11; // (X) 컴파일 오류. MyInt는 int&로 변환될 수 없습니다.
+        }
+        {
+            auto val_11 = static_cast<int>(MyInt(11)); // 명시적으로 int 입니다.
+            int& ref = val_11; // (△) 비권장. int&로 변환될 수 있습니다.
+        }
+    }
 }
 TEST(TestMordern, Decltype) {
     {
@@ -272,7 +278,7 @@ TEST(TestMordern, Decltype) {
         using namespace Decltype_4;
 
         int result1 = Add1_14(10, 20); // int를 리턴
-        int result2 = Add2_14(10, 20); // const int를 리턴했지만 템플릿 함수 인수 추론 규칙에 따라 int를 리턴
+        int result2 = Add2_14(10, 20); // const int를 리턴했지만 함수 템플릿 인수 추론 규칙에 따라 int를 리턴
         const int result3 = Add3_14(10, 20); // const int 리턴. 리턴하는 result 타입과 동일
         // const int& result4 = Add4_14(10, 20); // const int& 리턴. 리턴하는 (result) 표현식과 동일. 
     }
