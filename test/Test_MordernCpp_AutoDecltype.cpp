@@ -291,4 +291,14 @@ TEST(TestMordern, Decltype) {
          
     }
 #endif
+#if 201703L <= __cplusplus // C++17~
+    // (C++17~) 중괄호 초기화에서 auto 추론의 새로운 규칙
+    {
+        int a_17{1}; // a는 int
+        auto b_17{1}; // b는 int. 기존에는 initializer_list<int> 일 수 있었음
+        auto c_17 = {1}; // c는 initializer_list<int>
+        auto d_17 = {1, 2}; // d는 initializer_list<int>  
+        // auto e_17{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
+    }
+#endif  
 }

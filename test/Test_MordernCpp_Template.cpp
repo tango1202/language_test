@@ -48,6 +48,69 @@ namespace Template_2 {
     };   
 #endif    
 }
+namespace Template_3 {
+    template<int val>
+    class A {};
+
+    enum MyEnum{Val};
+    template<enum MyEnum myEnum>
+    class B {};
+
+    class MyClass {};
+    template<MyClass* ptr>
+    class C {};
+
+    template<MyClass& ref>
+    class D {};  
+
+    MyClass g_MyClass;
+    
+}
+namespace Template_4 {
+#if 202002L <= __cplusplus // C++20~ 
+    template<double d> 
+    class A_20 {};
+    
+    class MyClass_11 {
+    public: 
+        int m_Val; // 멤버 변수는 public이고, mutable이 아니어야 합니다.
+    public: 
+        constexpr explicit MyClass_11(int val) : m_Val(val) {} // constexpr 생성자여야 합니다.
+    };
+    template<MyClass_11 myClass> 
+    class B_20 {};
+#endif
+}
+
+namespace Template_5 {
+#if 202002L <= __cplusplus // C++20~ 
+    // 축약된 함수 템플릿
+
+    // template<typename T> 
+    // void f(T param);
+    void f_20(auto param) {} 
+
+    // template<typename T, typename U>
+    // void g(T param1, U param2);
+    void g_20(auto param1, auto param2) {} // param1과 param2는 동일한 타입이라는 보장이 없습니다.
+
+    // template<typename... Params>
+    // void h_11(Params... params);
+    void h_20(auto... params) {} // 가변 템플릿도 지원합니다.
+
+    // template<typename T, typename U>
+    // void i(T param1, U param2) {}
+    template<typename T>
+    void i_20(T param1, auto param2) {} // 템플릿 내에서 혼합해서 사용할 수 있습니다.
+#endif
+}
+namespace Template_6 {
+    template<typename T>
+    class A {
+    public:
+        explicit A(T val) {}
+    };
+}
 
 TEST(TestMordern, Template) {
 #if 201402L <= __cplusplus // C++14~        
@@ -90,5 +153,48 @@ TEST(TestMordern, Template) {
         EXPECT_TRUE(a_17.GetVal() == 10);
 #endif
     }
+    // 축약된 함수 템플릿
+    {
+#if 202002L <= __cplusplus // C++20~ 
+        using namespace Template_5;
+
+        f_20(10);
+        g_20(10, 3.14);
+        h_20(10, 3.14, "Hello");
+        i_20(10, 3.14);
+#endif
+    }     
+    // 템플릿 인자에 타입이 아닌 개체 지원 확장
+    {
+        using namespace Template_3;
+
+        A<10> a; // 정수 타입
+        B<Val> b; // 열거형의 열거자
+        C<&g_MyClass> c; // 전역, 정적 개체의 포인터
+        D<g_MyClass> d; // 전역, 정적 개체의 참조자
+    }
+    {
+#if 202002L <= __cplusplus // C++20~ 
+        using namespace Template_4;
+
+        A_20<3.14> a; // 실수 타입
+        B_20<MyClass_11{1}> b; // 리터럴 타입
+#endif
+    }
+    // initializer_list 사용시 클래스 템플릿 인수 추론
+    {
+        using namespace Template_6;
+
+        A<int> a{10}; // ~C++17 이전에는 타입을 명시해야 합니다.
+#if 201703L <= __cplusplus // C++17~       
+        A a_17{10}; // C++17 부터는 인수 타입으로부터 추론합니다.
+#endif
+
+        std::vector<int> v_11{1, 2, 3}; // ~C++20 이전에는 타입을 명시해야 합니다.
+#if 202002L <= __cplusplus // C++20~         
+        std::vector v_20{1, 2, 3}; // initializer_list의 요소 타입으로 부터 vector의 템플릿 인자를 추론합니다.
+#endif
+    }
+   
 
 }

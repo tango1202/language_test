@@ -419,6 +419,44 @@ TEST(TestClassicCpp, Operators) {
             EXPECT_TRUE(t1 >= t2);  
         } 
     }
+    {
+        class T {
+        private:
+            int m_X;
+            int m_Y;
+            int m_Z;
+
+        public:  
+
+            bool operator <(const T& other) const {
+                if (this->m_X < other.m_X) return true; // 작다고 판단되면 바로 리턴
+                if (other.m_X < this->m_X) return false; // 크다고 판단되면 바로 리턴
+        
+                if (this->m_Y < other.m_Y) return true;
+                if (other.m_Y < this->m_Y) return false;
+
+                return this->m_Z < other.m_Z;
+            }
+            bool operator ==(const T& other) const { 
+                if (this->m_X != other.m_X) return false; // 다르다고 판단되면 바로 리턴
+                if (this->m_Y != other.m_Y) return false;
+
+                return this->m_Z == other.m_Z;
+            }
+            bool operator !=(const T& other) const {
+                return !(*this == other);
+            }
+            bool operator >(const T& other) const {
+                return other < *this;
+            }
+            bool operator <=(const T& other) const {
+                return !(other < *this);
+            }
+            bool operator >=(const T& other) const {
+                return !(*this < other);
+            } 
+        };       
+    }
     // ----
     // 열거형 연산자 오버로딩
     // ----

@@ -73,6 +73,39 @@ TEST(TestClassicCpp, Static) {
         EXPECT_TRUE(T::GetVal() == 32); // 2회 호출
         EXPECT_TRUE(T::GetVal() == 33); // 3회 호출
     }
+    {
+        class A {
+        private:
+            A() {} // private여서 외부에서 생성할 수 없습니다.
+        public:
+            static A& GetInstance() {
+                static A s_A;
+                return s_A;
+            }    
+        };
+        class B {
+        private:
+            explicit B(A) {} // private여서 외부에서 생성할 수 없습니다. A로부터 생성됩니다.
+        public:
+            static B& GetInstance() {
+                static B s_B(A::GetInstance()); // A::GetInstance()로 A개체는 반드시 생성되고 초기화 됨을 보장합니다.
+                return s_B;
+            } 
+        };
+        class C {
+        private:
+            explicit C(B) {} // private여서 외부에서 생성할 수 없습니다. B로부터 생성됩니다.
+        public:
+            static C& GetInstance() {
+                static C s_C(B::GetInstance()); // B::GetInstance()로 B개체는 반드시 생성되고 초기화 됨을 보장합니다.
+                return s_C;
+            } 
+
+        };
+        A& g_A = A::GetInstance();
+        B& g_B = B::GetInstance();
+        C& g_C = C::GetInstance();         
+    }
     // ----
     // 임시 개체
     // ----

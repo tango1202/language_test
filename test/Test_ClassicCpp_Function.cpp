@@ -2,6 +2,15 @@
 #include "Test_Inline.h"
 #include <cstdarg>
 
+namespace Function_0 {
+    int f(int param); // 함수 선언 
+                      // 인자명을 꼭 동일하게 맞출 필요는 없습니다. 
+                      // 관례적으로 맞출 뿐입니다. 
+                      // 즉, int f(int); 와 같이 하셔도 됩니다.
+                      
+    int g(int param) {return f(param);} // (O) 선언만 된 함수 사용
+    int f(int param) {return param * 2;} // 함수 정의    
+}
 namespace Function_1 {
     // (X) 컴파일 오류. 배열을 리턴값으로 사용할 수 없습니다.
     // int [] f() {
@@ -121,6 +130,11 @@ namespace D {
 }
 
 TEST(TestClassicCpp, Function) {
+    // 함수 선언
+    {
+        using namespace Function_0;
+        EXPECT_TRUE(g(10) == 20);
+    }
     // ----
     // 함수 포인터
     // ----

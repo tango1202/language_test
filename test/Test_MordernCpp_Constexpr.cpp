@@ -116,7 +116,30 @@ namespace Constexpr_2 {
     }; 
 #endif       
 }
-
+namespace Consteval_1 {
+#if 202002L <= __cplusplus // C++20~ 
+    constexpr int Add_14(int a, int b) {return a + b;}
+    consteval int Add_20(int a, int b) {return a + b;}
+#endif
+}
+namespace Constinit_1 {
+#if 202002L <= __cplusplus // C++20~
+    
+    constexpr int f_11() {return 10;} // 컴파일 타임 함수 입니다.
+    
+    // constinit int 로 받을 수도 있지만, s_Val_20과 s_m_Val_20에 대입하기 위해 const를 붙였습니다.
+    constinit const int g_Val_20 = f_11(); // constinit여서 컴파일 타임에 초기화 되어야 합니다.
+        
+    // g_Val_20은 컴파일 타임 const 상수 입니다.
+    constinit static int s_Val_20 = g_Val_20; // constinit여서 컴파일 타임에 초기화 되어야 합니다.
+    
+    class T_20 {
+    public:
+        // C++17 부터 인라인 변수를 이용하여 정적 멤버 변수를 멤버 선언부에서 초기화할 수 있습니다.
+        constinit static inline int s_m_Val_20 = g_Val_20; // constinit여서 컴파일 타임에 초기화 되어야 합니다.
+    };
+#endif
+}
 TEST(TestMordern, Constexpr) {
     // constexpr
     {
@@ -222,5 +245,25 @@ TEST(TestMordern, Constexpr) {
         int* ptr{CloneTraits<int>::Clone_17(&val)}; // (O)
         delete ptr; 
     } 
-#endif       
+#endif    
+
+#if 202002L <= __cplusplus // C++20~ 
+    {
+        using namespace Consteval_1;
+
+        {
+            enum class MyEnum_11 {Val = Add_14(1, 2)}; // 컴파일 타임 함수로 사용
+            EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 3); 
+        }
+        {
+            enum class MyEnum_11 {Val = Add_20(1, 2)}; // 컴파일 타임 함수로 사용
+            EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 3); 
+        }
+
+        int a{10};
+        int b{20};
+        EXPECT_TRUE(Add_14(a, b) == 30); // 런타임 함수로 사용
+        // EXPECT_TRUE(Add_20(a, b) == 30); // (X) 컴파일 오류. 런타임 함수로 사용할 수 없습니다.
+    }
+#endif
 }
