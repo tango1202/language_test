@@ -7,13 +7,13 @@ namespace Lambda_1 {
         return lambda_11(a, b);
     }
 
-    class T {
+    class T_11 {
     public: 
-        T() {std::cout << "T::Default Constructor" << std::endl;}
-        T(const T&) {std::cout << "T::Copy Constructor" << std::endl;}
-        T(T&&) {std::cout << "T::Move Constructor" << std::endl;}
-        ~T() {std::cout << "T::Destructor" << std::endl;}
-        void operator =(const T&) {std::cout << "T::operator =()" << std::endl;}
+        T_11() {std::cout << "T_11::Default Constructor" << std::endl;}
+        T_11(const T_11&) {std::cout << "T_11T::Copy Constructor" << std::endl;}
+        T_11(T_11&&) {std::cout << "T_11::Move Constructor" << std::endl;}
+        ~T_11() {std::cout << "T_11::Destructor" << std::endl;}
+        void operator =(const T_11&) {std::cout << "T_11::operator =()" << std::endl;}
     };   
 #if 201402L <= __cplusplus // C++14~  
     template<typename T, typename U> 
@@ -192,6 +192,29 @@ TEST(TestMordern, Lambda) {
         EXPECT_TRUE(t.Func() == 12);
         EXPECT_TRUE(t.GetMember() == 10); // 멤버 변수가 수정되어 있습니다.
     }
+    {
+        class T_11 {
+            int m_Member{1};
+        public:
+            int GetMember() const {return m_Member;}
+            int Func() {
+                int local{2};
+
+                auto f_11{
+                    [&]() -> int { // C++20에서도 여전히 this를 참조로 캡쳐합니다.
+
+                        m_Member = 10; // this->m_Member = 10; 과 동일. 멤버 변수의 값을 수정합니다.
+                        return m_Member + local;
+                    }
+                };  
+
+                return f_11();
+            }
+        };  
+        T_11 t;
+        EXPECT_TRUE(t.Func() == 12);
+        EXPECT_TRUE(t.GetMember() == 10); // 멤버 변수가 수정되어 있습니다.      
+    }
     // 참조 캡쳐
     {
         int a{1};
@@ -268,13 +291,13 @@ TEST(TestMordern, Lambda) {
     {
         using namespace Lambda_1;
         
-        T t;
+        T_11 t;
         [=]() {std::cout << "Run Lambda" << std::endl;}(); // t를 사용하지 않았습니다.        
     }
     {
         using namespace Lambda_1;
         
-        T t;
+        T_11 t;
         [=]() {
             t; // t;로 사용합니다. 람다 캡쳐시 복사 부하가 있습니다.    
             std::cout << "Run Lambda" << std::endl;
@@ -283,7 +306,7 @@ TEST(TestMordern, Lambda) {
     {
         using namespace Lambda_1;
 
-        T t;
+        T_11 t;
         auto f_11{
             [=]() { // 변수에 저장하고, 호출합니다.   
                 t; 
@@ -295,7 +318,7 @@ TEST(TestMordern, Lambda) {
     {
         using namespace Lambda_1;
 
-        T t;
+        T_11 t;
         auto f1_11{
             [=]() {
                 t; 
@@ -310,7 +333,7 @@ TEST(TestMordern, Lambda) {
     {
         using namespace Lambda_1;
 
-        T t;
+        T_11 t;
         auto f1_11{
             [&]() {
                 t;

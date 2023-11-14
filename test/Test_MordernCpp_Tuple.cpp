@@ -158,7 +158,7 @@ TEST(TestMordern, Tuple) {
 #if 201703L <= __cplusplus // C++17~
     // (C++17~) make_from_tuple
     {
-        class T{
+        class T {
         public:
             T(int a, int b, int c) {}
         };

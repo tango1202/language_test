@@ -63,7 +63,7 @@ TEST(TestMordern, NoExcept) {
         // f_11(); // noexcept 함수 내에서 사용하는 함수 f()가 예외를 발생시켜 terminate()를 호출합니다.
     }
     {
-        class T_11{
+        class T_11 {
         public:
             ~T_11() noexcept(false) {} // 예외를 방출할 수 있습니다.
         };

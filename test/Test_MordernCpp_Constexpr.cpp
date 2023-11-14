@@ -140,6 +140,38 @@ namespace Constinit_1 {
     };
 #endif
 }
+namespace Constexpr_3 {
+#if 202002L <= __cplusplus // C++20~ 
+    constexpr void Func_20() {
+        int a; // 초기화되지 않은 지역 변수
+
+        try {}
+        catch(...) {}
+    }
+#endif    
+}
+
+namespace Constexpr_4 {
+   
+    union MyUnion {
+        int i;
+        float f;
+    };
+    constexpr int Func_20() {
+        MyUnion myUnion{};
+        myUnion.i = 3;
+
+        // (X) ~C++20 컴파일 오류. change of the active member of a union from 'MyUnion::i' to 'MyUnion::f'
+        // (O) C++2O~
+#if 202002L <= __cplusplus // C++20~          
+        myUnion.f = 1.2f; // 활성 멤버로의 전환을 허용합니다.
+#endif         
+        return 1;
+    }
+  
+}
+
+
 TEST(TestMordern, Constexpr) {
     // constexpr
     {
@@ -199,8 +231,8 @@ TEST(TestMordern, Constexpr) {
 
         {
             int x = 10;
-            // constexpr Area_11 area(x, 5); // (X) 컴파일 오류. x는 컴파일 타임 상수가 아닙니다.
-            Area_11 area(x, 5); // 런타임 함수로 동작합니다.
+            // constexpr Area_11 area{x, 5}; // (X) 컴파일 오류. x는 컴파일 타임 상수가 아닙니다.
+            Area_11 area{x, 5}; // 런타임 함수로 동작합니다.
         }
     }
     {
@@ -211,10 +243,11 @@ TEST(TestMordern, Constexpr) {
             int m_Y;
         public:
             constexpr Area_11(int x, int y) : // 컴파일 타임 상수로 사용 가능
-                m_X(x),
-                m_Y(y) {} 
+                m_X{x},
+                m_Y{y} {} 
             constexpr int GetVal_11() const {return m_X * m_Y;}
-#if 201402L <= __cplusplus // C++14~               
+#if 201402L <= __cplusplus // C++14~   
+            // C++14 부터는 constexpr개체에서도 멤버 변수의 값을 수정할 수 있습니다.            
             constexpr void SetX_14(int val) {m_X = val;}
             constexpr void SetY_14(int val) {m_Y = val;}    
 #endif                    
@@ -225,8 +258,8 @@ TEST(TestMordern, Constexpr) {
     // (C++14~) constexpr 함수 제약 완화
     {
         // 컴파일 타임에 계산된 120이 Val에 대입됩니다.
-        enum class MyEnum {Val = Factorial_14(5)};
-        EXPECT_TRUE(static_cast<int>(MyEnum::Val) == 1 * 2 * 3 * 4 * 5);       
+        enum class MyEnum_11 {Val = Factorial_14(5)};
+        EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 1 * 2 * 3 * 4 * 5);       
     }
 #endif    
     // C++17 if constexpr
@@ -250,7 +283,6 @@ TEST(TestMordern, Constexpr) {
 #if 202002L <= __cplusplus // C++20~ 
     {
         using namespace Consteval_1;
-
         {
             enum class MyEnum_11 {Val = Add_14(1, 2)}; // 컴파일 타임 함수로 사용
             EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 3); 
@@ -266,4 +298,33 @@ TEST(TestMordern, Constexpr) {
         // EXPECT_TRUE(Add_20(a, b) == 30); // (X) 컴파일 오류. 런타임 함수로 사용할 수 없습니다.
     }
 #endif
+#if 202002L <= __cplusplus // C++20~ 
+    // (C++20~) constexpr 함수 제약 완화
+    {
+        class Base {
+        public:
+            virtual int Func() const {return 0;}
+        };
+        class Derived_20 : public Base {
+        public:
+            constexpr virtual int Func() const override {return 1;} //// C++17 이하에서는 컴파일 오류가 발생했습니다.
+        };
+
+        constexpr Derived_20 a_20;
+        enum class MyEnum_11 {Val = a_20.Func()}; // 컴파일 타임 상수
+
+        const Base* ptr = &a_20;
+        EXPECT_TRUE(ptr->Func() == 1); // 부모 개체의 포인터로 런타임에 가상 함수를 호출할 수 있습니다.
+        // enum class MyEnum_11 {Val = ptr->Func()}; // (X) 컴파일 오류. 컴파일 타임 상수가 아닙니다.
+    }
+#endif
+
+    {
+        using namespace Constexpr_4;
+
+        enum class MyEnum_11 {Val = Func_20()}; 
+  
+    }
+
 }
+

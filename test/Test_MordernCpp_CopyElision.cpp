@@ -2,7 +2,7 @@
 
 namespace Test_1 {
 
-    class A{};
+    class A {};
     void Func1(A param) {}
     A Func2() {return A{};}
 }
@@ -69,7 +69,7 @@ TEST(TestMordern, CopyElision) {
     {
         using namespace Test_3;
 
-        A_17 a{A_17{}}; // (O) 문법적으로 이동 생성자를 사용하지 않습니다.         
+        A_17 a{A_17{}}; // (O) 문법적으로 복사 생성자와 이동 생성자를 사용하지 않습니다.         
     }
 #endif
 }

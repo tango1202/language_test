@@ -128,7 +128,7 @@ TEST(TestClassicCpp, Initialization) {
     // ----     
     {
         struct T {int x; int y;}; // 멤버 변수가 public 입니다.
-        T t = {10, 20}; // (O) 중괄호로 초기화
+        T t = {10, 20}; // (O) 중괄호로 초기화. 선언된 순서와 일치해야 합니다.
 
         EXPECT_TRUE(t.x == 10 && t.y == 20);
     }

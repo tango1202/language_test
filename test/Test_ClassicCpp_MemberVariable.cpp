@@ -177,6 +177,12 @@ TEST(TestClassicCpp, MemberVariable) {
         class Empty {}; // 빈 클래스는 강제로 1byte
         EXPECT_TRUE(sizeof(Empty) == 1);
 
+        class Composite {
+            int m_X;
+            Empty m_Empty; // 1byte 이지만 3byte 패딩됨
+        };
+        EXPECT_TRUE(sizeof(Composite) == sizeof(int) + sizeof(int));
+
         class EmptyDerived : public Empty { // 빈 클래스를 상속받으면, 강제 1byte는 빼고 크기가 설정됨
             int m_X;
         };

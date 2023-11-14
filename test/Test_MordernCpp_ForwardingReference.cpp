@@ -28,44 +28,44 @@ namespace ForwardingReference_4 {
 }
 namespace ForwardingReference_5 {
     template<typename T>
-    void f(T&& val) {} // 전달 참조입니다. val 타입으로 추론합니다.
+    void f_11(T&& val) {} // 전달 참조입니다. val 타입으로 추론합니다.
 
     template<typename T> 
     class A {
     public:
-        void f(T&& val) {} // 전달 참조가 아닙니다. A<int> val; 와 같이 인스턴스화 된 뒤에는 f(int&& val)로 구체화될 수 있기 때문에 val 타입으로 추론된다고 확신할 수 없습니다. 
+        void f_11(T&& val) {} // 전달 참조가 아닙니다. A<int> val; 와 같이 인스턴스화 된 뒤에는 f(int&& val)로 구체화될 수 있기 때문에 val 타입으로 추론된다고 확신할 수 없습니다. 
 
         template<typename U> 
-        void g(U&& val) {} // 전달 참조 입니다. val 타입으로 추론합니다.
+        void g_11(U&& val) {} // 전달 참조 입니다. val 타입으로 추론합니다.
     }; 
 }
 namespace ForwardingReference_6 {
     template<typename T>
-    void f(T&& param1, T&& param2) {} // 전달 참조가 아닙니다. param1, param2중 어느 하나가 추론된 뒤에는 나머지는 추론된 것으로 부터 구체화 될 수 있기 때문입니다. 
+    void f_11(T&& param1, T&& param2) {} // 전달 참조가 아닙니다. param1, param2중 어느 하나가 추론된 뒤에는 나머지는 추론된 것으로 부터 구체화 될 수 있기 때문입니다. 
 }
 namespace ForwardingReference_7 {
     template<typename T, typename U>
-    void f(T&& param1, U&& param2) {} // param1, param2 모두 전달 참조입니다.  
+    void f_11(T&& param1, U&& param2) {} // param1, param2 모두 전달 참조입니다.  
 }
 namespace ForwardingReference_8 {
     template<typename T>
-    struct remove_reference { 
+    struct remove_reference_11 { 
         using type = T; 
     };
     // 좌측값 참조인 경우 템플릿 부분 특수화. 좌측값 참조를 제거한 T를 type으로 사용합니다.
     template<typename T>
-    struct remove_reference<T&> { 
+    struct remove_reference_11<T&> { 
         using type = T; 
     };
     // 우측값 참조인 경우 탬플릿 부분 특수화. 우측값 참조를 제거한 T를 type으로 사용합니다.
     template<typename T>
-    struct remove_reference<T&&> { 
+    struct remove_reference_11<T&&> { 
         using type = T; 
     };
 
     template<typename T>
-    typename remove_reference<T>::type&& move(T&& param) {
-        using ReturnType = typename remove_reference<T>::type&&; // 참조성을 뗀 뒤 &&을 더합니다.
+    typename std::remove_reference<T>::type&& move(T&& param) {
+        using ReturnType = typename std::remove_reference<T>::type&&; // 참조성을 뗀 뒤 &&을 더합니다.
 
         return static_cast<ReturnType>(param);
     }  
@@ -143,8 +143,8 @@ namespace ForwardingReference_15 {
 }
 namespace ForwardingReference_16 {
     class A {};
-    void f_11(A param) {}
-    void g_11(A& param) {}
+    void f(A param) {}
+    void g(A& param) {}
     void h_11(A&& param) {}
 
     template<typename U, typename V, typename W>
@@ -158,7 +158,7 @@ namespace ForwardingReference_16 {
         //    return static_cast<A& + &&>(param);
         // }
         // 즉, A&를 A&로 형변환 합니다.
-        f_11(std::forward<U>(param1));
+        f(std::forward<U>(param1));
 
         // 전달 참조는 좌측값 참조 타입을 좌측값 참조로 받습니다.
         // 따라서, V == A&, param1 == A& 이며,
@@ -168,7 +168,7 @@ namespace ForwardingReference_16 {
         //    return static_cast<A& + &&>(param);
         // }
         // 즉, A&를 A&로 형변환 합니다.
-        g_11(std::forward<V>(param2));
+        g(std::forward<V>(param2));
 
         // 전달 참조는 우측값 참조 타입을 우측값 참조로 받습니다.
         // 또는 이름이 없는 값 타입인 임시 개체도 우측값 참조로 받습니다.
@@ -199,7 +199,7 @@ namespace ForwardingReference_17 {
 
 namespace ForwardingReference_18 {
 
-    class A {
+    class A_11 {
         std::string m_String;
     public:
         template<typename T>
@@ -213,7 +213,7 @@ namespace ForwardingReference_18 {
 }
 namespace ForwardingReference_18_1 {
 
-    class A {
+    class A_11 {
     public:
         template<typename T>
         int Func_11(T&& param) {return 1;} // 어지간 하면, 다 전달 참조 버전이 호출됩니다.
@@ -222,7 +222,7 @@ namespace ForwardingReference_18_1 {
 }
 
 namespace ForwardingReference_18_2 {
-    class A {
+    class A_11 {
     public:
         template<typename T>
         int Func_11(T&& param) {
@@ -282,7 +282,7 @@ namespace ForwardingReference_18_6 {
 }
 namespace ForwardingReference_19 {
 
-    class A {
+    class A_11 {
         std::string m_String;
     public:
         template<typename T>
@@ -310,7 +310,7 @@ namespace ForwardingReference_20 {
     } 
     A_11 f_11() {
         A_11 result; // 지역 변수를 정의합니다.
-        return std::move(result); // 리턴하면서 임시 개체를 이동합니다.
+        return std::move(result); // 리턴하면서 개체를 이동합니다.
     }      
 }
 
@@ -451,7 +451,7 @@ TEST(TestMordern, Forwarding) {
         using namespace ForwardingReference_8;
 
         class T {};
-        remove_reference<T&&>::type val;
+        remove_reference_11<T&&>::type val;
     }
 
     // forward() 와 완벽한 전달
@@ -503,7 +503,7 @@ TEST(TestMordern, Forwarding) {
     }    
     // 전달 참조를 이용한 함수 오버로딩
     {
-        class A {
+        class A_11 {
             std::string m_String;
         public:
             void SetString(const std::string& str) {m_String = str;} // lvalue 로 세팅
@@ -513,7 +513,7 @@ TEST(TestMordern, Forwarding) {
     }
     {
         using namespace ForwardingReference_18; 
-        A a;
+        A_11 a;
 
         std::string str = "Hello";
         a.SetString_11(str); // 값타입으로 전달. string&로 전달합니다.
@@ -523,7 +523,7 @@ TEST(TestMordern, Forwarding) {
     {
         using namespace ForwardingReference_18_1; 
 
-        A a;
+        A_11 a;
 
         EXPECT_TRUE(a.Func_11(1) == 2);
         EXPECT_TRUE(a.Func_11((short)1) == 1); // (△) 비권장. 전달 참조 버전이 호출됩니다.
@@ -532,7 +532,7 @@ TEST(TestMordern, Forwarding) {
 
     {
         using namespace ForwardingReference_18_2;      
-        A a;
+        A_11 a;
 
         EXPECT_TRUE(a.Func_11(1) == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type) 이 호출됩니다.
         EXPECT_TRUE(a.Func_11((short)1) == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type) 이 호출됩니다.
@@ -587,12 +587,12 @@ TEST(TestMordern, Forwarding) {
     {
         using namespace ForwardingReference_19; 
 
-        A a;
+        A_11 a;
 
         std::string str = "Hello";
-        a.SetString_11(str);
+        a.SetString_11(str); // str은 이동 연산되어 무효화됩니다.
 
-        std::string str2 = str; // 이동 연산되어 str의 값은 무효화되었습니다.
+        std::string str2 = str; // 이동 연산되어 무효화된 값으로 str2를 초기화했습니다.
         EXPECT_TRUE(str2.empty() == true); 
     }
     // 리턴문에서 move()와 forward() 사용

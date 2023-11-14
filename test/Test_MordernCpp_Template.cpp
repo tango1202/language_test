@@ -41,7 +41,7 @@ namespace Template_2 {
     };
 
 #if 201703L <= __cplusplus // C++17~
-    template<auto val> // 타입이 아닌 개체인 경우 auto를 사용할 수 있습니다.
+    template<auto val> // 비타입인 경우 auto를 사용할 수 있습니다.
     class A_17 {
     public:
         auto GetVal() const {return val;}
@@ -178,7 +178,7 @@ TEST(TestMordern, Template) {
         using namespace Template_4;
 
         A_20<3.14> a; // 실수 타입
-        B_20<MyClass_11{1}> b; // 리터럴 타입
+        B_20<MyClass_11{1}> b; // 멤버 변수는 public이고, mutable이 없는 constexpr 생성자가 있는 리터럴 타입
 #endif
     }
     // initializer_list 사용시 클래스 템플릿 인수 추론

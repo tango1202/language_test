@@ -2,8 +2,8 @@
 #include <cstdarg>
 
 namespace {
-    #define MY_SUM(count, ...) T::Sum(count, __VA_ARGS__)
-    #define MY_SUM2(count, ...) T::Sum(count, ##__VA_ARGS__)
+    #define MY_SUM_11(count, ...) T::Sum(count, __VA_ARGS__)
+    #define MY_SUM2_11(count, ...) T::Sum(count, ##__VA_ARGS__)
 }
 
 TEST(TestMordern, Align) {
@@ -51,12 +51,12 @@ TEST(TestMordern, VariadicMacro) {
 
     // 가변 인자에 인수가 있는 경우
     EXPECT_TRUE(T::Sum(3, 1, 2, 3) == 1 + 2 + 3);
-    EXPECT_TRUE(MY_SUM(3, 1, 2, 3) == 1 + 2 + 3);
+    EXPECT_TRUE(MY_SUM_11(3, 1, 2, 3) == 1 + 2 + 3);
 
     // 가변 인자에 인수가 없는 경우
     EXPECT_TRUE(T::Sum(0) == 0);
     // EXPECT_TRUE(MY_SUM(0) == 0); // (X) 컴파일 오류. T::Sum(count, ) 로 치환됩니다.
-    EXPECT_TRUE(MY_SUM2(0) == 0); // (O) 
+    EXPECT_TRUE(MY_SUM2_11(0) == 0); // (O) 
 
 }
 TEST(TestMordern, Sizeof) {

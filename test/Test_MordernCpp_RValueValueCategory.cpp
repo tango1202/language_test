@@ -291,28 +291,28 @@ TEST(TestMordern, RValue) {
 
         A val;
 
-        // A&& rref1 = val; // (X) 컴파일 오류. val은 좌측값입니다. 좌측값을 직접 참조할 수 없습니다.
-        A&& rref2 = static_cast<A&&>(val); // 좌측값을 형변환 하여 참조할 수 있습니다.
-        A&& rref3 = std::move(val); // 좌측값을 move를 이용하여 형변환하여 참조할 수 있습니다.
-        A&& rref4 = A(); // 임시 개체는 우측값이므로 참조할 수 있습니다.
+        // A&& rref1_11 = val; // (X) 컴파일 오류. val은 좌측값입니다. 좌측값을 직접 참조할 수 없습니다.
+        A&& rref2_11 = static_cast<A&&>(val); // 좌측값을 형변환 하여 참조할 수 있습니다.
+        A&& rref3_11 = std::move(val); // 좌측값을 move를 이용하여 형변환하여 참조할 수 있습니다.
+        A&& rref4_11 = A(); // 임시 개체는 우측값이므로 참조할 수 있습니다.
     }
     {
         class A {}; 
 
         A val;    
         A& ref = val;  
-        A&& rref = std::move(val); 
+        A&& rref_11 = std::move(val); 
 
-        // A&& rref1 = ref; // (X) 컴파일 오류. 우측값 참조는 좌측값 참조를 참조할 수 없습니다.
-        A&& rref2 = static_cast<A&&>(ref); // 좌측값 참조를 형변환하여 참조할 수 있습니다.
-        A&& rref3 = std::move(ref); // 좌측값 참조를 move를 이용하여 형변환하여 참조할 수 있습니다.
+        // A&& rref1_11 = ref; // (X) 컴파일 오류. 우측값 참조는 좌측값 참조를 참조할 수 없습니다.
+        A&& rref2_11 = static_cast<A&&>(ref); // 좌측값 참조를 형변환하여 참조할 수 있습니다.
+        A&& rref3_11 = std::move(ref); // 좌측값 참조를 move를 이용하여 형변환하여 참조할 수 있습니다.
 
         // A& ref1 = std::move(val); // (X) 컴파일 오류. 좌측값 참조는 우측값을 참조할 수 없습니다.
         // A& ref2 = static_cast<A&>(std::move(val)); // (X) 컴파일 오류. 좌측값 참조는 우측값을 참조할 수 없습니다.
         // A& ref3 = std::move(val); // (X) 컴파일 오류. 좌측값 참조는 우측값을 참조할 수 없습니다.
         // A& ref4 = A(); // (X) 컴파일 오류. 좌측값 참조는 임시 개체인 우측값을 참조할 수 없습니다.
         
-        A& ref5 = rref; // 이름이 부여된 우측값 참조는 좌측값이기에 좌측값 참조로 참조할 수 있습니다.
+        A& ref5 = rref_11; // 이름이 부여된 우측값 참조는 좌측값이기에 좌측값 참조로 참조할 수 있습니다.
     }
     // 이름이 부여된 우측값
     {
@@ -434,7 +434,7 @@ TEST(TestMordern, RValue) {
 
     // move
     {
-        class A{};
+        class A {};
         class T {
         public:
             static int Func_11(A&) {return 1;} // #1. lvalue

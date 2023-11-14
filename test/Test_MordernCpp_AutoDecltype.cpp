@@ -90,7 +90,6 @@ TEST(TestMordern, Auto) {
 
         auto c_11 = a; // int
 
-        
         {
             // 배열은 포인터로 추론됩니다.
             int arr[] = {1, 2, 3};
@@ -102,12 +101,13 @@ TEST(TestMordern, Auto) {
             auto a_11 = constVal; // int
             a_11 = 10; // const가 아니여서 값을 대입받을 수 있습니다. 
         } 
-
-        // 참조성은 제거됩니다.
-        int x = 10;
-        int& ref = x;
-        auto f_11 = ref; // int. 참조성이 제거됩니다.
-        auto& g_11 = ref; // auto&을 이용하여 억지로 참조자로 받을 수 있습니다.
+        {
+            // 참조성은 제거됩니다.
+            int x = 10;
+            int& ref = x;
+            auto a_11 = ref; // int. 참조성이 제거됩니다.
+            auto& b_11 = ref; // auto&을 이용하여 억지로 참조자로 받을 수 있습니다.
+        }
     }
     // auto의 중괄호 초기화 특수 추론 규칙
     {
@@ -148,7 +148,7 @@ TEST(TestMordern, Auto) {
             // int& ref = val_11; // (X) 컴파일 오류. MyInt는 int&로 변환될 수 없습니다.
         }
         {
-            auto val_11 = static_cast<int>(MyInt(11)); // 명시적으로 int 입니다.
+            auto val_11 = static_cast<int>(MyInt(11)); // (△) 비권장. 명시적으로 int 입니다.
             int& ref = val_11; // (△) 비권장. int&로 변환될 수 있습니다.
         }
     }
@@ -294,11 +294,26 @@ TEST(TestMordern, Decltype) {
 #if 201703L <= __cplusplus // C++17~
     // (C++17~) 중괄호 초기화에서 auto 추론의 새로운 규칙
     {
-        int a_17{1}; // a는 int
-        auto b_17{1}; // b는 int. 기존에는 initializer_list<int> 일 수 있었음
-        auto c_17 = {1}; // c는 initializer_list<int>
-        auto d_17 = {1, 2}; // d는 initializer_list<int>  
-        // auto e_17{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
+        // C++11
+        {
+            // 중괄호 직접 초기화
+            auto a_11{1}; //(△) a는 initializer_list<int> 또는 int
+            // auto b_11{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
+
+            // 중괄호 복사 초기화
+            auto c_11 = {1}; // c는 initializer_list<int>
+            auto d_11 = {1, 2}; // d는 initializer_list<int>
+        }
+        // C++17
+        {
+            // 중괄호 직접 초기화
+            auto a_17{1}; // b는 int. 기존에는 initializer_list<int> 일 수 있었음
+            // auto b_17{1, 2}; // (X) 컴파일 오류. auto에서는 단일 개체 대입 필요  
+
+            // 중괄호 복사 초기화
+            auto c_17 = {1}; // c는 initializer_list<int>
+            auto d_17 = {1, 2}; // d는 initializer_list<int>  
+        }
     }
 #endif  
 }

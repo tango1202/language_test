@@ -256,7 +256,7 @@ TEST(TestMordern, UniformInitialization) {
             int m_X;
             int m_Y;
         public:
-            A(int x, int y) : m_X(x), m_Y(y) {}
+            A(int x, int y) : m_X{x}, m_Y{y} {}
         };
 
         A arr_11[]{
@@ -269,7 +269,7 @@ TEST(TestMordern, UniformInitialization) {
             int m_X;
             int m_Y;
         public:
-            A(int x, int y) : m_X(x), m_Y(y) {}
+            A(int x, int y) : m_X{x}, m_Y{y} {}
         };
 
         A arr_11[]{
@@ -282,13 +282,13 @@ TEST(TestMordern, UniformInitialization) {
             int m_X;
             int m_Y;
         public:
-            A(int x, int y) : m_X(x), m_Y(y) {}
+            A(int x, int y) : m_X{x}, m_Y{y} {}
         };
         class B {
             int m_Val;
             A m_A;
         public:
-           B(int val, A a) : m_Val(val), m_A(a){}
+           B(int val, A a) : m_Val{val}, m_A{a} {}
         };
 
         B b_11{1, {2, 3}}; // B b_11{1, A{2, 3}};와 동일
@@ -368,7 +368,9 @@ TEST(TestMordern, UniformInitialization) {
             T_11(std::initializer_list<int>, int, int) {}
         };
         T_11 a{1, 2, 3, 4, 5}; // T_11(std::initializer_list<int>)
-        T_11 b{ {1, 2, 3}, 4, 5}; // T_11(std::initializer_list<int>, int, int)
+        T_11 b{
+            {1, 2, 3}, 4, 5 // T_11(std::initializer_list<int>, int, int)
+        }; 
     }
     // 기존 생성자와 initializer_list 생성자와의 충돌
     {
@@ -408,7 +410,7 @@ TEST(TestMordern, UniformInitialization) {
             int m_Val2;
         };
 
-        class T_20 {
+        class T {
         public:
             int m_X{1};
             int m_Y{2};
@@ -419,28 +421,35 @@ TEST(TestMordern, UniformInitialization) {
             B m_B{A{}}; // A 기본 생성자로 생성합니다.
         };
 
-        T_20 a{.m_X = 10, .m_Y = 20, .m_Z = 30.F};
-        // T_20 b{.m_X = 10, .m_Z = 30.F, .m_Y = 20}; // (X) 컴파일 오류. 멤버 변수 선언 순서와 같아야 합니다.
-        T_20 c{.m_X = 10, .m_Z = 30.F}; // 특정 항목을 생략할 수 있습니다.
-        EXPECT_TRUE(c.m_Y == 2); // 생략한 멤버는 멤버 선언부 초기화 값이 유지됩니다.
+        T a_20{.m_X = 10, .m_Y = 20, .m_Z = 30.F};
+        // T b_20{.m_X = 10, .m_Z = 30.F, .m_Y = 20}; // (X) 컴파일 오류. 멤버 변수 선언 순서와 같아야 합니다.
+        T c_20{.m_X = 10, .m_Z = 30.F}; // 특정 항목을 생략할 수 있습니다.
+        EXPECT_TRUE(c_20.m_Y == 2); // 생략한 멤버는 멤버 선언부 초기화 값이 유지됩니다.
 
         // 중첩 초기화
-        T_20 d{10, 20, 30.F, {1, 2}}; // {1, 2}는 Inner 개체를 초기화 합니다.
-        // T_20 e{.m_X = 10, .m_Y = 20, .m_Z = 30.F, m_Inner = Inner{1, 2}}; // (X) 컴파일 오류. 지명 초기화는 초기화 중첩을 지원하지 않습니다.
+        T d_20{10, 20, 30.F, {1, 2}}; // {1, 2}는 Inner 개체를 초기화 합니다.
+        // T e_20{.m_X = 10, .m_Y = 20, .m_Z = 30.F, m_Inner = Inner{1, 2}}; // (X) 컴파일 오류. 지명 초기화는 초기화 중첩을 지원하지 않습니다.
 
         // 인자의 암시적 형변환 차단 확인
-        // T_20 f{.m_X = 1.5}; // (X) 컴파일 오류. 실수를 정수로 변환시 컴파일 오류가 발생합니다.
+        // T f_20{.m_X = 1.5}; // (X) 컴파일 오류. 실수를 정수로 변환시 컴파일 오류가 발생합니다.
 
-        T_20 g{.m_Z = 3.14}; // 상수값을 저장할 수 있다면 허용합니다.
+        T g_20{.m_Z = 3.14}; // 상수값을 저장할 수 있다면 허용합니다.
         double h{3.14};
-        // T_20 i{.m_Z = d}; // (X) 컴파일 경고. double을 float으로 변환하는건 경고합니다.
+        // T i_20{.m_Z = h}; // (X) 컴파일 경고. double을 float으로 변환하는건 경고합니다.
 
         int* ptr;
-        // T_20 j{.m_Bool = ptr}; // (X) 컴파일 경고. 포인터 타입에서 bool 변환하는건 경고합니다.
+        // T j_20{.m_Bool = ptr}; // (X) 컴파일 경고. 포인터 타입에서 bool 변환하는건 경고합니다.
 
-        T_20 k{.m_B = A{}}; // (△) 비권장. A->B로의 암시적 변환을 허용하면 차단되지 않습니다.
+        T k_20{.m_B = A{}}; // (△) 비권장. A->B로의 암시적 변환을 허용하면 차단되지 않습니다.
 
-        // int arr[3]{[1] = 1}; // (X) 컴파일 오류. 배열은 지원하지 않습니다.
+        class U {
+        public:
+            int m_Val;
+            U() {}; // 생성자가 있어서 집합 타입이 아닙니다.
+        };
+        // U l_20{.m_Val = 0}; // (X) 컴파일 오류. 집합 타입이 아니면 지원하지 않습니다.
+        
+        // int arr_20[3]{[1] = 1}; // (X) 컴파일 오류. 배열은 지원하지 않습니다.
 #endif
     }
     {
@@ -452,10 +461,10 @@ TEST(TestMordern, UniformInitialization) {
         //     A m_A; 
         // };
 
-        // A a = {.m_Y = 1, .m_X = 2}; // valid C, invalid C++ (순서 불일치)
-        // B b = {.m_A.m_X = 0}; // valid C, invalid C++ (중첩)
-        // A a = {.m_X = 1, 2}; // valid C, invalid C++ (혼합)
-        // int arr[3] = {[1] = 5}; // valid C, invalid C++ (배열)     
+        // A a_20 = {.m_Y = 1, .m_X = 2}; // valid C, invalid C++ (순서 불일치)
+        // B b_20 = {.m_A.m_X = 0}; // valid C, invalid C++ (중첩)
+        // A a_20 = {.m_X = 1, 2}; // valid C, invalid C++ (혼합)
+        // int arr_20[3] = {[1] = 5}; // valid C, invalid C++ (배열)     
     }
 
 

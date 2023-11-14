@@ -6,7 +6,7 @@ namespace {
         int m_X;
         int m_Y;
     public:
-        A(int x, int y) : m_X(x), m_Y(y) {
+        A(int x, int y) : m_X{x}, m_Y{y} {
             std::cout << "A : Constructor" << std::endl;
         }
         ~A() {
@@ -24,7 +24,7 @@ namespace {
         std::string m_Str;
     public:
         
-        explicit B(const char* str) : m_Str(str) {
+        explicit B(const char* str) : m_Str{str} {
             std::cout << "B : Constructor" << std::endl;    
         }
         ~B() {
