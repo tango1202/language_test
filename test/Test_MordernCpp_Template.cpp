@@ -1,4 +1,5 @@
 #include "gtest/gtest.h" 
+#include <cstdarg>
 
 namespace {
 #if 201402L <= __cplusplus // C++14~        
@@ -104,6 +105,23 @@ namespace Template_5 {
     void i_20(T param1, auto param2) {} // 템플릿 내에서 혼합해서 사용할 수 있습니다.
 #endif
 }
+
+namespace Template_5_1 {
+#if 202002L <= __cplusplus // C++20~     
+    int Sum_20(auto count, ...) { // 가변 인자를 사용하는 함수입니다.
+
+        int result = 0;
+        std::va_list paramList; // 가변 인자
+        va_start(paramList, count); // 가변 인자 처리 시작
+        for (int i = 0; i < count; ++i) {
+            result += va_arg(paramList, int); // 가변 인자 추출
+        }
+        va_end(paramList); // 가변 인자 처리 끝
+        return result;       
+    }
+#endif
+}
+
 namespace Template_6 {
     template<typename T>
     class A {
@@ -113,6 +131,13 @@ namespace Template_6 {
 }
 
 TEST(TestMordern, Template) {
+    // 축약된 함수 템플릿
+    {
+        using namespace Template_5_1;
+#if 202002L <= __cplusplus // C++20~           
+        EXPECT_TRUE(Sum_20(3, 1, 2, 3) == 1 + 2 + 3);
+#endif        
+    }
 #if 201402L <= __cplusplus // C++14~        
     // C++14 변수 템플릿
     {

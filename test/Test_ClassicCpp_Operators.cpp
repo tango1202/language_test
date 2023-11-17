@@ -467,3 +467,34 @@ TEST(TestClassicCpp, Operators) {
         EXPECT_TRUE(++val == Week::Monday); // 일요일 에서 1 증가하여 월요일
     }
 }
+TEST(TestClassicCpp, BitShift) {
+    {
+        char ch = 0x20; // 0010 0000는 십진수 32
+        EXPECT_TRUE(ch == 32);
+
+        ch = ch << 1; // 0100 0000는 십진수 64. << 1은 곱하기 2의 효과
+        EXPECT_TRUE(ch == 64);
+
+        ch = ch << 1; // 1000 0000은 음수 십진수 -128.
+        EXPECT_TRUE(ch == -128);
+
+        ch = ch << 1; // 0000 0000은 0. 부호 비트를 이동시키면 결과가 정의되지 않았으나, 대부분 0으로 채웁니다.
+        EXPECT_TRUE(ch == 0);
+    }
+
+    {
+        char ch = 0x20; // 0010 0000는 십진수 32 
+        EXPECT_TRUE(ch == 32);
+    
+        ch = ch >> 1; // 0001 0000는 십진수 16. >> 1은 나누기 2의 효과
+        EXPECT_TRUE(ch == 16);
+
+        ch = 0x80; // 1000 0000 최상위 비트가 1인 음수
+        EXPECT_TRUE(ch == -128);
+
+        ch = ch >> 1; // 1100 0000는 십진수 -64
+        std::cout << (int)ch << std::endl;
+        EXPECT_TRUE(ch == -64);
+    }
+
+}

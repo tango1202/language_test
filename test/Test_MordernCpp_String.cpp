@@ -28,7 +28,9 @@ TEST(TestMordern, String) {
         std::u32string str2_11{U"abc가나다"};
 
         // C++20
-        // std::u8string str3_20{u8"abc가나다"};
+#if 202002L <= __cplusplus // C++20~         
+        std::u8string str3_20{u8"abc가나다"};
+#endif
 
         EXPECT_TRUE(str1_11.size() == 6);
         EXPECT_TRUE(str1_11[3] == u'가'); 
@@ -37,24 +39,12 @@ TEST(TestMordern, String) {
         EXPECT_TRUE(str2_11[3] == U'가');
 
         // C++20
-        // EXPECT_TRUE(str3_20.size() == 6);
-        // EXPECT_TRUE(str3_20[3] == U'가');
-    }
-
-    {
-        const char* str = "abc\r\ndef";
-        std::cout << str << std::endl;    
-
-        // 이스케이프 문자와 개행을 소스코드에 기재된 그대로 출력합니다.
-        const char* str_11 = R"(abc\r\n
-def)";     
-        std::cout << str_11 << std::endl;
-    }
-    {
-        // 임의 구분자 aaa 사용
-        const char* str_11 = R"aaa(abc"()"
-def)aaa";     
-        std::cout << str_11 << std::endl;
+#if 202002L <= __cplusplus // C++20~            
+        EXPECT_TRUE(str3_20.size() == 12); // abc : 3byte, 가 : 3byte, 나 : 3byte, 다 : 3byte
+        EXPECT_TRUE(str3_20[3] == 0xEA); // 한글 '가'는 UTF-8에서 3byte. 0xEA, 0xB0, 0x80
+        EXPECT_TRUE(str3_20[4] == 0xB0);
+        EXPECT_TRUE(str3_20[5] == 0x80);
+#endif        
     }
 }
 

@@ -192,6 +192,8 @@ TEST(TestMordern, UniformInitialization) {
     {
         int arr[] = {0, 1, 2}; // 초기화 갯수 만큼 배열 할당
         int arr_11[]{0, 1, 2}; // 초기화 갯수 만큼 배열 할당
+        int* ptr_11 = new int[3]{1, 2, 3}; // new[]로 생성하는 경우에는 배열 크기를 명시해야 합니다.
+        delete ptr_11;
     }
     {
         int arr[3] = {0, 1,}; // 초기값이 모자르면 0으로 채움
@@ -421,7 +423,7 @@ TEST(TestMordern, UniformInitialization) {
             B m_B{A{}}; // A 기본 생성자로 생성합니다.
         };
 
-        T a_20{.m_X = 10, .m_Y = 20, .m_Z = 30.F};
+        T a_20{.m_X = 10, .m_Y{20}, .m_Z = {30.F}}; // = 또는 {} 또는 ={}로 초기값을 대입합니다.
         // T b_20{.m_X = 10, .m_Z = 30.F, .m_Y = 20}; // (X) 컴파일 오류. 멤버 변수 선언 순서와 같아야 합니다.
         T c_20{.m_X = 10, .m_Z = 30.F}; // 특정 항목을 생략할 수 있습니다.
         EXPECT_TRUE(c_20.m_Y == 2); // 생략한 멤버는 멤버 선언부 초기화 값이 유지됩니다.
@@ -466,7 +468,75 @@ TEST(TestMordern, UniformInitialization) {
         // A a_20 = {.m_X = 1, 2}; // valid C, invalid C++ (혼합)
         // int arr_20[3] = {[1] = 5}; // valid C, invalid C++ (배열)     
     }
+    // new에서 중괄호 집합 초기화로 배열 크기 추론
+    {
 
+    int arr[]{1, 2, 3}; // 중괄호 집합 초기화로 배열 크기를 추론합니다.
+    //int* arr_11 = new int[]{1, 2, 3}; // (X) 컴파일 오류. new[]에서 중괄호 집합 초기화로 배열 크기를 추론하지 못합니다.
+    int* arr_11 = new int[3]{1, 2, 3}; // 배열 크기를 명시해야 합니다.
+#if 202002L <= __cplusplus // C++20~ 
+    int* arr_20 = new int[]{1, 2, 3}; // new[]를 사용해도 중괄호 집합 초기화로 배열 크기를 추론합니다.
+#endif
+
+    }
+}
+
+namespace MemberInitialization_1 {
+    class A {
+    public:
+        explicit A(int, int) {}    
+    };
+
+    class T {
+        int m_A_11 = 0; // C++11. 멤버 변수 초기화
+        int m_B_11{0}; // C++11. 중괄호 초기화
+        int m_C_11 = {0}; // C++11. 중괄호 초기화
+        int* m_D__1 = nullptr; // C++11. 포인터 초기화
+        std::vector<int> m_E_11{1,2,3}; // C++11. 중괄호 초기화
+        A m_F_11{10, 20}; // C++11. 중괄호 초기화
+        // A m_F_11(10, 20); // (X) 컴파일 오류. A를 리턴하는 m_F 함수 정의
+
+        const int m_G_11 = 0; // 기존과 동일하게 상수 멤버 변수 초기화
+        static const int m_H_11 = 0; // 기존과 동일하게 선언부에 정적 상수 멤버 변수 초기화
+        // static int m_H_11 = 0; // (X) 컴파일 오류. 기존과 동일하게 정적 멤버 변수는 별도 초기화해야 함 
+    };    
+}
+
+TEST(TestMordern, MemberInitialization) {
+    // C++14 비정적 멤버 변수의 멤버 선언부 초기화시 집합 초기화 허용
+    {
+        using namespace MemberInitialization_1;
+        class A_11 {
+        public:
+            int m_X{0}; // 비정적 멤버 변수 초기화
+            int m_Y{1};
+        };
+
+#if 201402L <= __cplusplus // C++14~    
+        // (X) ~C++14 컴파일 오류. no matching function for call to 'A_11::A_11(<brace-enclosed initializer list>)'
+        // (O) C++14~
+        A_11 a_14{0, 1}; // A_11 에는 생성자가 없습니다.
+                         // 따라서 생성자를 호출하는 중괄호 직접 초기화가 아니라 
+                         // 중괄호 집합 초기화 입니다.
+        EXPECT_TRUE(a_14.m_X == 0 && a_14.m_Y == 1); 
+#endif        
+    }
+#if 202002L <= __cplusplus // C++20~ 
+    // 비트 필트 초기화
+    {
+        class Flag_20 {
+        public:
+            unsigned char m_Val1 : 2{3}; // 2bit 00(0), 01(1), 10(2), 11(3)
+            unsigned char m_Val2 : 3{7}; // 3bit 000(0), 001(1), 010(2), 011(3), 100(4), 101(5), 110(6), 111(7)
+        };
+
+        Flag_20 flag;
+        EXPECT_TRUE(sizeof(flag) == sizeof(unsigned char));
+
+        EXPECT_TRUE(flag.m_Val1 == 3); // 3 저장
+        EXPECT_TRUE(flag.m_Val2 == 7); // 7 저장
+    }
+#endif
 
 
 }

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h" 
 #include <cstdarg>
 
-namespace {
+namespace VariadicMacro_1 {
     #define MY_SUM_11(count, ...) T::Sum(count, __VA_ARGS__)
     #define MY_SUM2_11(count, ...) T::Sum(count, ##__VA_ARGS__)
 }
@@ -35,6 +35,7 @@ TEST(TestMordern, Align) {
     EXPECT_TRUE(alignof(C_11) == 4 && sizeof(C_11) == 4 * 5); 
 }
 TEST(TestMordern, VariadicMacro) {
+    using namespace VariadicMacro_1;
     class T {
     public:
         static int Sum(int count, ...) {
@@ -59,6 +60,7 @@ TEST(TestMordern, VariadicMacro) {
     EXPECT_TRUE(MY_SUM2_11(0) == 0); // (O) 
 
 }
+
 TEST(TestMordern, Sizeof) {
 
     class T {
@@ -70,3 +72,38 @@ TEST(TestMordern, Sizeof) {
     // C++11 부터 허용
     EXPECT_TRUE(sizeof(T::m_X) == sizeof(int));
 }
+
+#if 202002L <= __cplusplus // C++20~
+namespace VA_OPT_1 {
+    int Sum(int a, int b, int c, int d) {return a + b + c + d;}
+    int Sum(int a) {return a;}
+    #define MY_FUNC_20(...) Sum(10 __VA_OPT__(,) __VA_ARGS__) // 가변 인수가 있다면 ,를 넣습니다.
+}
+TEST(TestMordern, VA_OPT) {
+    using namespace VA_OPT_1;
+    EXPECT_TRUE(MY_FUNC_20(1, 2, 3) == 10 + 1 + 2 + 3); // f(10, 1, 2, 3) 가변 인수가 있다면 , 를 넣습니다.
+    EXPECT_TRUE(MY_FUNC_20() == 10); // f(10) 가변 인수가 없다면 ,를 넣지 않습니다.
+}
+#endif 
+
+#if 202002L <= __cplusplus // C++20~
+
+TEST(TestMordern, HasCppAttributes) {
+    // __has_cpp_attribute() 매크로 함수
+    {
+#if __has_cpp_attribute(deprecated)
+        std::cout << "Support deprecated" << std::endl; // deprecated를 지원합니다.
+#else 
+        std::cout << "No Support deprecated" << std::endl;
+#endif
+    }
+    // 언어 지원 테스트
+    {
+#if __cpp_char8_t
+        std::cout << "Support char8_t" << std::endl; // char8_t를 지원합니다.
+#else 
+        std::cout << "No Support char8_t" << std::endl;
+#endif        
+    }
+}
+#endif

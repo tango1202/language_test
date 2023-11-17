@@ -466,6 +466,23 @@ TEST(TestMordern, Lambda) {
         EXPECT_TRUE(result == 10 + 1 + 2 + 3); // result 값이 잘 수정되어 있습니다.
 #endif        
     }
+#if 202002L <= __cplusplus // C++20~       
+    // (C++20~) 람다 캡쳐에서 구조화된 바인딩 지원
+    {
+        class A_11 {
+        public:
+            int m_X{1};
+            int m_Y{2};
+        };
+
+        const auto& [x_17, y_17]{A_11{}}; // const auto&로 받아서 임시 개체인 A_11의 수명이 연장됩니다.
+       
+        auto lambda_20{
+            [x_17, y_17] {return x_17 + y_17;} // 구조화된 바인딩을 람다 캡쳐합니다.
+        };
+        EXPECT_TRUE(lambda_20() == 1 + 2);
+    }  
+#endif     
     // 상태없는 람다 표현식의 기본 생성과 복사 대입
     {
         auto lambda_11{

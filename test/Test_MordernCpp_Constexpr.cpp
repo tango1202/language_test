@@ -157,20 +157,42 @@ namespace Constexpr_4 {
         int i;
         float f;
     };
+      
     constexpr int Func_20() {
+#if 202002L <= __cplusplus // C++20~     
         MyUnion myUnion{};
+       
         myUnion.i = 3;
-
         // (X) ~C++20 컴파일 오류. change of the active member of a union from 'MyUnion::i' to 'MyUnion::f'
-        // (O) C++2O~
-#if 202002L <= __cplusplus // C++20~          
-        myUnion.f = 1.2f; // 활성 멤버로의 전환을 허용합니다.
-#endif         
+        // (O) C++2O~       
+        myUnion.f = 1.2f; // 멤버 변수 활성 전환을 허용합니다.
+#endif        
         return 1;
     }
-  
 }
 
+namespace Constexpr_5 {
+    class Base {
+    public:
+        virtual int Func() const {return 0;}
+    };
+#if 202002L <= __cplusplus // C++20~      
+    class Derived_20 : public Base {
+    public:
+        constexpr virtual int Func() const override {return 1;} 
+    };
+      
+    constexpr int Func_20() {
+   
+        Derived_20 d;
+
+        Base* base = &d;
+        Derived_20* derived_20 = dynamic_cast<Derived_20*>(base); // dynamic_cast를 사용할 수 있습니다.
+        typeid(base); // typeid를 사용할 수 있습니다.
+        return 1;
+    }
+#endif     
+}
 
 TEST(TestMordern, Constexpr) {
     // constexpr
@@ -307,7 +329,7 @@ TEST(TestMordern, Constexpr) {
         };
         class Derived_20 : public Base {
         public:
-            constexpr virtual int Func() const override {return 1;} //// C++17 이하에서는 컴파일 오류가 발생했습니다.
+            constexpr virtual int Func() const override {return 1;} // C++17 이하에서는 컴파일 오류가 발생했습니다.
         };
 
         constexpr Derived_20 a_20;

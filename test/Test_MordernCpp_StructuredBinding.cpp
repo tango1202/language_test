@@ -22,7 +22,6 @@ TEST(TestMordern, StructuredBinding) {
     // C++17~ 구조화된 바인딩 - tuple
     {
         auto data_11{std::make_tuple(10, "John")};
-       
         auto [id_17, name_17]{data_11}; // 복제본에 바인딩
         EXPECT_TRUE(id_17 == 10 && name_17 == "John");
 
@@ -33,6 +32,9 @@ TEST(TestMordern, StructuredBinding) {
 
         EXPECT_TRUE(id_17 == 10 && name_17 == "John");
         EXPECT_TRUE(idRef_17 == 20 && nameRef_17 == "John");
+
+
+
     }
 
      // C++17~ 구조화된 바인딩 - 클래스
@@ -42,18 +44,28 @@ TEST(TestMordern, StructuredBinding) {
             int m_Id_11{10}; // C++11의 멤버 선언부 초기화
             std::string m_Name_11{"John"};    
         };
-        T data_11;
 
-        auto [id_17, name_17]{data_11}; // 복제본에 바인딩
-        EXPECT_TRUE(id_17 == 10 && name_17 == "John");
+        {
+            T data_11;
 
-        auto& [idRef_17, nameRef_17]{data_11}; // 원본에 바인딩
-        EXPECT_TRUE(idRef_17 == 10 && nameRef_17 == "John");
+            auto [id_17, name_17]{data_11}; // 복제본에 바인딩
+            EXPECT_TRUE(id_17 == 10 && name_17 == "John");
 
-        data_11.m_Id_11 = 20;
+            auto& [idRef_17, nameRef_17]{data_11}; // 원본에 바인딩
+            EXPECT_TRUE(idRef_17 == 10 && nameRef_17 == "John");
 
-        EXPECT_TRUE(id_17 == 10 && name_17 == "John");
-        EXPECT_TRUE(idRef_17 == 20 && nameRef_17 == "John");
+            data_11.m_Id_11 = 20;
+
+            EXPECT_TRUE(id_17 == 10 && name_17 == "John");
+            EXPECT_TRUE(idRef_17 == 20 && nameRef_17 == "John");
+        }
+        {
+            // 임시 개체의 수명 연장
+            const auto& [id_17, name_17]{
+                T{30, "Sam"}  // 임시 개체를 생성했지만 const auto&로 받아 수명이 연장됩니다.
+            };
+            EXPECT_TRUE(id_17 == 30 && name_17 == "Sam");
+        }
     }  
 #endif    
     // / C++17~ 구조화된 바인딩 - 컨테이너 활용 

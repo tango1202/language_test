@@ -13,10 +13,10 @@ TEST(TestMordern, RangeFor) {
         int sum{0};
 
         // 컨테이너 요소를 탐색 합니다.
-        auto itr_11{v_11.begin()};
-        auto endItr_11{v_11.end()};
-        for (;itr_11 != endItr_11; ++itr_11) {
-            sum += *itr_11;
+        std::vector<int>::iterator itr{v_11.begin()};
+        std::vector<int>::iterator endItr{v_11.end()};
+        for (;itr != endItr; ++itr) {
+            sum += *itr;
         }
         EXPECT_TRUE(sum == 1 + 2 + 3);
     }

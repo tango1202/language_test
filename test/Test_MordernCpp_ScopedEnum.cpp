@@ -35,7 +35,7 @@ TEST(TestMordern, ScopedEnum) {
             Sunday, Monday, Tuesday, Wednesday, 
             Thursday, Friday, Saturday
         };
-        Week_11 week{Week_11::Sunday}; // 범위명을 지정하여 이름 충돌 회피       
+        Week_11 week{Week_11::Sunday}; // 열거형 이름을 같이 사용하여 이름 충돌 회피       
     }
     // 열거형의 암시적 형변환
     {
@@ -96,5 +96,44 @@ EXPECT_TRUE(sizeof(Test) == sizeof(int));
         // MyInt_11 val7 = {10}; // (X) 컴파일 오류. 중괄호 복사 초기화는 지원하지 않습니다.    
     }
 #endif
+    // using enum
+    {
+        enum class Week_11 {
+            Sunday, Monday, Tuesday, Wednesday, 
+            Thursday, Friday, Saturday
+        };
+        Week_11 week{Week_11::Sunday}; 
+        bool isFreeDay{false};
+        switch(week) {
+        case Week_11::Sunday: isFreeDay = true; break;
+        case Week_11::Monday: break;
+        case Week_11::Tuesday: break;
+        case Week_11::Wednesday: break;
+        case Week_11::Thursday: break;
+        case Week_11::Friday: break;
+        case Week_11::Saturday: break;
+        }        
+    }
+    {
+#if 202002L <= __cplusplus // C++20~ 
+        enum class Week_11 {
+            Sunday, Monday, Tuesday, Wednesday, 
+            Thursday, Friday, Saturday
+        };
+        Week_11 week{Week_11::Sunday}; // 범위명을 지정하여 이름 충돌 회피
+        bool isFreeDay{false};
+        switch(week) {
+            
+        using enum Week_11; // 유효 범위 내에서 Week_11의 열거자를 사용할 수 있습니다.
+        case Sunday: isFreeDay = true; break;
+        case Monday: break;
+        case Tuesday: break;
+        case Wednesday: break;
+        case Thursday: break;
+        case Friday: break;
+        case Saturday: break;
+        }
+#endif
+    }
 
 }

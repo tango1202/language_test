@@ -19,6 +19,18 @@ namespace MyLib_17::File {
     void Save() {};
 }
 #endif
+#if 202002L <= __cplusplus // C++20~ 
+namespace A_20::B_17::inline C_11 {
+    void f() {}
+}
+
+// namespace A_20 {
+//     namespace B_17 {
+//         inline namespace C_11 {
+//         }
+//     }
+// }
+#endif
 
 TEST(TestMordern, Namespace) {
     {
@@ -32,5 +44,10 @@ TEST(TestMordern, Namespace) {
         MyLib_17::Parser::Tokenizer();
         MyLib_17::File::Load();
     }
-#endif    
+#endif 
+#if 202002L <= __cplusplus // C++20~ 
+    {
+        A_20::B_17::f();
+    }  
+#endif
 }

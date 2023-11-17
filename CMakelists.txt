@@ -83,15 +83,14 @@ set(TestFiles
    test/Test_ClassicCpp_Diagonostics.cpp     
    test/Test_ClassicCpp_ExceptionWarranty.cpp
    test/Test_ClassicCpp_Pair.cpp 
+   test/Test_MordernCpp_Type.cpp
    test/Test_MordernCpp_RValueValueCategory.cpp
    test/Test_MordernCpp_ForwardingReference.cpp
    test/Test_MordernCpp_AutoDecltype.cpp
-   test/Test_MordernCpp_DefaultDeleteOverrideFinal.cpp
+   test/Test_MordernCpp_Class.cpp
    test/Test_MordernCpp_ScopedEnum.cpp
    test/Test_MordernCpp_Constexpr.cpp    
-   test/Test_MordernCpp_UniformInitialization.cpp   
-   test/Test_MordernCpp_DelegatingInheritedConstructor.cpp
-   test/Test_MordernCpp_Nullptr.cpp
+   test/Test_MordernCpp_Initialization.cpp   
    test/Test_MordernCpp_VariadicTemplate.cpp
    test/Test_MordernCpp_UnrestrictedUnion.cpp
    test/Test_MordernCpp_String.cpp
@@ -100,7 +99,6 @@ set(TestFiles
    test/Test_MordernCpp_Attribute.cpp
    test/Test_MordernCpp_Statement.cpp
    test/Test_MordernCpp_NoExcept.cpp
-   test/Test_MordernCpp_MemberInitialization.cpp
    test/Test_MordernCpp_Lambda.cpp 
    test/Test_MordernCpp_ETC.cpp 
    test/Test_MordernCpp_MemberFunctionRef.cpp 
@@ -142,7 +140,7 @@ set(TestFiles
    test/Test_MordernCpp_Algorithm.cpp
    test/Test_MordernCpp_PolymorphicAllocator.cpp
    test/Test_MordernCpp_TypeTraits.cpp
-   test/Test_MordernCpp_3WayComparision.cpp
+   test/Test_MordernCpp_Operators.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
    test/Test_CppPattern_SmartPointer.cpp
