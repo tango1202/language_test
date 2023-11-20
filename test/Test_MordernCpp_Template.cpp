@@ -33,6 +33,27 @@ namespace Template_1 {
         T Func(T a, T b) {return a + b;}
     };
 }
+// 클래스 템플릿 인수 추론 사용자 정의 가이드
+namespace Template_1_1 {
+    template<typename T>
+    class A {
+    public:
+        A(T x, T y) {}
+    };    
+}
+// 클래스 템플릿 인수 추론 사용자 정의 가이드
+namespace Template_1_2 {
+    template<typename T>
+    class A {
+    public:
+        A(T x, T y) {}
+    };  
+#if 201703L <= __cplusplus // C++17~  
+    // 클래스 템플릿 인수 추론 사용자 정의 가이드
+    template<typename T, typename U>
+    A(T x, U y) -> A<U>; // T와 U가 타입이 다르다면 U 타입으로 추론하세요. 
+#endif    
+}
 // auto 템플릿 인자
 namespace Template_2 { 
     template<typename T, T val> // 타입과 개체를 전달받습니다.
@@ -167,6 +188,24 @@ TEST(TestMordern, Template) {
         EXPECT_TRUE(a_17.Func(1, 2) == 3);    
 #endif         
     }
+    {
+        using namespace Template_1_1;
+#if 201703L <= __cplusplus // C++17~            
+        A a_17{1, 2}; // A<int>. 인수로부터 인자를 추론합니다.
+        // A b_17{1, 1.5}; // (X) 컴파일 오류. A<int, double>은 안됩니다.
+#endif          
+        A<double> c{1, 1.5}; // 명시적으로 A<double>을 사용합니다.
+    } 
+    {
+        using namespace Template_1_2;
+
+#if 201703L <= __cplusplus // C++17~     
+        A a_17{1, 2}; 
+        A b_17{1, 1.5}; // (O) 클래스 템플릿 인수 추론 사용자 정의 가이드에 의해. A<double>로 추론합니다.
+#endif        
+        A<double> c{1, 1.5};
+    } 
+       
     {
         using namespace Template_2;
 

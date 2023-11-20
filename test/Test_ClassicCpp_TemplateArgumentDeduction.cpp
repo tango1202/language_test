@@ -487,7 +487,7 @@ TEST(TestClassicCpp, SFINAE) {
         EXPECT_TRUE(f<A>('a') == 2);
 
         EXPECT_TRUE(f<B>(10) == 1);
-        EXPECT_TRUE(f<B>('a') == 1);  
+        EXPECT_TRUE(f<B>('a') == 1); // char를 전달했는데 int 버전이 호출됩니다.  
     }  
      {
         using namespace SFINAE_2;

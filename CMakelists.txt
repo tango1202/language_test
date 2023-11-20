@@ -141,6 +141,7 @@ set(TestFiles
    test/Test_MordernCpp_PolymorphicAllocator.cpp
    test/Test_MordernCpp_TypeTraits.cpp
    test/Test_MordernCpp_Operators.cpp
+   test/Test_MordernCpp_Concept.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
    test/Test_CppPattern_SmartPointer.cpp
