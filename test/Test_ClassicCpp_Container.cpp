@@ -209,6 +209,32 @@ TEST(TestClassicCpp, Container) {
         EXPECT_TRUE(m.size() == 1); // 요소 갯수 1개
         EXPECT_TRUE((*eraseResult).first == 1); // 삭제한 요소의 다음 요소를 리턴함
     }
+    // # 원본 관리
+    {
+        class A {
+            int m_Val;
+        public:
+            explicit A(int val) : m_Val(val) {}
+            int GetVal() const {return m_Val;}
+            void SetVal(int val) {m_Val = val;}
+        };
+
+        std::vector<A> v;
+        A a(1);
+
+        v.push_back(a);
+        EXPECT_TRUE(a.GetVal() == v[0].GetVal());
+
+        a.SetVal(2);
+        EXPECT_TRUE(a.GetVal() != v[0].GetVal()); // vector는 복제본을 저장했기 때문에 a를 수정했다고 값이 변하지는 않습니다.
+
+        std::vector<A*> ptrVector; // 포인터를 관리합니다.
+        ptrVector.push_back(&a);
+        EXPECT_TRUE(a.GetVal() == ptrVector[0]->GetVal());
+
+        a.SetVal(3);
+        EXPECT_TRUE(a.GetVal() == ptrVector[0]->GetVal()); // vector는 포인터의 복제본을 저장했기 때문에 동일한 a를 가리킵니다.
+    }
 
     // ----
     // 이터레이터를 이용한 요소 접근

@@ -11,7 +11,7 @@ namespace UniformInitialization_1 {
     };
 
     T Func_11() {
-        return {10, 'b'}; // return T{10, 'b'}; 와 동일
+        return {10, 'b'}; // return T{10, 'b'}; 와 동일. 임시 개체가 생성되어 전달됩니다.
     }
 }
 namespace UniformInitialization_2 {
@@ -86,7 +86,9 @@ TEST(TestMordern, UniformInitialization) {
             T() {}
             T(int, char) {}
         };
-        T a_11{}; // T a(); 는 T를 리턴하는 함수 a의 정의로 인식되어 컴파일 오류가 났었습니다.
+        // T a(); // (△) 비권장. T를 리턴하는 함수 a의 선언입니다.
+        T a_11{}; // (O) T의 기본 생성자로 생성합니다.
+
         T b_11{10, 'a'}; // T(int, char)로 생성합니다.
         T{10, 'a'}; // T(int, char) 로 임시 개체를 생성합니다.
         T* c_11 = new T{10, 'a'}; // new 시 T(int, char)로 생성한 포인터를 d에 저장합니다.
@@ -106,7 +108,7 @@ TEST(TestMordern, UniformInitialization) {
             char m_B_11;
         public:
             T(int a, char b) :
-                m_A_11{a}, // 생성자 초기화 리스트에서 멤버 변수 초기화에서 사용합니다.
+                m_A_11{a}, // 생성자 초기화 리스트에서 사용합니다.
                 m_B_11{b} {}
         };
     }
@@ -120,7 +122,7 @@ TEST(TestMordern, UniformInitialization) {
         };
 
         T a_11{10};
-        // T b_11 = {10}; // (X) 컴파일 오류. 복사 생성자를 사용합니다.
+        // T b_11 = {10}; // (X) 컴파일 오류. 복사 생성자를 사용할 수 없습니다.
     }
     {
         class T {
@@ -131,47 +133,10 @@ TEST(TestMordern, UniformInitialization) {
         };
 
         T a_11{}; // 기본 생성자 호출
-        T b_11 = {}; // T b_11 = T{};와 동일
-        T c_11 = T{}; // T 기본 생성자를 호출하고, 복사 생성자를 호출. 컴파일러 최적화에 의해 2개의 생성을 1개의 생성으로 바꿈
+        T b_11 = T{}; // T 기본 생성자를 호출하고, 복사 생성자를 호출. 컴파일러 최적화에 의해 2개의 생성을 1개의 생성으로 바꿈 
+        T c_11 = {}; // T c_11 = T{}; 와 동일
     }
 
-    {
-        int a(int(10)); // int(10)으로 생성한 개체를 int a 의 복사 생성자를 호출하여 생성합니다.
-        int b = int(10); // int(10)으로 생성한 개체를 int a 의 복사 생성자를 호출하여 생성합니다.
-
-        // 중괄호 변환
-        {
-            int a_11{int{10}};
-            int b_11 = int{10};
-        }
-        // int{10}에서 int를 생략
-        {
-            // int c_11{ // (X) 컴파일 오류. 기본 타입은 중괄호 중첩을 지원하지 않습니다.
-            //    {10}
-            // };
-            int d_11 = {10};
-        }
-
-        {
-            class T {
-            public:
-                explicit T(int) {}
-            };
-
-            {
-                T a_11{ // (O)
-                    {10} // T{10}
-                };
-                T b_11 = T{10}; // (O)
-            }
-            {
-                // 축약형
-                T a_11{{10}}; // (O)
-                T b_11 = T{10}; // (O)
-            }
-        }
-
-    }
     {
         class T {
         public:
@@ -181,11 +146,11 @@ TEST(TestMordern, UniformInitialization) {
         };
 
         T t_11;
-        t_11 = {}; // t = T{};과 동일
+        t_11 = {}; // t = T{};과 동일. 임시 개체가 생성되어 대입됩니다.
     }
     {
         using namespace UniformInitialization_2;
-        f({}); // f(T{}); 와 동일
+        f({}); // f(T{}); 와 동일. 임시 개체가 생성되어 전달됩니다.
     }
 
     // 중괄호 집합 초기화
@@ -204,11 +169,20 @@ TEST(TestMordern, UniformInitialization) {
     {
         class T {
         public:
-        explicit T(int) {};
+        explicit T(int) {}
         };
 
-        T a(3.14); // (△) 비권장. double 이 int로 암시적으로 변환되어 초기화 됩니다.
+        T a(3.14); // (△) 비권장. 3.14는 double입니다. int로 암시적으로 변환되어 초기화 됩니다.
         // T b_11{3.14}; // (X) 컴파일 오류. 암시적 변환을 차단합니다.
+    }
+    {
+        class T {
+        public:
+        explicit T(double) {}
+        };
+
+        T a(3); // (△) 비권장. int가 double로 승격 변환되어 초기화 됩니다.
+        T b_11{3}; //  (△) 비권장. int가 double로 승격 변환되어 초기화 됩니다.
     }
     {
         class T {
@@ -216,10 +190,10 @@ TEST(TestMordern, UniformInitialization) {
             explicit T(float) {};
         };
 
-        T a_11{3.14}; // 상수 표현식은 값 범위라면 허용. 3.14는 float이 저장할 수 있어서 허용
-
         double doubleVal = 3.14;
-        // T b_11{doubleVal}; // (X) 컴파일 경고. double을 float으로 변환하는건 경고합니다.
+        // T a_11{doubleVal}; // (X) 컴파일 경고. double을 float으로 변환하는건 경고합니다.
+        
+        T b_11{3.14}; // 상수 표현식은 값 범위라면 허용. 3.14는 float이 저장할 수 있어서 허용
     }
     {
         class T {
@@ -227,11 +201,11 @@ TEST(TestMordern, UniformInitialization) {
             explicit T(char) {};
         };
 
-        T a_11{10}; // 상수 표현식은 값 범위라면 허용. 10은 char에서 저장할 수 있어서 허옹
-        // T b_11{255}; // (X) 컴파일 오류. 255는 char에서 저장할 수 없음.
-
         int intVal = 10;
-        // T c_11{intVal}; // (X) 컴파일 경고. int를 char로 변환하는건 경고합니다.
+        // T a_11{intVal}; // (X) 컴파일 경고. int를 char로 변환하는건 경고합니다.
+
+        T b_11{10}; // 상수 표현식은 값 범위라면 허용. 10은 char에서 저장할 수 있어서 허옹
+        // T c_11{255}; // (X) 컴파일 오류. 255는 char에서 저장할 수 없음.
     }
     {
         int* ptr;
@@ -253,6 +227,52 @@ TEST(TestMordern, UniformInitialization) {
         T t_11{a}; // (△) A->B로의 암시적 변환을 허용하면 차단되지 않습니다.
     }
     // 중괄호 초기화 중첩
+    {
+        {
+            int a = 10;
+            int b(10);        
+        }
+        {
+            int a(int(10)); // int(10)으로 생성한 개체를 int a 의 복사 생성자를 호출하여 생성합니다.
+            int b = int(10); // int(10)으로 생성한 개체를 int a 의 복사 생성자를 호출하여 생성합니다.
+        }
+        // 중괄호 변환
+        {
+            int a_11{
+                int{10}
+            };
+            int b_11 = int{10};
+        }
+        // int{10}에서 int를 생략
+        {
+            // int c_11{ // (X) 컴파일 오류. 기본 타입은 중괄호 중첩을 지원하지 않습니다.
+            //    {10}
+            // };
+            int d_11 = {10};
+        }
+
+        {
+            class T {
+            public:
+                explicit T(int) {}
+            };
+
+            {
+                T a_11{ 
+                    T{10} // (O)
+                };
+                T b_11 = T{10}; // (O)
+            }
+            {
+                // 축약형
+                T a_11{ 
+                    {10} // (O) T{10}
+                }; 
+                T b_11 = T{10}; // (O)
+            }
+        }
+
+    }    
     {
         class A {
             int m_X;
@@ -304,7 +324,7 @@ TEST(TestMordern, UniformInitialization) {
         };
         class B {
         public:
-            int m_Val; // 내부 멤버가 public인 집합 타입ㄴ이면 값 생성자가 없어도 됩니다.
+            int m_Val; // 내부 멤버가 public인 집합 타입이면 값 생성자가 없어도 됩니다.
             A m_A;
         };
 
@@ -315,7 +335,7 @@ TEST(TestMordern, UniformInitialization) {
     {
         // 이전 방식
         std::vector<int> v;
-        v.push_back(1);
+        v.push_back(1); // 일일이 push_back을 작성해야 해서 번거롭습니다.
         v.push_back(2);
         EXPECT_TRUE(v[0] == 1 && v[1] == 2);
 
@@ -363,6 +383,33 @@ TEST(TestMordern, UniformInitialization) {
         char arr_11[] = {"abc"}; // char arr_11[] = "abc"; 와 동일
     }
     {
+        class T { // 집합 타입은 사용자 정의 생성자와 소멸자가 없어야 합니다.
+        public: // 집합 타입은 모든 멤버 변수가 public 이어야 합니다.
+            int m_X;
+            int m_Y;
+        };
+        
+        T a{1, 2};
+        T b = {10, 20};
+
+        EXPECT_TRUE(a.m_X == 1 && a.m_Y == 2);
+        EXPECT_TRUE(b.m_X == 10 && b.m_Y == 20);         
+    }
+    {
+        class T {
+        private: // 집합 타입이 아닙니다. 집합 타입은 모든 멤버 변수가 public 이어야 합니다.
+            int m_X;
+            int m_Y;
+        };
+        
+        // T a{1, 2}; // (X) 컴파일 오류. 집합 타입이 아니어서 생성자를 호출하는데, 생성자가 없습니다.
+        // T b = {10, 20}; // (X) 컴파일 오류. 집합 타입이 아니어서 생성자를 호출하는데, 생성자가 없습니다.        
+    }
+    {
+        // std::vector<int> v(); // (△) 비권장.  std::vector<int>를 리턴하는 함수 v의 선언입니다.
+        std::vector<int> v_11{}; // 기본 생성자        
+    }
+    {
         class T_11 {
         public:
             T_11(int, int, int, int, int) {}
@@ -376,18 +423,33 @@ TEST(TestMordern, UniformInitialization) {
     }
     // 기존 생성자와 initializer_list 생성자와의 충돌
     {
-        // std::vector<int> v1(); // 함수 선언
-        std::vector<int> v1_11{}; // 기본 생성자
-
-        std::vector<int> v2_11{
-            {} // 빈 initializer_list로 vector 생성
+        class T_11 {
+        public:
+            T_11() {std::cout << "T::Default Constructor" << std::endl;}
+            T_11(const T_11&) {std::cout << "T::Copy Constructor" << std::endl;}
+            T_11(std::initializer_list<int>) {std::cout << "T::initializer_list Constructor" << std::endl;}    
         };
+        T_11 t{
+            {} // T_11{} 의 축약형 입니다.
+        };        
+    }
+    {
+        class T_11 {
+        public:
+            T_11() {std::cout << "T::Default Constructor" << std::endl;}
+            T_11(const T_11&) {std::cout << "T::Copy Constructor" << std::endl;}
+            T_11(std::initializer_list<int>) {std::cout << "T::initializer_list Constructor" << std::endl;}    
+        };
+        T_11 t{
+            T_11{} // 명시적으로 사용했습니다.
+        };        
+    }    
+    {
+        std::vector<int> v1(2); // 요소 갯수가 2개인 vector 생성
+        EXPECT_TRUE(v1.size() == 2 && v1[0] == 0 && v1[1] == 0);
 
-        std::vector<int> v3(2); // 요소 갯수가 2개인 vector 생성
-        EXPECT_TRUE(v3.size() == 2 && v3[0] == 0 && v3[1] == 0);
-
-        std::vector<int> v3_11{2}; // 요소값이 2인 vector 생성
-        EXPECT_TRUE(v3_11.size() == 1 && v3_11[0] == 2);
+        std::vector<int> v2_11{2}; // 요소값이 2인 vector 생성
+        EXPECT_TRUE(v2_11.size() == 1 && v2_11[0] == 2);  
     }
 
     // 지명 초기화
@@ -397,63 +459,109 @@ TEST(TestMordern, UniformInitialization) {
             int a, b, c, d, e;
         };
 
-        T_11 obj{1, 2, 3, 4, 5}; // 갯수가 많아지면 어느값이 어느 멤버 변수를 초기화 하는지 헷갈립니다.
+        T_11 obj_11{1, 2, 3, 4, 5}; // 갯수가 많아지면 어느값이 어느 멤버 변수를 초기화 하는지 헷갈립니다.
+        T_11 obj_20{.a = 1, .b = 2, .c = 3, .d = 4, .e = 5}; // 초기화할 변수명과 값을 지명합니다.
+    }
+#if 202002L <= __cplusplus // C++20~
+    {
+        class T { // 집합 타입은 사용자 정의 생성자와 소멸자가 없어야 합니다.
+        public: // 집합 타입은 모든 멤버 변수가 public 이어야 합니다.
+            int m_Val;
+        };  
+        class U {
+        private: // 집합 타입이 아닙니다. 집합 타입은 모든 멤버 변수가 public 이어야 합니다.
+            int m_Val;
+        };      
+        class V {
+        public:
+            int m_Val;
+            V() {}; // 사용자 정의 생성자가 있어서 집합 타입이 아닙니다.
+        };
+
+        T t_20{.m_Val = 1};
+        // U u_20{.m_Val = 1}; // (X) 컴파일 오류. 집합 타입이 아닙니다.
+        // V v_20{.m_Val = 1}; // (X) 컴파일 오류. 집합 타입이 아닙니다.        
     }
     {
-#if 202002L <= __cplusplus // C++20~
+        // 배열은 지원하지 않습니다.
+        // int arr_20[3]{[1] = 1}; // (X) 컴파일 오류. 배열은 지원하지 않습니다.
+    }
+    {
+        class T {
+        public:
+            int m_X;
+            int m_Y;
+            int m_Z;
+        };
+        T a_20{.m_X = 0, .m_Y = 1, .m_Z = 2}; // (O)
+        // T b_20{.m_X = 0, .m_Z = 1, .m_Y = 2}; // (X) 컴파일 오류. m_Z와 m_Y가 선언 순서와 다릅니다.
+    }
+    {
+        class T {
+        public:
+            int m_X;
+            int m_Y;
+        };  
+
+        // T a_20{.m_X = 0, 1}; // (X) 컴파일 오류. m_X를 지명했으면, 다른 멤버도 지명해야 합니다.        
+    }
+    {
+        class T {
+        public:
+            int m_X;
+            int m_Y;
+            int m_Z;
+        };
+
+        T t_20{.m_X = 0, .m_Z = 2}; // (O)
+        EXPECT_TRUE(t_20.m_Y == 0); // 생략된 것은 기본 생성자로 초기화됩니다.        
+    }
+
+    {
+        class Inner { // 집합 타입입니다.
+        public:
+            int m_Val1; 
+            int m_Val2;
+        };
+        
+        class T {
+        public:
+            int m_Val{0};
+            Inner m_Inner; // 내부 개체 입니다.
+        };        
+
+        T a_20{0, {1, 2}}; // {1, 2}는 Inner 개체를 초기화 합니다.
+        T b_20{.m_Val = 0, .m_Inner = {1, 2}}; // (O)
+        // T c_20{.m_Val = 0, .m_Inner.m_Val1 = 1, .m_Inner.m_Val2 = 2}; // // (X) 컴파일 오류. 지명 초기화는 내부 개체를 지명할 수 없습니다.
+    }
+    {
         class A {};
         class B {
         public:
             B(A) {} // explicit가 없는 형변환 생성자. A로 암시적으로 생성됩니다.
         };
-        class Inner {
-        public:
-            int m_Val1;
-            int m_Val2;
-        };
-
         class T {
+            
         public:
             int m_X{1};
             int m_Y{2};
-            float m_Z{3}; // float 입니다.
-            Inner m_Inner;
-
+            float m_Z{3.F}; // float 입니다.
             bool m_Bool;
             B m_B{A{}}; // A 기본 생성자로 생성합니다.
-        };
+        };   
 
-        T a_20{.m_X = 10, .m_Y{20}, .m_Z = {30.F}}; // = 또는 {} 또는 ={}로 초기값을 대입합니다.
-        // T b_20{.m_X = 10, .m_Z = 30.F, .m_Y = 20}; // (X) 컴파일 오류. 멤버 변수 선언 순서와 같아야 합니다.
-        T c_20{.m_X = 10, .m_Z = 30.F}; // 특정 항목을 생략할 수 있습니다.
-        EXPECT_TRUE(c_20.m_Y == 2); // 생략한 멤버는 멤버 선언부 초기화 값이 유지됩니다.
+        // T a_20{.m_X = 1.5}; // (X) 컴파일 오류. 실수를 정수로 변환시 컴파일 오류가 발생합니다.
 
-        // 중첩 초기화
-        T d_20{10, 20, 30.F, {1, 2}}; // {1, 2}는 Inner 개체를 초기화 합니다.
-        // T e_20{.m_X = 10, .m_Y = 20, .m_Z = 30.F, m_Inner = Inner{1, 2}}; // (X) 컴파일 오류. 지명 초기화는 초기화 중첩을 지원하지 않습니다.
-
-        // 인자의 암시적 형변환 차단 확인
-        // T f_20{.m_X = 1.5}; // (X) 컴파일 오류. 실수를 정수로 변환시 컴파일 오류가 발생합니다.
-
-        T g_20{.m_Z = 3.14}; // 상수값을 저장할 수 있다면 허용합니다.
-        double h{3.14};
-        // T i_20{.m_Z = h}; // (X) 컴파일 경고. double을 float으로 변환하는건 경고합니다.
+        // double doubleVal{3.14};
+        // T b_20{.m_Z = doubleVal}; // (X) 컴파일 경고. double을 float으로 변환하는건 경고합니다.
+        T c_20{.m_Z = 3.14}; // 상수값을 저장할 수 있다면 허용합니다.
 
         int* ptr;
-        // T j_20{.m_Bool = ptr}; // (X) 컴파일 경고. 포인터 타입에서 bool 변환하는건 경고합니다.
+        // T d_20{.m_Bool = ptr}; // (X) 컴파일 경고. 포인터 타입에서 bool 변환하는건 경고합니다.
 
         T k_20{.m_B = A{}}; // (△) 비권장. A->B로의 암시적 변환을 허용하면 차단되지 않습니다.
-
-        class U {
-        public:
-            int m_Val;
-            U() {}; // 생성자가 있어서 집합 타입이 아닙니다.
-        };
-        // U l_20{.m_Val = 0}; // (X) 컴파일 오류. 집합 타입이 아니면 지원하지 않습니다.
-        
-        // int arr_20[3]{[1] = 1}; // (X) 컴파일 오류. 배열은 지원하지 않습니다.
-#endif
     }
+    // c언어 지명 초기화
     {
         // struct A { 
         //     int m_X;
@@ -463,11 +571,13 @@ TEST(TestMordern, UniformInitialization) {
         //     A m_A; 
         // };
 
+        // int arr_20[3] = {[1] = 5}; // valid C, invalid C++ (배열)   
         // A a_20 = {.m_Y = 1, .m_X = 2}; // valid C, invalid C++ (순서 불일치)
-        // B b_20 = {.m_A.m_X = 0}; // valid C, invalid C++ (중첩)
-        // A a_20 = {.m_X = 1, 2}; // valid C, invalid C++ (혼합)
-        // int arr_20[3] = {[1] = 5}; // valid C, invalid C++ (배열)     
+        // A b_20 = {.m_X = 1, 2}; // valid C, invalid C++ (혼합)
+        // B c_20 = {.m_A.m_X = 0}; // valid C, invalid C++ (내부 개체 지명)
     }
+#endif
+
     // new에서 중괄호 집합 초기화로 배열 크기 추론
     {
 
@@ -492,7 +602,7 @@ namespace MemberInitialization_1 {
         int m_B_11{0}; // C++11. 중괄호 초기화
         int m_C_11 = {0}; // C++11. 중괄호 초기화
         int* m_D__1 = nullptr; // C++11. 포인터 초기화
-        std::vector<int> m_E_11{1,2,3}; // C++11. 중괄호 초기화
+        std::vector<int> m_E_11{1, 2, 3}; // C++11. 중괄호 초기화
         A m_F_11{10, 20}; // C++11. 중괄호 초기화
         // A m_F_11(10, 20); // (X) 컴파일 오류. A를 리턴하는 m_F 함수 정의
 
@@ -505,10 +615,20 @@ namespace MemberInitialization_1 {
 TEST(TestMordern, MemberInitialization) {
     // C++14 비정적 멤버 변수의 멤버 선언부 초기화시 집합 초기화 허용
     {
+        class A { // 집합 타입은 사용자 정의 생성자와 소멸자가 없고, 모든 멤버 변수가 public 이어야 합니다.
+        public: 
+            int m_X;
+            int m_Y;
+        };
+
+        A a_11{0, 1}; // 중괄호 집합 초기화
+        EXPECT_TRUE(a_11.m_X == 0 && a_11.m_Y == 1);        
+    }
+    {
         using namespace MemberInitialization_1;
-        class A_11 {
+        class A_11 { // 집합 타입은 사용자 정의 생성자와 소멸자가 없고, 모든 멤버 변수가 public 이어야 합니다.
         public:
-            int m_X{0}; // 비정적 멤버 변수 초기화
+            int m_X{0}; // 비정적 멤버 선언부 초기화
             int m_Y{1};
         };
 
@@ -526,8 +646,8 @@ TEST(TestMordern, MemberInitialization) {
     {
         class Flag_20 {
         public:
-            unsigned char m_Val1 : 2{3}; // 2bit 00(0), 01(1), 10(2), 11(3)
-            unsigned char m_Val2 : 3{7}; // 3bit 000(0), 001(1), 010(2), 011(3), 100(4), 101(5), 110(6), 111(7)
+            unsigned char m_Val1 : 2{3}; // 2bit 이므로 값의 범위는 00(0), 01(1), 10(2), 11(3)
+            unsigned char m_Val2 : 3{7}; // 3bit 이므로 값의 범위는 000(0), 001(1), 010(2), 011(3), 100(4), 101(5), 110(6), 111(7)
         };
 
         Flag_20 flag;

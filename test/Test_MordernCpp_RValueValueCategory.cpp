@@ -18,7 +18,7 @@ namespace RValue_1 {
         } 
 
         // 이동 생성
-        CopyableMoveable_11(CopyableMoveable_11&& other) : 
+        CopyableMoveable_11(CopyableMoveable_11&& other) noexcept : 
             m_Data(other.m_Data) {
             std::cout << "CopyableMoveable_11 : Move Constructor" << std::endl;   
 
@@ -240,7 +240,7 @@ TEST(TestMordern, RValue) {
                 return *this;
             }
             // 이동 생성자
-            Big_11(Big_11&& other) : 
+            Big_11(Big_11&& other) noexcept : // 이동 연산은 noexcept가 좋습니다.(암시적 이동 연산 변환을 참고하세요.)
                 m_Size(other.m_Size),
                 m_Ptr(other.m_Ptr) {
 
@@ -248,7 +248,7 @@ TEST(TestMordern, RValue) {
                 other.m_Ptr = nullptr;
             }            
             // 이동 대입 연산자. 우측값(rvalue) 이동
-            Big_11& operator =(Big_11&& other) {
+            Big_11& operator =(Big_11&& other) noexcept { // 이동 연산은 noexcept가 좋습니다.(암시적 이동 연산 변환을 참고하세요.)
                 delete[] m_Ptr; // 기존 것은 삭제하고,
                 m_Size = other.m_Size; // other 것을 저장한뒤
                 m_Ptr = other.m_Ptr;
@@ -384,14 +384,53 @@ TEST(TestMordern, RValue) {
         public:
             explicit A_11(int* data) : m_Data(data) {}
             A_11(A_11&) = default; // 암시적 복사 생성자를 사용합니다.
-            A_11(A_11&&) = default; // 암시적 이동 생성자를 사용합니다.
+            A_11(A_11&&) noexcept = default; // 암시적 이동 생성자를 사용합니다.
             ~A_11() {} // 암시적 이동 생성자와 암시적 이동 대입 연산자가 만들어 지지 않습니다.
         };
 
         A_11 a(new int(10));
         A_11 b(a); // 복사 생성자 호출
         A_11 c(std::move(a)); // 이동 생성자 호출
-    } 
+    }
+    // # 암시적 이동 연산 변환
+    {
+        class A_11 {
+        public:
+            A_11(int x, int y) {std::cout << "A_11::Value Constructor" << std::endl;}
+            A_11(const A_11& other) {std::cout << "A_11::Copy Constructor" << std::endl;}
+            // noexcept가 아닙니다.
+            A_11(A_11&& other) {std::cout << "A_11::Move Constructor" << std::endl;}
+
+            A_11& operator =(const A_11& other) = delete;
+            A_11& operator =(A_11&& other) = delete;
+        };
+
+        class B_11 {
+        public:
+            B_11(int x, int y) {std::cout << "B_11::Value Constructor" << std::endl;}
+            B_11(const B_11& other) {std::cout << "B_11::Copy Constructor" << std::endl;}
+            // noexcept입니다.
+            B_11(B_11&& other) noexcept {std::cout << "B_11::Move Constructor" << std::endl;}
+
+            B_11& operator =(const B_11& other) = delete;
+            B_11& operator =(B_11&& other) noexcept = delete;
+        };
+
+        A_11 a1{1, 2}, a2{3, 4};
+        std::vector<A_11> v1;
+        v1.push_back(a1);
+        EXPECT_TRUE(v1.capacity() == 1);
+
+        v1.push_back(a2); // 새로운 영역을 할당하고 a1을 복사한뒤 a2를 삽입합니다.
+       
+        B_11 b1{1, 2}, b2{3, 4};
+        std::vector<B_11> v2;
+        v2.push_back(b1);
+        EXPECT_TRUE(v2.capacity() == 1);
+
+        v2.push_back(b2); // 새로운 영역을 할당하고 b1을 이동한뒤 b2를 삽입합니다.
+
+    }
     // 이동 연산을 이용한 리팩토링
     {
         class T {
@@ -456,28 +495,28 @@ TEST(TestMordern, RValue) {
         EXPECT_TRUE(T::Func_11(std::move(A())) == 2); // 임시 개체를 move 해도 rvalue
     }
 
-    // move_no_except
+    // move_if_noexcept
     {
         class A_11 {
         public:
             A_11() {}
-            // noexcept가 없어서 예외가 발생할 수도 있습니다.
             A_11(const A_11&) {std::cout << "A_11 : Copy Constructor" << std::endl;}
-            A_11(A_11&&) {std::cout << "A_11 : Move Constructor" << std::endl;;} 
+             // noexcept가 없어서 예외가 발생할 수도 있습니다.
+            A_11(A_11&&) {std::cout << "A_11 : Move Constructor" << std::endl;} 
         };
         class B_11 {
         public:
             B_11() {}
-            // nothrow 보증합니다.
-            B_11(const B_11&) noexcept {std::cout << "B_11 : Copy Constructor" << std::endl;;}
-            B_11(B_11&&) noexcept {std::cout << "B_11 : Move Constructor" << std::endl;;} 
+            B_11(const B_11&) noexcept {std::cout << "B_11 : Copy Constructor" << std::endl;}
+            // noexcept 보증합니다.
+            B_11(B_11&&) noexcept {std::cout << "B_11 : Move Constructor" << std::endl;} 
         };
 
         A_11 a1;
-        A_11 a2 = std::move_if_noexcept(a1); // A_11(A_11&&)가 nothrow 예외 보증이 되지 않아 그냥 A(const A&)를 호출합니다.
+        A_11 a2 = std::move_if_noexcept(a1); // A_11(A_11&&)가 noexcept 예외 보증이 되지 않아 그냥 A(const A&)를 호출합니다.
 
         B_11 b1;
-        B_11 b2 = std::move_if_noexcept(b1); // B_11(B_11&&)가 nothrow 예외 보증이 되어 B_11(B_11&&)를 호출합니다.    }
+        B_11 b2 = std::move_if_noexcept(b1); // B_11(B_11&&)가 noexcept 예외 보증이 되어 B_11(B_11&&)를 호출합니다.   
     }
 
 }

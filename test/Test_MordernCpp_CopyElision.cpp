@@ -13,9 +13,9 @@ namespace Test_2 {
     public:
         A_11() = default;
         A_11(const A_11& other) = delete;
-        A_11(A_11&& other) = delete; // 이동 생성자 사용 안함
+        A_11(A_11&& other) noexcept = delete; // 이동 생성자 사용 안함
         A_11& operator =(const A_11& other) = delete; 
-        A_11& operator =(A_11&& other) = delete;         
+        A_11& operator =(A_11&& other) noexcept = delete;         
     };
 }
 namespace Test_3 {
@@ -25,9 +25,9 @@ namespace Test_3 {
     public:
         A_11() = default;
         A_11(const A_11& other) = delete;
-        A_11(A_11&& other) = default; // 억지로 이동 생성자를 사용함
+        A_11(A_11&& other) noexcept = default; // 억지로 이동 생성자를 사용함
         A_11& operator =(const A_11& other) = delete; 
-        A_11& operator =(A_11&& other) = delete;         
+        A_11& operator =(A_11&& other) noexcept = delete;         
     };
 #if 201703L <= __cplusplus // C++17~
     class A_17 {
@@ -36,9 +36,9 @@ namespace Test_3 {
     public:
         A_17() = default;
         A_17(const A_17& other) = delete;
-        A_17(A_17&& other) = delete; // 이동 생성자 사용 안함
+        A_17(A_17&& other) noexcept = delete; // 이동 생성자 사용 안함
         A_17& operator =(const A_17& other) = delete; 
-        A_17& operator =(A_17&& other) = delete;           
+        A_17& operator =(A_17&& other) noexcept = delete;           
     };   
 #endif    
 }

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h" 
 
 namespace {
-    // 생성자와 소멸자가 있어서 non-trivial 타입입니다.
+    // 생성자와 소멸자가 있어서 non-Trivial 타입입니다.
     class A {
         int m_X;
         int m_Y;
@@ -19,7 +19,7 @@ namespace {
         void SetY(int y) {m_Y = y;}
     };
 
-    // 생성자와 소멸자가 있어서 non-trivial 타입입니다.
+    // 생성자와 소멸자가 있어서 non-Trivial 타입입니다.
     class B {
         std::string m_Str;
     public:
@@ -38,7 +38,7 @@ namespace {
         virtual int Func() {return 1;} // #1
     };
     
-    // 생성자와 소멸자, 가상 함수가 있어서 non-trivial 타입입니다.
+    // 생성자와 소멸자, 가상 함수가 있어서 non-Trivial 타입입니다.
     class Derived : public Base {
     public:
         Derived() {
@@ -52,9 +52,9 @@ namespace {
     };
 
     union MyUnion_11 {
-        A m_A; // non-trivial 타입입니다.
-        B m_B; // non-trivial 타입입니다.
-        Derived m_Derived; // non-trivial 타입입니다.
+        A m_A; // non-Trivial 타입입니다.
+        B m_B; // non-Trivial 타입입니다.
+        Derived m_Derived; // non-Trivial 타입입니다.
         MyUnion_11() {
             std::cout << "MyUnion_11 : Constructor" << std::endl;  
         }

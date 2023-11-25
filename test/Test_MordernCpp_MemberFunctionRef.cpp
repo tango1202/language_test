@@ -11,7 +11,7 @@ namespace {
             std::cout << "Big_11 : Copy Constructor" << std::endl;
         }
         // 이동 생성자
-        Big_11(Big_11&& other) {
+        Big_11(Big_11&& other) noexcept {
             std::cout << "Big_11 : Move Constructor" << std::endl;
         }  
     };     

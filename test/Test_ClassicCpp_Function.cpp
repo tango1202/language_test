@@ -98,6 +98,19 @@ namespace Function_10 {
     int f(int& a) {return 2;} // int 타입, int& 타입을 받을 수 있습니다.
     int f(const int& a) {return 3;} // const int 타입, const int& 타입을 받을 수 있습니다.  
 }
+// 오버로딩 함수 탐색 규칙
+namespace Function_10_1 {
+    int f(int a) {return 1;}
+    int g(int a) {return 2;}
+    int h(double a) {return 3;}
+}
+
+namespace Function_11 {
+    // int f(void, int); // (X) 컴파일 오류
+    // int f(const void); // (X) 컴파일 오류  
+    // int f(void*); // (O)
+    // int f(const void*); // (O)
+}
 
 // ----
 // 이름 탐색 규칙 - ADL(Argument-dependent lookup), Keonig 
@@ -439,22 +452,6 @@ TEST(TestClassicCpp, Function) {
         EXPECT_TRUE(f(ref) == 1); 
         // EXPECT_TRUE(f(constRef) == 1); // (X) 컴파일 오류. const int&는 int&에 대입되지 않습니다.     
     }
-    {
-        using namespace Function_10;
-
-        int val = 10;
-        const int constVal = 10;
-
-        int& ref = val;
-        const int& constRef = val;
-
-        // EXPECT_TRUE(f(val) == 1); // (X) 컴파일 오류. f(int)와 f(int&)와 f(const int&)가 모호합니다.
-        // EXPECT_TRUE(f(constVal) == 1); // (X) 컴파일 오류. f(int)와 f(const int&)가 모호합니다.
-
-        // EXPECT_TRUE(f(ref) == 2); // (X) 컴파일 오류. f(int)와 f(int&)와 f(const int&)가 모호합니다.
-        // EXPECT_TRUE(f(constRef) == 3); // (X) 컴파일 오류. f(int)와 f(const int&)가 모호합니다.
-    }
-
     
     {
         using namespace Function_9;
@@ -470,6 +467,29 @@ TEST(TestClassicCpp, Function) {
 
         EXPECT_TRUE(f(ref) == 1); 
         EXPECT_TRUE(f(constRef) == 2);        
+    }
+    {
+        using namespace Function_10;
+
+        int val = 10;
+        const int constVal = 10;
+
+        int& ref = val;
+        const int& constRef = val;
+
+        // EXPECT_TRUE(f(val) == 1); // (X) 컴파일 오류. f(int)와 f(int&)와 f(const int&)가 모호합니다.
+        // EXPECT_TRUE(f(constVal) == 1); // (X) 컴파일 오류. f(int)와 f(const int&)가 모호합니다.
+
+        // EXPECT_TRUE(f(ref) == 2); // (X) 컴파일 오류. f(int)와 f(int&)와 f(const int&)가 모호합니다.
+        // EXPECT_TRUE(f(constRef) == 3); // (X) 컴파일 오류. f(int)와 f(const int&)가 모호합니다.
+    }
+    // 오버로딩 함수 탐색 규칙
+    {
+        using namespace Function_10_1;
+
+        EXPECT_TRUE(f((bool)true) == 1); // bool은 int로 승격
+        EXPECT_TRUE(g((char)'a') == 2); // char는 int로 승격
+        EXPECT_TRUE(h((int)1) == 3); // int는 double로 승격
     }
 
     // 이름 탐색 규칙 - ADL(Argument-dependent lookup), Keonig 
