@@ -5,7 +5,7 @@ namespace {
 #if 201402L <= __cplusplus // C++14~        
     // C++14 변수 템플릿
     template<class T>
-    // constexpr T pi_14{3.1415926535897932385L}; // 중괄호 초기화는 암시적 형변환이 안되서 = 로 초기화 합니다.
+    // constexpr T pi_14{3.1415926535897932385L}; // (X) 컴파일 오류. 중괄호 초기화는 암시적 형변환이 안되서 = 로 초기화 합니다.
     constexpr T pi_14 = 3.1415926535897932385L; 
 #endif
 
@@ -63,7 +63,7 @@ namespace Template_2 {
     };
 
 #if 201703L <= __cplusplus // C++17~
-    template<auto val> // 비타입인 경우 auto를 사용할 수 있습니다.
+    template<auto val> // 비타입 템플릿 인자인 경우 auto를 사용할 수 있습니다.
     class A_17 {
     public:
         auto GetVal() const {return val;}
@@ -162,7 +162,7 @@ TEST(TestMordern, Template) {
 #if 201402L <= __cplusplus // C++14~        
     // C++14 변수 템플릿
     {
-        // 동일한 값을 타입에 따라 서로 다른 정밀도로 사용할 수 있습니다.
+        // pi_14를 타입에 따라 서로 다른 정밀도로 사용할 수 있습니다.
         std::cout << "pi_14<double> : " << std::setprecision(10) << pi_14<double> << std::endl;
         std::cout << "pi_14<float> : " << std::setprecision(10) << pi_14<float> << std::endl;
         std::cout << "pi_14<int> : " << std::setprecision(10) << pi_14<int> << std::endl;
@@ -201,7 +201,7 @@ TEST(TestMordern, Template) {
 
 #if 201703L <= __cplusplus // C++17~     
         A a_17{1, 2}; 
-        A b_17{1, 1.5}; // (O) 클래스 템플릿 인수 추론 사용자 정의 가이드에 의해. A<double>로 추론합니다.
+        A b_17{1, 1.5}; // (O) 클래스 템플릿 인수 추론 사용자 정의 가이드에 의해 A<double>로 추론합니다.
 #endif        
         A<double> c{1, 1.5};
     } 
@@ -242,7 +242,7 @@ TEST(TestMordern, Template) {
         using namespace Template_4;
 
         A_20<3.14> a; // 실수 타입
-        B_20<MyClass_11{1}> b; // 멤버 변수는 public이고, mutable이 없는 constexpr 생성자가 있는 리터럴 타입
+        B_20<MyClass_11{1}> b; // 멤버 변수는 public이고, mutable이 없으며, constexpr 생성자가 있는 리터럴 타입
 #endif
     }
     // initializer_list 사용시 클래스 템플릿 인수 추론
@@ -254,11 +254,9 @@ TEST(TestMordern, Template) {
         A a_17{10}; // C++17 부터는 인수 타입으로부터 추론합니다.
 #endif
 
-        std::vector<int> v_11{1, 2, 3}; // ~C++20 이전에는 타입을 명시해야 합니다.
+        std::vector<int> v_11{1, 2, 3}; // ~C++20 이전에는 initializer_list로 초기화시에 타입을 명시해야 합니다.
 #if 202002L <= __cplusplus // C++20~         
-        std::vector v_20{1, 2, 3}; // initializer_list의 요소 타입으로 부터 vector의 템플릿 인자를 추론합니다.
+        std::vector v_20{1, 2, 3}; // C++20 부터는 initializer_list로 초기화시에 타입을 명시하지 않아도 됩니다.
 #endif
     }
-   
-
 }

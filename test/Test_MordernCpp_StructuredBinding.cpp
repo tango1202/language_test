@@ -7,10 +7,10 @@ TEST(TestMordern, StructuredBinding) {
         int arr[]{1, 2, 3};
         
         auto [a_17, b_17, c_17]{arr}; // auto [a_17, b_17, c_17] = arr; 과 동일
-        EXPECT_TRUE(a_17 == 1 && b_17 == 2 && c_17 == 3); // arr을 임시 개체에 복제하고, 복제본에 a_17 = &temp[0], b_17 = &temp[1], c_17 = &temp[2] 바인딩
+        EXPECT_TRUE(a_17 == 1 && b_17 == 2 && c_17 == 3); // arr을 임시 개체에 복제하고, 복제본에 a_17 = temp[0], b_17 = temp[1], c_17 = temp[2] 바인딩
 
         auto& [x_17, y_17, z_17]{arr};
-        EXPECT_TRUE(x_17 == 1 && y_17 == 2 && z_17 == 3); // x_17 = &a[0], y_17 = &a[1], z_17 = &a[2] 에 바인딩
+        EXPECT_TRUE(x_17 == 1 && y_17 == 2 && z_17 == 3); // x_17 = a[0], y_17 = a[1], z_17 = a[2] 에 바인딩
 
         arr[0] = 10; // 원본 수정
         arr[1] = 20;

@@ -8,18 +8,13 @@ TEST(TestClassicCpp, ImplicitDefinition) {
         class T {
             int m_X;
             int m_Y;
-            Object m_Object;
         };
     }
     // T에서 암시적으로 만들어 지는 것들
     {
-        class Object {
-            int m_X;
-        };        
         class T {
             int m_X;
             int m_Y;
-            Object m_Object;
         public:
             // 기본 생성자
             T() {}
@@ -27,14 +22,12 @@ TEST(TestClassicCpp, ImplicitDefinition) {
             // 복사 생성자 - 멤버별 복사 생성자 호출
             T(const T& other) :
                 m_X(other.m_X),
-                m_Y(other.m_Y),
-                m_Object(other.m_Object) {}
+                m_Y(other.m_Y) {}
 
             // 복사 대입 연산자 - 멤버별 복사 대입
             T& operator =(const T& other) {
                 m_X = other.m_X;
                 m_Y = other.m_Y;
-                m_Object = other.m_Object;
             
                 return *this;
             }

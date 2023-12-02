@@ -52,7 +52,7 @@ TEST(TestClassicCpp, MemberVariable) {
             T m_X;
             T m_Y;
         public:
-            U(int x, int y) {  // (△) 비권장. 초기화 리스트가 없어서 멤버 변수를 기본 생성자로 생성합니다.  
+            U(int x, int y) {  // (△) 비권장. 초기화 리스트가 없어서 m_X, m_Y를 기본 생성자로 생성합니다.  
                 m_X = T(x); // (△) 비권장. 값 생성자로 임시 개체를 생성 후, 복사 대입 연산자로 대입합니다.
                 m_Y = T(y);
             }
@@ -114,6 +114,7 @@ TEST(TestClassicCpp, MemberVariable) {
             int m_B;
             int m_C;
         public:
+            // 초기화 리스트 순서가 아닌 멤버 변수 선언 순서로 초기화 됩니다.
             T(int a, int b, int c) :
                 m_C(c + m_B), // (△) 비권장. 3
                 m_B(b + m_A), // (△) 비권장. 2
@@ -197,7 +198,7 @@ TEST(TestClassicCpp, MemberVariable) {
         class Derived : public Base { // 가상 함수 테이블 크기로 정렬됨
             char m_X;
         };
-        EXPECT_TRUE(sizeof(Derived) == 8 * 2); 
+        EXPECT_TRUE(sizeof(Derived) == 8 + 8); 
         std::cout << sizeof(Derived) << std::endl;        
     }
     // 메모리 접근 편의를 위해 4byte단위로 멤버 변수를 할당. 4byte 단위로 읽을 수 있도록 빈공간 할당(패딩)

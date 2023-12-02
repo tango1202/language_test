@@ -8,7 +8,7 @@ namespace ThreeWayComparison_1 {
         explicit T(int val) : m_Val{val} {} 
 
         // T op T 의 형태로 비교
-        bool operator ==(const T& other) const {return m_Val == other.m_Val;} // < 로부터 구현하면, !(*this < other || other < *this)로 할 수 있음. 단 < 을 2회 하므로 비효율적임.
+        bool operator ==(const T& other) const {return m_Val == other.m_Val;} // < 로부터 구현하면, !(*this < other || other < *this)로 할 수 있습니다. 단 < 을 2회 하므로 비효율적입니다.
         bool operator !=(const T& other) const {return !(*this == other);} // == 로부터 구현
         bool operator <(const T& other) const {return m_Val < other.m_Val;}
         bool operator >(const T& other) const {return other < *this;} // < 로부터 구현
@@ -16,12 +16,12 @@ namespace ThreeWayComparison_1 {
         bool operator >=(const T& other) const {return !(*this < other);} // < 로부터 구현
 
         // T op int 의 형태로 비교
-        bool operator ==(int other) const {return m_Val == other;} 
-        bool operator !=(int other) const {return !(m_Val == other);} 
-        bool operator <(int other) const {return m_Val < other;}
-        bool operator >(int other) const {return other < m_Val;} 
-        bool operator <=(int other) const {return !(other < m_Val);} 
-        bool operator >=(int other) const {return !(m_Val < other);} 
+        bool operator ==(int val) const {return m_Val == val;} 
+        bool operator !=(int val) const {return !(m_Val == val);} 
+        bool operator <(int val) const {return m_Val < val;}
+        bool operator >(int val) const {return val < m_Val;} 
+        bool operator <=(int val) const {return !(val < m_Val);} 
+        bool operator >=(int val) const {return !(m_Val < val);} 
     }; 
     // int op T의 형태로 비교
     bool operator ==(int left, const T& right) {return T{left} == right;}
@@ -38,7 +38,7 @@ TEST(TestMordern, 3WayComparison) {
             int m_Val;
         public:
             explicit T(int val) : m_Val{val} {} 
-            bool operator ==(const T& other) const {return m_Val == other.m_Val;} // < 로부터 구현하면, !(*this < other || other < *this)로 할 수 있음. 단 < 을 2회 하므로 비효율적임.
+            bool operator ==(const T& other) const {return m_Val == other.m_Val;} // < 로부터 구현하면, !(*this < other || other < *this)로 할 수 있습니다. 단 < 을 2회 하므로 비효율적입니다.
             bool operator !=(const T& other) const {return !(*this == other);} // == 로부터 구현
             bool operator <(const T& other) const {return m_Val < other.m_Val;}
             bool operator >(const T& other) const {return other < *this;} // < 로부터 구현
@@ -112,8 +112,8 @@ TEST(TestMordern, 3WayComparison) {
         EXPECT_TRUE((T_20{10} <=> T_20{20}) != 0); // left != right
         EXPECT_TRUE((T_20{10} <=> T_20{20}) < 0); // left < right
         EXPECT_TRUE((T_20{20} <=> T_20{10}) > 0);  // left > right
-        EXPECT_TRUE((T_20{10} <=> T_20{20}) <= 0 && (T_20{10} <=> T_20{10}) <= 0); // left <= right
-        EXPECT_TRUE((T_20{20} <=> T_20{10}) >= 0  && (T_20{10} <=> T_20{10}) >= 0); // left >= right
+        EXPECT_TRUE((T_20{10} <=> T_20{20}) == 0 || (T_20{10} <=> T_20{10}) <= 0); // left <= right
+        EXPECT_TRUE((T_20{20} <=> T_20{10}) == 0 || (T_20{10} <=> T_20{10}) >= 0); // left >= right
     }
     {
         using namespace ThreeWayComparison_1;
@@ -132,8 +132,8 @@ TEST(TestMordern, 3WayComparison) {
             bool operator ==(const T_20& other) const {return m_Val == other.m_Val;}
 
             // T_20 op int 또는 int op T_20
-            std::strong_ordering operator <=>(int other) const {return m_Val <=> other;}
-            bool operator ==(int other) const {return m_Val == other;}
+            std::strong_ordering operator <=>(int val) const {return m_Val <=> val;}
+            bool operator ==(int val) const {return m_Val == val;}
         };  
 
         EXPECT_TRUE((T_20{10} <=> T_20{20}) < 0); // T_20 op T_20
@@ -214,13 +214,13 @@ TEST(TestMordern, 3WayComparison) {
             int m_Val;
         public:
             explicit Strong_20(int val) : m_Val{val} {}
-            std::partial_ordering operator <=>(const Strong_20& other) const = default; 
+            std::strong_ordering operator <=>(const Strong_20& other) const = default; 
         };
         class Weak_20 {
             int m_Val;
         public:
             explicit Weak_20(int val) : m_Val{val} {}
-            std::partial_ordering operator <=>(const Weak_20& other) const = default; 
+            std::weak_ordering operator <=>(const Weak_20& other) const = default; 
         };
         class Partial_20 {
             int m_Val;
@@ -230,9 +230,9 @@ TEST(TestMordern, 3WayComparison) {
         };
 
         class Mix_20 {
-            Strong_20 m_Strong;
-            Weak_20 m_Weak;
-            Partial_20 m_Partial;
+            Strong_20 m_Strong; // strong_ordering
+            Weak_20 m_Weak; // weak_ordering
+            Partial_20 m_Partial; // partial_ordering
 
         public:
             explicit Mix_20(int strong, int weak, int partial) : m_Strong{strong}, m_Weak(weak), m_Partial(partial) {}

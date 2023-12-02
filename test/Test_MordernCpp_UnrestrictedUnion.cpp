@@ -83,12 +83,12 @@ TEST(TestMordern, UnrestrictedUnion) {
         MyUnion_11 obj;
 
         // A를 사용하기 위해 A의 생성자를 호출합니다.
-        new (&obj.m_A) A(10, 20);
+        new (&obj.m_A) A{10, 20};
         EXPECT_TRUE(obj.m_A.GetX() == 10 && obj.m_A.GetY());
 
         // A말고 B를 사용하기 위해 기존 A는 소멸시키고 B의 생성자를 호출합니다.
         obj.m_A.~A();
-        new (&obj.m_B) B("Hello");
+        new (&obj.m_B) B{"Hello"};
         EXPECT_TRUE(obj.m_B.GetString() == "Hello");
 
         // B 말고 Derived를 사용하기 위해 기존 B는 소멸시키고 Derived의 생성자를 호출합니다.

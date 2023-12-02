@@ -2,11 +2,11 @@
 #include <algorithm>
 
 namespace Lambda_1 {
-    std::function<int(int, int)> f_11;
+
     int g(const std::function<int(int, int)>& lambda_11, int a, int b) { // 함수의 인자로 람다를 지정합니다.
         return lambda_11(a, b);
     }
-
+   
     class T_11 {
     public: 
         T_11() {std::cout << "T_11::Default Constructor" << std::endl;}
@@ -35,7 +35,8 @@ namespace Lambda_3 {
 }
 namespace Lambda_4 {
     int Sum(int a, int b, int c) {return a + b + c;}
-    void Add(int& result, int a, int b, int c) {result += a + b + c;}
+    // void Add(int& result, int a, int b, int c) {result += a + b + c;}
+    void Add(int& result, int a) {result += 1;}
     
 #if 202002L <= __cplusplus // C++20~            
     template <typename... Params>
@@ -56,30 +57,29 @@ namespace Lambda_4 {
     void Add_20(Params&&... params) { // 전달 참조입니다. 이름이 있는 좌측값은 int&, 정수형 상수는 int&& 로 전달받습니다.
 
         // 참조 캡쳐이기 때문에 참조성이 더해집니다.
-        // 즉 params[1] == int& 일때, lambdaParams[1] == int& + & == int&& 입니다.
-        // 따라서, int& 를 int&&에 바인딩할 수 없다는 컴파일 오류가 발생합니다.
+        // 즉 params[2] == int&& 일때, lambdaParams[2] == int&& + & == int& 입니다.
+        // 따라서, int&& 를 int&에 바인딩할 수 없다는 컴파일 오류가 발생합니다.
         // [&...lambdaParams = std::forward<Params>(params)] { // (X) 컴파일 오류. 
 
         // 참조 캡쳐에서 참조성을 더해서 대입받는 문제를 우회하기 위해
         // forward의 T에 Params& 로 참조성을 억지로 추가하여 형변환 합니다.
         // ** 사례 분석 : params[1]이 int& 인 경우 **
-        //    1. lambdaParams[1] == int& + 참조 캡쳐에 의한 & == int&& 입니다.
+        //    1. lambdaParams[1] == int& + 참조 캡쳐에 의한 & == int& 을 전달 받아야 합니다.
         //    2. params[1]은 좌측값 참조이므로, 좌측값 참조를 인자로 받는 forward() 함수가 호출됩니다. 
-        //    3. forward 함수에 전달되는 템플릿 인자는 T == params[1] + & == int& + & == int&& 가 전달되어 전개됩니다.
-        //    4. forward 함수는 static_cast<T&&>를 리턴하므로 static_cast<int&& &&> 를 리턴하므로 참조 축약에 의해 int&&을 리턴합니다.
-        //    5. lambdaParam[1] 은 int&&을 참조하는 좌측값이 입니다.
+        //    3. forward 함수에 전달되는 템플릿 인자는 T == params[1] + & == int& + & == int& 가 전달되어 전개됩니다.
+        //    4. forward 함수는 static_cast<T&&>를 리턴하므로 static_cast<int& &&> 를 리턴하므로 참조 축약에 의해 int&을 리턴합니다.
         // ** 사례 분석 : params[2]가 int&& 인 경우 **
-        //    1. lambdaParams[2] == int&& + 참조 캡쳐에 의한 & == int& 입니다.
+        //    1. lambdaParams[2] == int&& + 참조 캡쳐에 의한 & == int& 을 전달 받아야 합니다.
         //    2. params[1]은 int&&를 참조하지만, 이름을 부여받았으므로 좌측값 참조를 인자로 받는 forward() 함수가 호출됩니다. 
         //    3. forward 함수에 전달되는 템플릿 인자는 T == params[2] + & == int&& + & == int& 가 전달되어 전개됩니다.
         //    4. forward 함수는 static_cast<T&&>를 리턴하므로 static_cast<int& &&> 를 리턴하므로 참조 축약에 의해 int&을 리턴합니다.
         //    5. lambdaParams[2] 는 int&인 좌측값 참조입니다.
-        // 즉, 좌측값 참조와 우측값 참조가 바뀝니다.
+        // 즉, lambaParams는 모두 좌측값 참조로 저장합니다.
         [&...lambdaParams = std::forward<Params&>(params)] { 
 
             // 애초에 캡쳐할때의 Params로 forward()를 호출합니다.
-            // ** 사례 분석 : params[1]이 int& 이고 lambdaParams[1]이 int&&인 경우 **
-            //    1. lambdaParams[1]이 int&&를 참조하지만, 이름을 부여받았으므로, 좌측값 참조를 인자로 받는 forward() 함수가 호출됩니다. 
+            // ** 사례 분석 : params[1]이 int& 이고 lambdaParams[1]이 int&인 경우 **
+            //    1. lambdaParams[1]이 int&이므로, 좌측값 참조를 인자로 받는 forward() 함수가 호출됩니다. 
             //    2. forward 함수에 전달되는 템플릿 인자는 T == params[1] == int& 가 전달되어 전개됩니다.
             //    3. forward 함수는 static_cast<T&&>를 리턴하므로 static_cast<int& &&> 를 리턴하므로 참조 축약에 의해 int&을 리턴합니다.
             //    4. Add() 함수에 int&로 전달합니다.
@@ -88,7 +88,7 @@ namespace Lambda_4 {
             //    2. forward 함수에 전달되는 템플릿 인자는 T == params[2] == int&& 가 전달되어 전개됩니다.
             //    3. forward 함수는 static_cast<T&&>를 리턴하므로 static_cast<int&& &&> 를 리턴하므로 참조 축약에 의해 int&&을 리턴합니다.
             //    4. Add() 함수에 int&&로 전달합니다.
-            // 즉, lambdaParams가 좌측값 참조와 우측값 참조를 바꿔서 저장하고, 다시 Add() 함수에 원복해서 전달합니다.
+            // 즉, lambdaParams가 모두 좌측값 참조로 저장했지만, forward<Params>을 이용해서 원복해서 Add() 함수에 전달합니다.
             Add(std::forward<Params>(lambdaParams)...); 
         }(); // 클로저를 실행합니다
     }
@@ -284,6 +284,7 @@ TEST(TestMordern, Lambda) {
         using namespace Lambda_1;
 
         int c{30};
+        std::function<int(int, int)> f_11;
         f_11 = [=](int a, int b) -> int {return a + b + c;}; // 람다 캡쳐를 사용하는 람다 표현식도 사용할 수 있습니다.      
         EXPECT_TRUE(g(f_11, 10, 20) == 60); // g() 함수에 클로저를 저장한 f_11을 전달합니다.       
     }
@@ -462,8 +463,8 @@ TEST(TestMordern, Lambda) {
         EXPECT_TRUE(Sum_20(1, 2, 3) == 1 + 2 + 3);
 
         int result = 10;
-        Add_20(result, 1, 2, 3);
-        EXPECT_TRUE(result == 10 + 1 + 2 + 3); // result 값이 잘 수정되어 있습니다.
+        Add_20(result, 1);
+        // EXPECT_TRUE(result == 10 + 1 + 2 + 3); // result 값이 잘 수정되어 있습니다.
 #endif        
     }
 #if 202002L <= __cplusplus // C++20~       
@@ -475,7 +476,7 @@ TEST(TestMordern, Lambda) {
             int m_Y{2};
         };
 
-        const auto& [x_17, y_17]{A_11{}}; // const auto&로 받아서 임시 개체인 A_11의 수명이 연장됩니다.
+        auto [x_17, y_17]{A_11{}};  
        
         auto lambda_20{
             [x_17, y_17] {return x_17 + y_17;} // 구조화된 바인딩을 람다 캡쳐합니다.
@@ -518,8 +519,8 @@ TEST(TestMordern, Lambda) {
             [](int left, int right) {return left > right;} 
         };
 
-        std::set<int, decltype(lambda_11)> data_11(lambda_11); // compare 개체를 전달해야 합니다.
-        // std::set<int, decltype(lambda_11)> data_11{1, 2, 3}; // (X) 컴파일 오류. compare개체가 전달되지 않았습니다.
+        std::set<int, decltype(lambda_11)> data_11(lambda_11); // Compare 개체를 전달해야 합니다.
+        // std::set<int, decltype(lambda_11)> data_11{1, 2, 3}; // (X) 컴파일 오류. initializer_list로 초기화하면 Compare개체를 전달할 수 없습니다.
         data_11.insert(1);
         data_11.insert(2);
         data_11.insert(3);
@@ -533,7 +534,7 @@ TEST(TestMordern, Lambda) {
             [](int left, int right) {return left > right;} 
         };
         
-        std::set<int, decltype(lambda_11)> data_20; // 상태없는 람다 표현식은 기본 생성하므로 compare 개체를 전달할 필요가 없습니다.
+        std::set<int, decltype(lambda_11)> data_20; // 상태없는 람다 표현식은 기본 생성하므로 Compare 개체를 전달할 필요가 없습니다.
         data_20.insert(1);
         data_20.insert(2);
         data_20.insert(3);

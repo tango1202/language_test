@@ -105,7 +105,7 @@ namespace Constexpr_2 {
                 return  NULL;
             }
 
-            // 조건에 맞는 부부만 컴파일 합니다.
+            // 조건에 맞는 부분만 컴파일 합니다.
             if constexpr (!IsDerivedFrom<T, ICloneable>::Val) {
                 return new T(*ptr);
             }
@@ -145,7 +145,7 @@ namespace Constexpr_3 {
     constexpr void Func_20() {
         int a; // 초기화되지 않은 지역 변수
 
-        try {}
+        try {} // try-catch
         catch(...) {}
     }
 #endif    
@@ -269,7 +269,7 @@ TEST(TestMordern, Constexpr) {
                 m_Y{y} {} 
             constexpr int GetVal_11() const {return m_X * m_Y;}
 #if 201402L <= __cplusplus // C++14~   
-            // C++14 부터는 constexpr개체에서도 멤버 변수의 값을 수정할 수 있습니다.            
+            // C++14 부터는 void를 리턴할 수 있고, constexpr개체에서도 멤버 변수의 값을 수정할 수 있습니다.  
             constexpr void SetX_14(int val) {m_X = val;}
             constexpr void SetY_14(int val) {m_Y = val;}    
 #endif                    

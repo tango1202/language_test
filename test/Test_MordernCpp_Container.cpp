@@ -1,5 +1,6 @@
 #include "gtest/gtest.h" 
 
+#include <algorithm>
 TEST(TestMordern, Container) {
     // # (C++11~) const_iterator 지원
     {

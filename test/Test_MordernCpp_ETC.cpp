@@ -19,7 +19,7 @@ TEST(TestMordern, Align) {
         int m_B; 
     };
 
-    // int 보다 적은값이므로 무시되고 alignof(int) 크기로 정렬됩니다.
+    // 2는 내부 멤버중 제일 큰 값인 int 보다 적은값이므로 무시되고 alignof(int) 크기로 정렬됩니다.
     class alignas(2) C_11 {
         char m_A[13];
         int m_B; 
@@ -68,15 +68,15 @@ TEST(TestMordern, Sizeof) {
         int m_X;
     };
 
-    // C++03 에서는 컴파일 오류
-    // C++11 부터 허용
+    // (X) C++03 에서는 컴파일 오류
+    // (O) C++11 부터 허용
     EXPECT_TRUE(sizeof(T::m_X) == sizeof(int));
 }
 
 #if 202002L <= __cplusplus // C++20~
 namespace VA_OPT_1 {
-    int Sum(int a, int b, int c, int d) {return a + b + c + d;}
-    int Sum(int a) {return a;}
+    int Sum(int init, int a, int b, int c) {return init + a + b + c;}
+    int Sum(int init) {return init;}
     #define MY_FUNC_20(...) Sum(10 __VA_OPT__(,) __VA_ARGS__) // 가변 인수가 있다면 ,를 넣습니다.
 }
 TEST(TestMordern, VA_OPT) {

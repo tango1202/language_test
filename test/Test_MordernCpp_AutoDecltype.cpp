@@ -106,7 +106,7 @@ TEST(TestMordern, Auto) {
             int x = 10;
             int& ref = x;
             auto a_11 = ref; // int. 참조성이 제거됩니다.
-            auto& b_11 = ref; // auto&을 이용하여 억지로 참조자로 받을 수 있습니다.
+            auto& b_11 = ref; // auto&을 이용하여 참조자로 받을 수 있습니다.
         }
     }
     // auto의 중괄호 초기화 특수 추론 규칙
@@ -163,14 +163,26 @@ TEST(TestMordern, Decltype) {
         // d_11 = 10; // (X) 컴파일 오류. const int이므로 값대입 안됨
     }
     {
-        class T {
-        public:
-            double m_Val;
-        };
-        const T* t;
 
-        decltype(t->m_Val) a_11 = 10; // 멤버 엑세스로 평가됩니다. double
-        decltype((t->m_Val)) b_11 = 10; // 괄호를 추가하면 좌측값 표현식으로 처리합니다. t가 const 이므로 const double&
+        {
+            int a;
+            int b;
+
+            // 선언된 타입
+            decltype(a) a_11 = a; // int. 선언된 타입
+
+            // lvalue 표현식. 이름이 있는 좌측값을 나타냄
+            decltype((a)) b_11 = a; // int&. (a)는 좌측값 표현식
+
+            // prvalue 표현식. 이름이 없는 우측값을 나타냄
+            decltype(a + b) c_11 = a; // int. a + b 는 임시 개체인 우측값을 생성하는 표현식
+            decltype(int{}) d_11 = int{}; // int. int{}는 임시 개체인 우측값을 생성하는 표현식
+            decltype((int{})) e_11 = int{}; // int. (int{})는 우측값 표현식
+    
+            // xvalue 표현식. 형변환된 xvalue를 나타냄
+            decltype(static_cast<int&&>(a)) f_11 = int{}; // int&&. static_cast<int&&>(a)는 xvalue로 변환하는 표현식
+            decltype(static_cast<int&&>(int{})) g_11 = int{}; // int&&. static_cast<int&&>(int{})는 xvalue로 변환하는 표현식
+        }
     }
     // auto 와 decltype()의 차이점
     {
@@ -229,10 +241,10 @@ TEST(TestMordern, Decltype) {
 
         T t(10);
         
-        // decltype(T().Func_11(10)) val_11 = t.Func(10); // (X) 컴파일 오류. T에 기본 생성자가 없습니다.
-        // decltype(T(10).Func_11(10)) val_11 = t.Func(10); // (O)
+        // decltype(T().Func_11(10)) val_11 = t.Func_11(10); // (X) 컴파일 오류. T에 기본 생성자가 없습니다.
+        // decltype(T(10).Func_11(10)) val_11 = t.Func_11(10); // (O) 그냥 대충 아무값이나 넣어주어 컴파일 되게 합니다.
 
-        // T::Func(int) 함수의 리턴 타입
+        // T::Func_11(int) 함수의 리턴 타입
         decltype(std::declval<T>().Func_11(10)) val_11 = t.Func_11(10); 
     }
 #if 201402L <= __cplusplus // C++14~        
@@ -252,7 +264,7 @@ TEST(TestMordern, Decltype) {
             int arr[] = {1, 2, 3};
             auto a_11 = arr; // int*
             decltype(arr) d_11 = {1, 2, 3}; // int d_11[3] 
-            // decltype(auto) d_14 = {1, 2, 3}; // (X) 컴파일 오류. 중괄호 복사 초기화로 배열 요소의 타입까지는 추론하지 못합니다.
+            // decltype(auto) d_14 = {1, 2, 3}; // (X) 컴파일 오류. 중괄호 복사 초기화를 사용하면 추론하지 못합니다.
         }
         // 최상위 const
         {
@@ -303,6 +315,7 @@ TEST(TestMordern, Decltype) {
             // 중괄호 복사 초기화
             auto c_11 = {1}; // c는 initializer_list<int>
             auto d_11 = {1, 2}; // d는 initializer_list<int>
+            // auto e_11 = {1, "Hello"}; // (X) 컴파일 오류. 타입이 다르면 추론할 수 없습니다.
         }
         // C++17
         {
@@ -313,6 +326,7 @@ TEST(TestMordern, Decltype) {
             // 중괄호 복사 초기화
             auto c_17 = {1}; // c는 initializer_list<int>
             auto d_17 = {1, 2}; // d는 initializer_list<int>  
+            // auto e_17 = {1, "Hello"}; // (X) 컴파일 오류. 타입이 다르면 추론할 수 없습니다.
         }
     }
 #endif  

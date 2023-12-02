@@ -61,13 +61,23 @@ TEST(TestClassicCpp, Destructor) {
     {
         class T {
         public:
-            ~T() {}
+            ~T() {
+                std::cout << "2. T::~T()" << std::endl;        
+            }
         };
-        // (△) 비권장. 다형 소멸이 되지 않아, 기능 개선을 하다 보면 나중에 메모리 릭이 발생할 수 있습니다.
+        // (△) 비권장. 다형 소멸이 되지 않습니다.
         class U : public T { 
+        public:
+            ~U() {
+                std::cout << "1. U::~U()" << std::endl;        
+            }
         };
-        T t;
-        U u;
+        T t; // ~T() 호출
+        U u; // ~U() 호출 및 ~U() 호출
+
+        // (△) 비권장. 누군가가 다음처럼 부모 클래스 포인터로 사용해 버리면 메모리 릭입니다.
+        T* ptr = new U;
+        delete ptr; // (△) 비권장. ~T() 호출. ~U()가 호출되지 않습니다.
     }
     // ----
     // public Virtual 소멸자
@@ -105,9 +115,10 @@ TEST(TestClassicCpp, Destructor) {
             virtual void Func() {}
         };
         // Base base; // (X) 컴파일 오류. 소멸자가 protected
+        
         Derived derived; // (O)
 
-        Base* p = &derived;
+        // Base* p = new Derived();
         // delete p; // (X) 컴파일 오류. Base의 소멸자가 protected        
     }    
     {

@@ -2,7 +2,7 @@
 
 #include "Test_MordernCpp_ExternTemplate.h"
 
-// 이전에 정의된 템플릿을 사용합니다.
+// 템플릿 선언만 합니다. 이전에 정의된 템플릿을 사용합니다.
 extern template int ExternTemplate::Add<int>(int, int); // C++11
 
 TEST(TestMordern, ExternTemplate2) {

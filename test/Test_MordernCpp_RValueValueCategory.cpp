@@ -206,7 +206,7 @@ TEST(TestMordern, RValue) {
         Big b(20);
         a.Move(b);
         EXPECT_TRUE(a.GetSize() == 20);   
-        EXPECT_TRUE(b.GetSize() == 0);   
+        EXPECT_TRUE(b.GetSize() == 0); // b는 이동되어 초기화 되었고, 더이상 사용할 수 없음  
     }
     // 이동 대입 연산자 
     {
@@ -271,18 +271,19 @@ TEST(TestMordern, RValue) {
         a = static_cast<Big_11&&>(b); // b 를 이름이 없는 rvalue로 변환. 이동 대입 연산자 호출
 
         EXPECT_TRUE(a.GetSize() == 20);   
-        EXPECT_TRUE(b.GetSize() == 0); // b는 이동되어 더이상 쓸 수 없음  
+        EXPECT_TRUE(b.GetSize() == 0); // b는 이동되어 초기화 되었고, 더이상 사용할 수 없음  
 
         Big_11 c(30);
         a = std::move(c); // c 를 이름이 없는 rvalue로 변환. static_cast<Big&&>(c)와 동일. 이동 대입 연산자 호출
         EXPECT_TRUE(a.GetSize() == 30);
+        EXPECT_TRUE(c.GetSize() == 0); // c는 이동되어 초기화 되었고, 더이상 사용할 수 없음
 
         a = Big_11(40); // Big(40) 이름이 없는 rvalue를 생성. 이동 대입 연산자 호출
         EXPECT_TRUE(a.GetSize() == 40);
 
         Big_11 d(50);
         Big_11 e(std::move(d)); // 이동 생성자 호출
-        EXPECT_TRUE(d.GetSize() == 0); // d는 이동되어 더이상 쓸 수 없음  
+        EXPECT_TRUE(d.GetSize() == 0); // d는 이동되어 초기화 되었고, 더이상 사용할 수 없음  
         EXPECT_TRUE(e.GetSize() == 50); 
     }
     // 우측값 참조
@@ -301,7 +302,6 @@ TEST(TestMordern, RValue) {
 
         A val;    
         A& ref = val;  
-        A&& rref_11 = std::move(val); 
 
         // A&& rref1_11 = ref; // (X) 컴파일 오류. 우측값 참조는 좌측값 참조를 참조할 수 없습니다.
         A&& rref2_11 = static_cast<A&&>(ref); // 좌측값 참조를 형변환하여 참조할 수 있습니다.
@@ -311,15 +311,20 @@ TEST(TestMordern, RValue) {
         // A& ref2 = static_cast<A&>(std::move(val)); // (X) 컴파일 오류. 좌측값 참조는 우측값을 참조할 수 없습니다.
         // A& ref3 = std::move(val); // (X) 컴파일 오류. 좌측값 참조는 우측값을 참조할 수 없습니다.
         // A& ref4 = A(); // (X) 컴파일 오류. 좌측값 참조는 임시 개체인 우측값을 참조할 수 없습니다.
-        
-        A& ref5 = rref_11; // 이름이 부여된 우측값 참조는 좌측값이기에 좌측값 참조로 참조할 수 있습니다.
+    }  
+    {  
+        class A {};
+        A val;
+        A&& rref_11 = std::move(val); 
+
+        A& ref = rref_11; // 이름이 부여된 우측값 참조는 좌측값이기에 좌측값 참조로 참조할 수 있습니다.    
     }
     // 이름이 부여된 우측값
     {
         using namespace RValue_2;
  
         A lvalue;
-        A&& rvalue_11 = std::move(lvalue); // rvalue는 이름이 부여됐으므로 좌측값입니다.
+        A&& rvalue_11 = std::move(lvalue); // rvalue_11은 이름이 부여됐으므로 좌측값입니다.
         EXPECT_TRUE(f_11(rvalue_11) == 1); // f_11(A&)를 호출합니다.
         EXPECT_TRUE(f_11(std::move(lvalue)) == 2); // f_11(A&&)를 호출합니다.
     }
@@ -349,6 +354,8 @@ TEST(TestMordern, RValue) {
     {
         using namespace RValue_1;
 
+        // 복사 생성자/이동 생성자/복사 대입 연산자/이동 대입 연산자/소멸자가 사용자 정의 되어 있지 않으므로, 
+        // 암시적으로 이동 생성자와 이동 대입 연산자가 정의됩니다.
         class A_11 {
         private:
             CopyableMoveable_11<int> m_Data;
@@ -368,7 +375,7 @@ TEST(TestMordern, RValue) {
             CopyableMoveable_11<int> m_Data;
         public:
             explicit A_11(int* data) : m_Data(data) {}
-            ~A_11() {} // 암시적 이동 생성자와 암시적 이동 대입 연산자가 만들어 지지 않습니다.
+            ~A_11() {} // 소멸자를 정의해서 암시적 이동 생성자와 암시적 이동 대입 연산자가 만들어 지지 않습니다.
         };
 
         A_11 a(new int(10));
@@ -383,9 +390,9 @@ TEST(TestMordern, RValue) {
             CopyableMoveable_11<int> m_Data;
         public:
             explicit A_11(int* data) : m_Data(data) {}
-            A_11(A_11&) = default; // 암시적 복사 생성자를 사용합니다.
+            A_11(const A_11&) = default; // 암시적 복사 생성자를 사용합니다.
             A_11(A_11&&) noexcept = default; // 암시적 이동 생성자를 사용합니다.
-            ~A_11() {} // 암시적 이동 생성자와 암시적 이동 대입 연산자가 만들어 지지 않습니다.
+            ~A_11() {} 
         };
 
         A_11 a(new int(10));
@@ -393,6 +400,33 @@ TEST(TestMordern, RValue) {
         A_11 c(std::move(a)); // 이동 생성자 호출
     }
     // # 암시적 이동 연산 변환
+    {
+        class A {
+        public:
+            // 복사 생성자/이동 생성자/복사 대입 연산자/이동 대입 연산자/소멸자가 사용자 정의 되어 있지 않으므로, 
+            // 암시적으로 이동 생성자와 이동 대입 연산자가 정의됩니다.
+            A() {}
+        };  
+        A a;
+        A b;
+
+        b = a; // a 는 임시 개체가 아니므로 복사 대입합니다.
+        b = A(); // A()는 임시 개체이므로 이동 대입합니다.        
+    }
+    {
+        class A_11 {
+        public:
+            A_11() {}
+            // 복사 생성자
+            A_11(const A_11& other) {std::cout << "A_11::Copy Constructor" << std::endl;}
+            
+            // 이동 생성자. const A_11&& 가 아니라 A_11&& 입니다.
+            A_11(A_11&& other) noexcept {std::cout << "A_11::Move Constructor" << std::endl;}
+        };  
+        const A_11 a;
+        A_11 b(std::move(a)); // const A_11를 move하면 const A_11&&이 됩니다.
+                              // 이동 생성자는 A_11&& 타입이어서 복사 생성자를 호출합니다.    
+    }
     {
         class A_11 {
         public:
@@ -476,23 +510,23 @@ TEST(TestMordern, RValue) {
         class A {};
         class T {
         public:
-            static int Func_11(A&) {return 1;} // #1. lvalue
-            static int Func_11(A&&) {return 2;} // #2. rvalue
+            static int Func_11(A&) {return 1;} // #1. 좌측값
+            static int Func_11(A&&) {return 2;} // #2. 우측값
         };
 
         A a;
 
-        EXPECT_TRUE(T::Func_11(a) == 1); // 이름이 있는 lvalue
-        EXPECT_TRUE(T::Func_11(static_cast<A&&>(a)) == 2); // 강제 형변환 해서 rvalue
-        EXPECT_TRUE(T::Func_11(std::move(a)) == 2); // lvalue를 move 해서 rvalue
+        EXPECT_TRUE(T::Func_11(a) == 1); // 이름이 있는 좌측값
+        EXPECT_TRUE(T::Func_11(static_cast<A&&>(a)) == 2); // 강제 형변환 해서 우측값
+        EXPECT_TRUE(T::Func_11(std::move(a)) == 2); // 좌측값을 move 해서 우측값
 
         A& b = a;
         EXPECT_TRUE(T::Func_11(b) == 1);  
         EXPECT_TRUE(T::Func_11(static_cast<A&&>(b)) == 2);
         EXPECT_TRUE(T::Func_11(std::move(b)) == 2);
 
-        EXPECT_TRUE(T::Func_11(A()) == 2); // 임시 개체는 rvalue
-        EXPECT_TRUE(T::Func_11(std::move(A())) == 2); // 임시 개체를 move 해도 rvalue
+        EXPECT_TRUE(T::Func_11(A()) == 2); // 임시 개체는 우측값
+        EXPECT_TRUE(T::Func_11(std::move(A())) == 2); // 임시 개체를 move 해도 우측값
     }
 
     // move_if_noexcept

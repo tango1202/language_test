@@ -98,11 +98,11 @@ TEST(TestMordern, Attribute) {
 #if 201703L <= __cplusplus // C++17~     
         {
             // GetLastError_17(); // (X) 컴파일 경고. 리턴값을 무시하면 안됩니다.
-            Error_11 error = GetLastError_17(); 
+            Error_11 error = GetLastError_17(); // (O)
         }
         {
             // GetForcedError_17(); // (X) 컴파일 경고. Error_17 타입이 리턴되면 무시하면 안됩니다.
-            Error_17 error = GetForcedError_17();
+            Error_17 error = GetForcedError_17(); // (O)
         }
 #endif
 #if 202002L <= __cplusplus // C++20~

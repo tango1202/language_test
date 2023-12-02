@@ -57,22 +57,22 @@ TEST(TestMordern, ScopedEnum) {
     }
     {
 
-enum Test {a_, b_, c_};
-EXPECT_TRUE(sizeof(Test) == sizeof(int));
+        enum Test {a_, b_, c_};
+        EXPECT_TRUE(sizeof(Test) == sizeof(int));
 
         enum MyEnum1_11 : int {a, b, c}; // int 형을 기반 타입으로 사용합니다.
         enum class MyEnum2_11 : char {i, j, k}; // char 형을 기반 타입으로 사용합니다.
     }
     {
         // 특정 값을 대입합니다. 반드시 MyInt_11 타입만 대입받을 수 있습니다.
-        MyInt_11 val1(MyInt_11(10));
-        MyInt_11 val2 = MyInt_11(10); // MyInt_11 val1(MyInt_11(10)); 와 동일
+        MyInt_11 val1{MyInt_11(10)};
+        MyInt_11 val2 = MyInt_11(10); // MyInt_11 val1{MyInt_11(10)}; 와 동일
         MyInt_11 val3{val1}; 
 
         // MyInt_11 val4 = 10; // (X) 컴파일 오류. 정수는 대입 받을 수 없습니다.
         // MyInt_11 val5(10); // (X) 컴파일 오류. 정수는 대입 받을 수 없습니다.
         // MyInt_11 val6{10}; // (X) 컴파일 오류. 중괄호 직접 초기화는 지원하지 않습니다.
-        // MyInt_11 val7 = {10}; // (X) 컴파일 오류. 중괄호 복사 초기화는 지원하지 않습니다.        
+        // MyInt_11 val7 = {10}; // (X) 컴파일 오류. 암시적으로 중괄호 직접 초기화를 사용하므로 지원하지 않습니다.
     }
     // 암시적 형변환 차단
     {
@@ -93,7 +93,7 @@ EXPECT_TRUE(sizeof(Test) == sizeof(int));
         // MyInt_11 val4 = 10; // (X) 컴파일 오류. 정수는 대입 받을 수 없습니다.
         // MyInt_11 val5(10); // (X) 컴파일 오류. 정수는 대입 받을 수 없습니다.
         MyInt_11 val6_17{10}; // (O) C++17~ 중괄호 직접 초기화를 지원합니다.
-        // MyInt_11 val7 = {10}; // (X) 컴파일 오류. 중괄호 복사 초기화는 지원하지 않습니다.    
+        // MyInt_11 val7_17 = {10}; // (X) 컴파일 오류. 중괄호 직접 초기화는 허용하지만, {10}은 int로 추론되어 사용할 수 없습니다.    
     }
 #endif
     // using enum
@@ -124,7 +124,7 @@ EXPECT_TRUE(sizeof(Test) == sizeof(int));
         bool isFreeDay{false};
         switch(week) {
             
-        using enum Week_11; // 유효 범위 내에서 Week_11의 열거자를 사용할 수 있습니다.
+        using enum Week_11; // (C++20~) 유효 범위 내에서 Week_11의 열거자를 사용할 수 있습니다.
         case Sunday: isFreeDay = true; break;
         case Monday: break;
         case Tuesday: break;

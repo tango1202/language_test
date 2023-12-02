@@ -116,8 +116,31 @@ TEST(TestMordern, UniformInitialization) {
     {
         class T {
         public:
+            T(int) {}
+            T(int, int) {}
+        };
+
+        // 암시적으로 T(int), T(int, int) 생성자를 호출하고, a_11과 b_11, c_11에 복사 생성합니다.
+        T a_11 = {1}; 
+        T b_11 = {1, 2};
+        T c_11 = T{1, 2};
+
+        class U {
+        public:
+            explicit U(int) {}
+            explicit U(int, int) {} // 생성자의 인자가 여러개이더라도 = {} 표현을 차단하기 위해 explicit를 사용합니다.
+        };
+
+        // (X) 컴파일 오류. explicit 생성자여서 암시적으로 생성자를 호출할 수 없습니다.
+        // U d_11 = {1};         
+        // U e_11 = {1, 2};
+        U f_11 = U{1, 2}; // 명시적으로 생성할 있습니다. 중괄호 직접 초기화인 U{1, 2}을 f_11에 복사 생성하는 표현입니다.
+    }
+    {
+        class T {
+        public:
             T() {}
-            explicit T(int) {}
+            T(int) {}
             T(const T&) = delete; // 복사 생성자를 사용할 수 없습니다.
         };
 
@@ -155,6 +178,27 @@ TEST(TestMordern, UniformInitialization) {
 
     // 중괄호 집합 초기화
     {
+        class T {
+        private:
+            int m_X;
+            int m_Y;
+        public:
+            T(int x, int y) : m_X(x), m_Y(y) {}
+        };
+
+        T a_11{1, 2}; // 중괄호 직접 초기화. 생성자를 호출합니다.
+        T b_11 = {1, 2}; // 중괄호 복사 초기화. T(int x, int y)를 이용해서 생성하고 복사 생성자를 호출합니다.
+
+        class U { // 집합 타입은 사용자 정의 생성자와 소멸자가 없어야 합니다.
+        public: // 집합 타입은 모든 멤버 변수가 public 이어야 합니다
+            int m_X;
+            int m_Y;
+        };
+
+        U c_11{1, 2}; // 중괄호 집합 초기화. 생성자가 없더라도 멤버 변수들을 직접 초기화 합니다. 
+        U d_11 = {1, 2}; // U d_11{1, 2}; 과 동일
+    }
+    {
         int arr[] = {0, 1, 2}; // 초기화 갯수 만큼 배열 할당
         int arr_11[]{0, 1, 2}; // 초기화 갯수 만큼 배열 할당
         int* ptr_11 = new int[3]{1, 2, 3}; // new[]로 생성하는 경우에는 배열 크기를 명시해야 합니다.
@@ -182,7 +226,7 @@ TEST(TestMordern, UniformInitialization) {
         };
 
         T a(3); // (△) 비권장. int가 double로 승격 변환되어 초기화 됩니다.
-        T b_11{3}; //  (△) 비권장. int가 double로 승격 변환되어 초기화 됩니다.
+        T b_11{3}; // (△) 비권장. int가 double로 승격 변환되어 초기화 됩니다.
     }
     {
         class T {
@@ -254,7 +298,7 @@ TEST(TestMordern, UniformInitialization) {
         {
             class T {
             public:
-                explicit T(int) {}
+                T(int) {}
             };
 
             {
@@ -268,10 +312,9 @@ TEST(TestMordern, UniformInitialization) {
                 T a_11{ 
                     {10} // (O) T{10}
                 }; 
-                T b_11 = T{10}; // (O)
+                T b_11 = {10}; // (O)
             }
         }
-
     }    
     {
         class A {
@@ -412,9 +455,9 @@ TEST(TestMordern, UniformInitialization) {
     {
         class T_11 {
         public:
-            T_11(int, int, int, int, int) {}
-            T_11(std::initializer_list<int>) {}
-            T_11(std::initializer_list<int>, int, int) {}
+            explicit T_11(int, int, int, int, int) {}
+            explicit T_11(std::initializer_list<int>) {}
+            explicit T_11(std::initializer_list<int>, int, int) {}
         };
         T_11 a{1, 2, 3, 4, 5}; // T_11(std::initializer_list<int>)
         T_11 b{
@@ -425,20 +468,20 @@ TEST(TestMordern, UniformInitialization) {
     {
         class T_11 {
         public:
-            T_11() {std::cout << "T::Default Constructor" << std::endl;}
-            T_11(const T_11&) {std::cout << "T::Copy Constructor" << std::endl;}
-            T_11(std::initializer_list<int>) {std::cout << "T::initializer_list Constructor" << std::endl;}    
+            T_11() {std::cout << "T_11::Default Constructor" << std::endl;}
+            T_11(const T_11&) {std::cout << "T_11::Copy Constructor" << std::endl;}
+            T_11(std::initializer_list<int>) {std::cout << "T_11::initializer_list Constructor" << std::endl;}    
         };
         T_11 t{
-            {} // T_11{} 의 축약형 입니다.
+            {} // initializer_list를 암시적으로 생성합니다.
         };        
     }
     {
         class T_11 {
         public:
-            T_11() {std::cout << "T::Default Constructor" << std::endl;}
-            T_11(const T_11&) {std::cout << "T::Copy Constructor" << std::endl;}
-            T_11(std::initializer_list<int>) {std::cout << "T::initializer_list Constructor" << std::endl;}    
+            T_11() {std::cout << "T_11::Default Constructor" << std::endl;}
+            T_11(const T_11&) {std::cout << "T_11::Copy Constructor" << std::endl;}
+            T_11(std::initializer_list<int>) {std::cout << "T_11::initializer_list Constructor" << std::endl;}    
         };
         T_11 t{
             T_11{} // 명시적으로 사용했습니다.

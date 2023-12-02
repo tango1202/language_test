@@ -63,6 +63,7 @@ set(TestFiles
    test/Test_ClassicCpp_MemberVariable.cpp
    test/Test_ClassicCpp_PImpl.cpp
    test/Test_ClassicCpp_NewDelete.cpp  
+   test/Test_ClassicCpp_NewOverloading.cpp  
    test/Test_ClassicCpp_Inheritance.cpp  
    test/Test_ClassicCpp_Abstract_Interface.cpp  
    test/Test_ClassicCpp_Generic.cpp

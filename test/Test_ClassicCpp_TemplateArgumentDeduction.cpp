@@ -352,7 +352,7 @@ TEST(TestClassicCpp, TemplateOverloading) {
         // 더 특수화된 버전으로 선택함.
         EXPECT_TRUE(f(a) == 2);
     }
-    // 기본 인자가 탬플릿 탬플릿 인자인 경우 타입에 따라 특수화된 버전으로 선택함
+    // 기본 인자가 템플릿 템플릿 인자인 경우 타입에 따라 특수화된 버전으로 선택함
     {
         using namespace Overloading_6;
 

@@ -7,6 +7,17 @@ TEST(TestClassicCpp, AssignmentOperator) {
     // ----
     {
         class T {
+        public:
+            T& operator =(const T& other) {
+                return *this;
+            }
+            void f() {}
+        };
+        T a, b, c;
+        (a = b = c).f();
+    }
+    {
+        class T {
             int m_X;
             int m_Y;
         public:
@@ -100,37 +111,37 @@ TEST(TestClassicCpp, AssignmentOperator) {
     // nothrow swap
     {
         class Big {
-            int m_Val; // 실제로는 복사 부하가 큰 데이터라고 생각해 주세요.
+            int m_Val; // #1. 실제로는 복사 부하가 큰 데이터라고 생각해 주세요.
         public:
             explicit Big(int val) : 
                 m_Val(val) {}
             Big(const Big& other) : 
                 m_Val(other.m_Val) {
-                std::cout << "Big::Big(const Big& other)" << std::endl;  
+                std::cout << "Big::Big(const Big& other)" << std::endl; // #2 
             }
             Big& operator =(const Big& other) {
                 m_Val = other.m_Val;
-                std::cout << "Big::operator =(const Big& other)" << std::endl;  
+                std::cout << "Big::operator =(const Big& other)" << std::endl; // #2  
                 return *this;
             }    
             int GetVal() const {return m_Val;}
             void SetVal(int val) {m_Val = val;}
         };
         class T {
-            Big* m_Big; // 복사 부하가 큰 데이터는 포인터로 관리합니다.
+            Big* m_Big; // #3. 복사 부하가 큰 데이터는 포인터로 관리합니다.
         public:
             explicit T(Big* big) : 
                 m_Big(big) {} 
             // NULL 포인터가 아니라면 복제합니다.
             T(const T& other) :
-                m_Big(other.m_Big != NULL ? new Big(*other.m_Big) : NULL) {
+                m_Big(other.m_Big != NULL ? new Big(*other.m_Big) : NULL) { // #4
             }
             // 힙 개체를 메모리에서 제거 합니다.
             ~T() {
-                delete m_Big;
+                delete m_Big; // #4
             }
             
-            T& operator =(const T& other) {
+            T& operator =(const T& other) { // #5
 
                 // other를 복제한 임시 개체를 만듭니다.
                 T temp(other); // (O) 생성시 예외가 발생하더라도 this는 그대로 입니다.
@@ -144,7 +155,7 @@ TEST(TestClassicCpp, AssignmentOperator) {
             } // temp는 지역 변수여서 자동으로 소멸됩니다.
 
             // 멤버 변수들의 값을 바꿔치기 합니다.
-            void Swap(T& other) {
+            void Swap(T& other) { // #6
                 // (O) 포인터 변수끼리의 복사/대입이라 복사 부하가 크지 않습니다.
                 // 예외가 발생할 확률도 낮습니다.
                 std::swap(this->m_Big, other.m_Big); 

@@ -22,6 +22,7 @@ TEST(TestClassicCpp, NewDelete) {
         delete[] arr; // (O) 소멸자 3회 호출. 메모리 해제(sizeof(T) * 3 + 오버헤드)
         // delete arr; // (X) 예외 발생. 소멸자가 1회만 호출되고, 프로그램이 다운될 수 있음
     }
+
     // ----
     // delete
     // ----
@@ -33,6 +34,7 @@ TEST(TestClassicCpp, NewDelete) {
         delete p; // (O) new로 생성한 것은 반드시 delete 해야 합니다.
         // delete p; // (X) 예외 발생. 두번 죽일 순 없습니다.
     }
+    // new(nothrow) 와 무의미한 널검사
     {
         class T {};
         T* t = new(std::nothrow) T; // (△) 비권장. 메모리 할당에 실패하면 널을 리턴하지만, 생성자에서 예외를 발생시키면 전파됩니다.
@@ -40,6 +42,44 @@ TEST(TestClassicCpp, NewDelete) {
             // 할당 실패시 처리할 코드
         }
     }
+    {
+        class T {
+        public:
+            T() {
+                throw "My Error"; // 생성자에서 예외를 발생시킵니다.
+            }
+        };
+
+        try {
+            T* t = new(std::nothrow) T; // (△) 비권장. 메모리 할당에 실패하면 널을 리턴하지만, 생성자에서 예외를 발생시키면 전파됩니다.
+            if (t == NULL) {
+                // 할당 실패시 처리할 코드
+            }
+        }
+        catch (const char* e) {
+            // 생성자에서 예외를 발생할 경우 처리할 코드
+            std::cout << e << std::endl; // My Error 출력
+        }
+    }
+    {
+        class T {
+        public:
+            T() {
+                throw "My Error"; // 생성자에서 예외를 발생시킵니다.
+            }
+        };
+
+        try {
+            T* t = new T; 
+        }
+        catch (std::bad_alloc& e) {
+            // 할당 실패시 처리할 코드
+        }
+        catch (const char* e) {
+            // 생성자에서 예외를 발생할 경우 처리할 코드
+            std::cout << e << std::endl; // My Error 출력
+        }
+    }    
     // ----
     // operator new 기본 재정의 방법
     // ---- 
@@ -70,7 +110,8 @@ TEST(TestClassicCpp, NewDelete) {
             int GetX() const {return m_X;}
             int GetY() const {return m_Y;}
 
-            static void* operator new(std::size_t sz) {
+            // sz는 오버헤드 공간을 제외한 크기가 전달됩니다.
+            static void* operator new(std::size_t sz) { // #1
                 // 혹시 모르니 검사하여 최소 1byte로 만듬    
                 if (sz == 0) { 
                     ++sz;
@@ -78,13 +119,13 @@ TEST(TestClassicCpp, NewDelete) {
 
                 // 핸들러가 예외를 발생시키거나 프로그램을 종료할 때까지 반복
                 while (true) {
-                    void* ptr = malloc(sz);
+                    void* ptr = malloc(sz); // #1. 오버헤드 공간을 포함하여 할당합니다.
                     if (ptr != NULL) {
-                        return ptr;
+                        return ptr; // 성공적으로 할당했다면 리턴
                     }
 
-                    std::new_handler handler = std::set_new_handler(NULL); // 대충 NULL을 세팅하고 핸들러를 구합니다.
-                    std::set_new_handler(handler); // 핸들러 복원
+                    std::new_handler handler = std::set_new_handler(NULL); // #2. 대충 NULL을 세팅하고 핸들러를 구합니다.
+                    std::set_new_handler(handler); // #2. 핸들러 복원
                     // 핸들러가 있다면 실행
                     if (handler != NULL) {
                         handler(); // 핸들러가 발생시킨 예외 전파
@@ -174,13 +215,13 @@ TEST(TestClassicCpp, NewDelete) {
             int m_X;
             int m_Y;
         public:
-            virtual ~Base() {}
+            virtual ~Base() {} // virtual 입니다.
 
             // sz : sizeof(Base) 또는 sizeof(Derived) 크기
             static void* operator new(std::size_t sz) {
                 return ::operator new(sz);
             }
-            // sz : sizeof(Base) 또는 sizeof(Derived) 크기
+            // sz : 소멸자가 virtual이어서 sizeof(Base) 또는 sizeof(Derived) 크기
             static void operator delete(void* ptr, std::size_t sz) {
                 ::operator delete(ptr); 
             } 
@@ -204,13 +245,13 @@ TEST(TestClassicCpp, NewDelete) {
             int m_X;
             int m_Y;
         public:
-            ~Base() {}
+            ~Base() {} // (X) 오동작. virtual이 아닙니다.
 
             // sizeof(Derived) 크기 : 16byte
             static void* operator new(std::size_t sz) {
                 return ::operator new(sz);
             }
-            // (X) 오동작. 소멸시에는 Base의 크기 : 8byte. 메모리 릭 발생
+            // (X) 오동작. 소멸자가 virtual이 아니어서 Base의 크기인 8byte만 전달됩니다. 메모리 릭 발생
             static void operator delete(void* ptr, std::size_t sz) {
                 ::operator delete(ptr);  
             } 
@@ -232,6 +273,7 @@ TEST(TestClassicCpp, NewDelete) {
     // ----
     {
         class T {
+            int m_Val;
         public:
             // sz : sizeof(T) * 배열 요수 갯수 + 오버헤드
             static void* operator new[](std::size_t sz) { 
@@ -242,7 +284,7 @@ TEST(TestClassicCpp, NewDelete) {
                 ::operator delete[](ptr);
             } 
         };
-        T* arr = new T[10]; // operator new[](std::size_t sz), sizeof(T) * 10 + 오버헤드
+        T* arr = new T[3]; // operator new[](std::size_t sz), sizeof(T) * 3 + 오버헤드
         delete[] arr; // operator delete[](void* ptr, std::size_t sz) 호출
     }
     // ----
@@ -289,6 +331,7 @@ TEST(TestClassicCpp, NewDelete) {
             EXPECT_TRUE(other->GetX() == 100 && other->GetY() == 200);
 
             other->~T(); 
+
             // (△) 비권장. 소멸자를 호출하기는 했습니다만, 아직 buffer는 유효하여 other 접근이 되기는 합니다.
             EXPECT_TRUE(other->GetX() == 100 && other->GetY() == 200); 
             free(buffer);     
@@ -297,51 +340,32 @@ TEST(TestClassicCpp, NewDelete) {
     // operator new를 정의하면 전역 위치 지정 new가 가려지므로, 위치 지정 new 도 정의해야 함
     {
         class T {
-            int m_X;
-            int m_Y;
         public:
-            T() : 
-                m_X(10), 
-                m_Y(20) {}
-            T(int x, int y) :
-                m_X(x), 
-                m_Y(y) {}
-            int GetX() const {return m_X;}
-            int GetY() const {return m_Y;}
-
-            static void* operator new(std::size_t sz) {
+            static void* operator new(std::size_t sz) { // operator new를 정의하면 전역 위치 지정 생성을 가립니다.
                 return ::operator new(sz);
             }
-            static void operator delete(void* ptr) {
-                ::operator delete(ptr);  
+        }; 
+
+        void* buffer = T::operator new(sizeof(T));
+        // T* t = new(buffer) T; // (X) 컴파일 오류. 전역 위치 지정 생성이 가려졌습니다.
+    }
+    {
+        class T {
+        public:
+            static void* operator new(std::size_t sz) { // operator new를 정의하면 전역 위치 지정 생성을 가립니다.
+                return ::operator new(sz);
             }
+
             // Placement New 재정의
-            static void* operator new(size_t sz, void* ptr) { 
+            static void* operator new(size_t sz, void* ptr) { // (O) 위치 지정 생성을 정의했습니다.
                 return ptr;
             }
         }; 
-        {
-            void* buffer = T::operator new(sizeof(T));
-            T* t = new(buffer) T; // T 의 기본 생성자를 호출합니다.
-            EXPECT_TRUE(t->GetX() == 10 && t->GetY() == 20);
 
-            // (△) 비권장. buffer를 직접 수정해도 동작하는지 확인합니다.
-            // 테스트를 위한 것이니 실제 코드에서 이런거 하시면 캡슐화가 무너집니다.
-            int* p = static_cast<int*>(buffer);
-            *p = 100;
-            *(p + 1) = 200;
-            EXPECT_TRUE(t->GetX() == 100 && t->GetY() == 200);
-
-            t->~T(); // Placement New를 사용하면 명시적으로 소멸자를 호출해야 합니다.
-            T::operator delete(buffer); 
-        }
-
-        {
-            T* t = new T; // operator new(size_t sz, void* ptr) 가 호출되지는 않습니다.
-            EXPECT_TRUE(t->GetX() == 10 && t->GetY() == 20);
-            delete t;
-        }
+        void* buffer = T::operator new(sizeof(T));
+        T* t = new(buffer) T; // (O) 위치 지정 생성을 호출합니다.       
     }
+
     // ----
     // 스택에만 생성되는 개체
     // ----
@@ -368,7 +392,7 @@ TEST(TestClassicCpp, NewDelete) {
             void Destroy() const {delete this;} // 자기 자신을 소멸시킵니다.
         };
         {
-            // T t; // (X) 컴파일 오류. 스택으로 만들고 암시적으로 소멸될 때 컴파일 오류가 발생합니다.
+            // T t; // (X) 컴파일 오류. 스택에 만들고 암시적으로 소멸될 때 컴파일 오류가 발생합니다.
         }  
         {
             T* p = new T;
@@ -382,14 +406,14 @@ TEST(TestClassicCpp, NewHandler) {
     // new_handler
     // ----   
     {
-        class MyException : public std::bad_alloc {};
+        class MyException : public std::bad_alloc {}; // #2
 
         // 엄청 큰 데이터를 관리하는 클래스 입니다.
-        class T {
+        class T { // #1
             int m_Big[1024 * 1024 * 1000]; // 1000 M * sizeof(int)
         public:
             // bad_alloc으로 포기합니다.
-            static void MyExceptionHandler() {
+            static void MyExceptionHandler() { // #2
                 throw MyException();
             }
             static void* operator new(std::size_t sz) { 
@@ -400,23 +424,24 @@ TEST(TestClassicCpp, NewHandler) {
             } 
         };
 
-        std::new_handler oldHandler = std::set_new_handler(&T::MyExceptionHandler); // 핸들러를 설치합니다.
+        std::new_handler oldHandler = std::set_new_handler(&T::MyExceptionHandler); // #3. 핸들러를 설치합니다.
 
         // !! 테스트 속도가 느려 임시로 막습니다. 
         // T* arr[100] = {}; // 모두 NULL(0)로 초기화
-        // for (int i = 0; i < 100; ++i) { // 대략 예외를 발생시킬때까지 반복합니다.
+        // for (int i = 0; i < 100; ++i) { // 대략 예외를 발생시킬때까지 반복합니다. 5 ~ 6개정도 할당하면 발생합니다.
         //     try {
-        //         arr[i] = new T;
+        //         arr[i] = new T; // #4
         //     }
         //     catch (MyException& e) {
         //         // i 이전까지 생성된 T 개체를 모두 삭제합니다.
         //         for (int j = 0; j < i; ++j) {
-        //             delete arr[j];
+        //             delete arr[j]; // #4
         //         }
         //         break; // T 할당을 그만두기 위해 for문을 탈출합니다.
         //     }
         // }
 
-        std::set_new_handler(oldHandler); // 이전 핸들러로 복원합니다.
+        std::set_new_handler(oldHandler); // #3. 이전 핸들러로 복원합니다.
     }
 }
+

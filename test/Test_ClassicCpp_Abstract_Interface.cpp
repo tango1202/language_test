@@ -17,18 +17,18 @@ TEST(TestClassicCpp, Abstract) {
     // ----
     {
         class Shape {
-            // 모든 도형은 왼쪽 상단 좌표와 크기를 가집니다.
+            // #1. 모든 도형은 왼쪽 상단 좌표와 크기를 가집니다.
             int m_Left;
             int m_Top;
             int m_Width;
             int m_Height;
-            Shape(const Shape& other) {} // 추상 클래스여서 외부에서 사용 못하게 복사 생성자 막음
-            Shape& operator =(const Shape& other) {return *this;} // 추상 클래스여서 외부에서 사용 못하게 복사 대입 연산자 막음    
+            Shape(const Shape& other) {} // #4. 추상 클래스여서 외부에서 사용 못하게 복사 생성자 막음
+            Shape& operator =(const Shape& other) {return *this;} // #5. 추상 클래스여서 외부에서 사용 못하게 복사 대입 연산자 막음    
         protected:
-            Shape() {} // 추상 클래스여서 상속한 개체에서만 생성할 수 있게함               
+            Shape() {} // #3. 추상 클래스여서 상속한 개체에서만 생성할 수 있게함               
         public:
-            virtual ~Shape() {} // 다형 소멸 하도록 public virtual
-            virtual void Draw() const = 0; // 순가상 함수입니다. 자식 클래스에서 구체화 해야 합니다.
+            virtual ~Shape() {} // #6. 다형 소멸 하도록 public virtual
+            virtual void Draw() const = 0; // #2. 순가상 함수입니다. 자식 클래스에서 구체화 해야 합니다.
         };
 
         // Shape을 구체화한 클래스 입니다. Draw()에서 사각형을 그립니다.
@@ -97,24 +97,24 @@ TEST(TestClassicCpp, Interface) {
     // 인터페이스
     class IDrawable {
     private:    
-        IDrawable(const IDrawable& other) {} // 인터페이스여서 외부에서 사용 못하게 복사 생성자 막음
-        IDrawable& operator =(const IDrawable& other) {return *this;} // 인터페이스여서 외부에서 사용 못하게 복사 대입 연산자 막음     
+        IDrawable(const IDrawable& other) {} // #3. 인터페이스여서 외부에서 사용 못하게 복사 생성자 막음
+        IDrawable& operator =(const IDrawable& other) {return *this;} // #3. 인터페이스여서 외부에서 사용 못하게 복사 대입 연산자 막음     
     protected:
-        IDrawable() {} // 인터페이스여서 상속한 개체에서만 생성할 수 있게함
-        ~IDrawable() {} // 인터페이스여서 protected non-virtual(상속해서 사용하고, 다형 소멸 안함) 입니다. 
+        IDrawable() {} // #2. 인터페이스여서 상속한 개체에서만 생성할 수 있게함
+        ~IDrawable() {} // #4. 인터페이스여서 protected non-virtual(상속해서 사용하고, 다형 소멸 안함) 입니다. 
     public:
-        virtual void Draw() const = 0; // 순가상 함수입니다. 자식 클래스에서 구체화 해야 합니다.
+        virtual void Draw() const = 0; // #1. 순가상 함수입니다. 자식 클래스에서 구체화 해야 합니다.
     };
 
     // 추상 클래스
-    class Shape : public IDrawable { // Shape은 IDrawable 인터페이스를 제공합니다.
+    class Shape : public IDrawable { // #5. Shape은 IDrawable 인터페이스를 제공합니다.
         // 모든 도형은 왼쪽 상단 좌표와 크기를 가집니다.
         int m_Left;
         int m_Top;
         int m_Width;
         int m_Height;
     public:
-        virtual ~Shape() {} // 다형 소멸 하도록 public virtual
+        virtual ~Shape() {} // #5. 다형 소멸 하도록 public virtual
     };
 
     // Shape을 구체화한 클래스 입니다. Draw()에서 사각형을 그립니다.
@@ -188,7 +188,7 @@ TEST(TestClassicCpp, Interface) {
         // }
 
         // for(int i = 0; i < 2; ++i) {
-        //     delete drawables[i]; // (X) 컴파일 오류. 인터페이스는 다형 소멸을 제공하지 않습니다.
+        //     delete drawables[i]; // (X) 컴파일 오류. 인터페이스는 protected Non-Virtual 소멸자이기 때문에 다형 소멸을 제공하지 않습니다.
         // }     
     }    
 }

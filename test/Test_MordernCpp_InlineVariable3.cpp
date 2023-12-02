@@ -1,5 +1,5 @@
 #include "gtest/gtest.h" 
-#include "Test_MordernCpp_InlineVariable.h"
+#include "Test_MordernCpp_InlineVariable.h" // g_Val_17은 inline 변수여서 중복 정의되지 않습니다.
 
 namespace InlineVariable {
 #if 201703L <= __cplusplus // C++17~    
@@ -13,7 +13,7 @@ namespace {
     public:
         static int s_m_Val; // 정적 멤버 변수. 별도 정의 필요
     };
-    int T::s_m_Val{10}; // 별도 정의 필요
+    int T::s_m_Val{10}; // 별도 정의
 
 #if 201703L <= __cplusplus // C++17~
     // C++17 인라인 변수를 이용한 클래스 정적 멤버 변수 정의

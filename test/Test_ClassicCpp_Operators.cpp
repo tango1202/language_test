@@ -363,7 +363,7 @@ TEST(TestClassicCpp, Operators) {
             } 
 
             bool operator ==(const T& other) const {
-                return !(this->m_Val < other.m_Val || other.m_Val < this->m_Val);
+                return m_Val == other.m_Val; // < 로부터 구현하면, !(*this < other || other < *this)로 할 수 있습니다. 단 < 을 2회 하므로 비효율적입니다.
             }
             bool operator !=(const T& other) const {
                 return !(*this == other);

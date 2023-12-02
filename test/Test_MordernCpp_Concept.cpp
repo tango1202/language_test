@@ -58,7 +58,7 @@ namespace Concept_4 {
     concept AddableEqual_20 = requires(T a, T b) {
         
         {a == b} -> std::convertible_to<bool>; // T 는 ==을 제공하고 결과는 bool로 변환되어야 합니다.
-        {a != b} -> std::convertible_to<bool>; // T 는 ==을 제공하고 결과는 bool로 변환되어야 합니다.
+        {a != b} -> std::convertible_to<bool>; // T 는 !=을 제공하고 결과는 bool로 변환되어야 합니다.
         
         requires Addable_20<T>; // requires 로 추가 제약 조건을 작성합니다.
     }; 
@@ -242,14 +242,14 @@ TEST(TestMordern, Concept) {
         using namespace Concept_2;
         EXPECT_TRUE(Add_11(1, 2) == 3);
         EXPECT_TRUE(Add_11(1.0, 2.0) == 3.0);  
-        // EXPECT_TRUE(Add_11(std::string("Hello"), std::string("World")) == std::string("HelloWorld")); // (X) 컴파일 오류. std::is_integral<T>::value 가 true 인 것만 가능합니다.
+        // EXPECT_TRUE(Add_11(std::string{"Hello"}, std::string{"World"}) == std::string{"HelloWorld"}); // (X) 컴파일 오류. std::is_integral<T>::value나 std::is_floating_point<T>::value가 true 인 것만 가능합니다.
     }
 #if 202002L <= __cplusplus // C++20~    
     {
         using namespace Concept_3;
         EXPECT_TRUE(Add_20(1, 2) == 3);
         EXPECT_TRUE(Add_20(1.0, 2.0) == 3.0);
-        // EXPECT_TRUE(Add_20(std::string("Hello"), std::string("World")) == std::string("HelloWorld")); // (X) 컴파일 오류. std::is_integral<T>::value 가 true 인 것만 가능합니다.        
+        // EXPECT_TRUE(Add_20(std::string{"Hello"}, std::string{"World"}) == std::string{"HelloWorld"}); // (X) 컴파일 오류. std::integral 이거나 std::floating_point인 것만 가능합니다.        
     }
 #endif   
 #if 202002L <= __cplusplus // C++20~    
@@ -258,7 +258,7 @@ TEST(TestMordern, Concept) {
         using namespace Concept_5;
         EXPECT_TRUE(Add_20(1, 2) == 3);
         EXPECT_TRUE(Add_20(1.0, 2.0) == 3.0);
-        //EXPECT_TRUE(Add_20(std::string("Hello"), std::string("World")) == std::string("HelloWorld")); // (X) 컴파일 오류. std::is_integral<T>::value 가 true 인 것만 가능합니다.
+        //EXPECT_TRUE(Add_20(std::string{"Hello"}, std::string{}"World"}) == std::string{"HelloWorld"}); // (X) 컴파일 오류. NumberAddable_20인 것만 가능합니다.
     }
 #endif
     {

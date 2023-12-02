@@ -19,7 +19,7 @@ TEST(TestMordern, StaticAssert) {
     
     {
         int a{20};
-        Func_11(&a);
+        Func_11(&a); // (O) 포인터여서 문제없습니다.
         // Func_11(a); // (X) 컴파일 오류. error: static assertion failed: only pointer
     }
 #if 201703L <= __cplusplus // C++17~    

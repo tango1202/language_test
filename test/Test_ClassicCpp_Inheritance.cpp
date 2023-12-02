@@ -8,7 +8,7 @@ namespace {
     public:
         virtual ~T() = 0; // 순가상 소멸자
     };
-    T::~T() {} // (△) 비권장. 실제 구현 정의가 있어야 함
+    T::~T() {} // (△) 비권장. 실제 구현 정의가 있어야 합니다.
 }
 
 TEST(TestClassicCpp, Inheritance) {
@@ -73,8 +73,8 @@ TEST(TestClassicCpp, Inheritance) {
         class ProtectedDerived2 : public ProtectedDerived { 
             void g() {
                 // m_Private; // (X) 컴파일 오류. private 접근 불가
-                m_Protected; // (O)
-                m_Public; // (O)
+                m_Protected; // (O) 자식을 상속한 자손에서 사용할 수 있습니다.
+                m_Public; // (O) 자식을 상속한 자손에서 사용할 수 있습니다.
             }
         };
 
@@ -95,7 +95,7 @@ TEST(TestClassicCpp, Inheritance) {
         PublicDerived obj3;
         // obj3.m_Private; // (X) 컴파일 오류. private 접근 불가
         // obj3.m_Protected; // (X) 컴파일 오류. protected 접근 불가
-        obj3.m_Public; // (O) 
+        obj3.m_Public; // (O) 외부에서 사용할 수 있습니다. 
     }
     // ----
     // 부모 개체 멤버 접근
@@ -116,7 +116,7 @@ TEST(TestClassicCpp, Inheritance) {
         Base* b = &d;
 
         EXPECT_TRUE(b->f() == 10); // (△) 비권장. Base 개체를 이용하면 Base::f()가 호출됨   
-        EXPECT_TRUE(d.f() == 20);
+        EXPECT_TRUE(d.f() == 20); // (△) 비권장.Derived 개체를 이용하면 Derived::f()가 호출됨 
 
         EXPECT_TRUE(b->Base::f() == 10); // 부모 개체에 명시적으로 접근합니다.
         EXPECT_TRUE(d.Base::f() == 10); // 부모 개체에 명시적으로 접근합니다.
@@ -132,7 +132,7 @@ TEST(TestClassicCpp, Inheritance) {
 
         class Derived : public Base {
         public:
-            int f(int) {return 20;} // (△) 비권장. 부모 개체의 이름을 가립니다.
+            int f(int) {return 20;} // (△) 비권장. 함수 오버로딩한게 아닙니다. 그냥 부모 개체의 이름을 가립니다.
         };
 
         Derived d;
@@ -140,10 +140,8 @@ TEST(TestClassicCpp, Inheritance) {
 
         EXPECT_TRUE(b->f() == 10);  // (△) 비권장. Base 개체를 이용하면 Base::f()가 호출됨 
         // EXPECT_TRUE(d.f() == 10); // (X) 컴파일 오류. 오버로딩 함수 탐색 규칙에서 제외됨
+        EXPECT_TRUE(d.Base::f() == 10); // (△) 비권장. 부모 개체에 명시적으로 접근해야 합니다.
         EXPECT_TRUE(d.f(1) == 20);
-
-        EXPECT_TRUE(b->Base::f() == 10); 
-        EXPECT_TRUE(d.Base::f() == 10);      
     }
     // ----
     // 부모 개체의 가상 함수 오버라이딩
@@ -156,7 +154,7 @@ TEST(TestClassicCpp, Inheritance) {
 
         class Derived : public Base {
         public:
-            virtual int f() {return 20;} // (O) 다형적으로 동작합니다.
+            virtual int f() {return 20;} // (O) 오버라이딩. 함수명/인자 타입/상수 멤버 함수의 const/동적 예외 사양은 동일해야 합니다.
         };
         Derived d;
         Base* b = &d;
@@ -207,7 +205,7 @@ TEST(TestClassicCpp, Inheritance) {
 
         Derived d(1, 2, 3);
         Base b = d; // (X) 오동작. 아무런 경고없이 실행됩니다. 
-        // d = b; // (X) 컴파일 오류
+        // d = b; // (X) 컴파일 오류. 부모 개체를 자식 개체에 대입할 수 없습니다.
     }
     // ----
     // 다중 상속
@@ -266,6 +264,8 @@ TEST(TestClassicCpp, Inheritance) {
         };
 
         Idol obj;
+
+        // (△) 비권장. m_Age는 동일 개체 입니다만, 접근하는 방법이 3가지나 됩니다.
         obj.m_Age = 10;
         obj.Singer::m_Age = 20; // obj.m_Age와 동일
         obj.Dancer::m_Age = 30; // obj.m_Age와 동일
@@ -278,18 +278,18 @@ TEST(TestClassicCpp, Inheritance) {
     {
         class Shape {
         public:
-            virtual ~Shape() {} // 다형 소멸을 하려면 public virtual 소멸자를 사용합니다.
+            virtual ~Shape() {} // #2. 다형 소멸을 하려면 public virtual 소멸자를 사용합니다.
             virtual void Draw() const {}
         };
-        class Rectangle : public Shape {
+        class Rectangle : public Shape { // #1. public 상속합니다.
         public:
             virtual void Draw() const {}
         };
-        class Ellipse : public Shape {
+        class Ellipse : public Shape { // #1. public 상속합니다.
         public:
             virtual void Draw() const {}
         };
-        class Triangle : public Shape {
+        class Triangle : public Shape { // #1. public 상속합니다.
         public:
             virtual void Draw() const {}
         };
@@ -304,7 +304,7 @@ TEST(TestClassicCpp, Inheritance) {
             shapes[i]->Draw(); // 다형적으로 그립니다.
         }
         for(int i = 0; i < 3; ++i) {
-            delete shapes[i]; // 다형 소멸 합니다. Shape*로 Rectangle, Ellipse, Triangle을 소멸합니다.
+            delete shapes[i]; // #2. 다형 소멸 합니다. Shape*로 Rectangle, Ellipse, Triangle을 소멸합니다.
         }        
     }
     // ----
@@ -320,7 +320,7 @@ TEST(TestClassicCpp, Inheritance) {
             ResizeableImpl(int w, int h) :
                 m_Width(w), 
                 m_Height(h) {}
-            ~ResizeableImpl() {} // has-a 관계로 사용되기 때문에, 단독으로 생성되지 않도록 protected입니다.
+            ~ResizeableImpl() {} // #1. has-a 관계로 사용되기 때문에, 단독으로 생성되지 않도록 protected입니다.
         public:    
             // Get/Set 함수
             int GetWidth() const {return m_Width;}
@@ -329,7 +329,7 @@ TEST(TestClassicCpp, Inheritance) {
             void SetWidth(int val) {m_Width = val;}
             void SetHeight(int val) {m_Height = val;}
         };
-        class Rectangle : public ResizeableImpl {
+        class Rectangle : public ResizeableImpl { // #2
             int m_Left;
             int m_Top;
         public:
@@ -338,8 +338,8 @@ TEST(TestClassicCpp, Inheritance) {
                 m_Left(l),
                 m_Top(t) {}
         };
-        class Ellipse : public ResizeableImpl {
-            int m_CenterX;
+        class Ellipse : public ResizeableImpl { // #2
+            int m_CenterX; 
             int m_CenterY;
         public:
             Ellipse(int centerX, int centerY, int w, int h) :
@@ -353,32 +353,32 @@ TEST(TestClassicCpp, Inheritance) {
     {
         class IEatable {
         protected:
-            ~IEatable() {} // 상속할 수 있지만, 다형적으로 사용하지 않아 non-virtual 입니다.
+            ~IEatable() {} // #1. 인터페이스여서 protected non-virtual(상속해서 사용하고, 다형 소멸 안함) 입니다.
 
         public:
-            virtual void Eat() = 0;
+            virtual void Eat() = 0; // #3. 기능 스펙을 순가상 함수로 제공합니다. 상속해서만 사용할 수 있습니다.
         };
         class IWalkable {
         protected:
-            ~IWalkable() {} // 상속할 수 있지만, 다형적으로 사용하지 않아 non-virtual 입니다.
+            ~IWalkable() {} // #1. 인터페이스여서 protected non-virtual(상속해서 사용하고, 다형 소멸 안함) 입니다.
 
         public:
-            virtual void Walk() = 0;
+            virtual void Walk() = 0; // #3. 기능 스펙을 순가상 함수로 제공합니다. 상속해서만 사용할 수 있습니다.
         };
 
         class Dog :
-            public IEatable,
-            public IWalkable {
+            public IEatable, // #2
+            public IWalkable { // #2
         public:        
             virtual void Eat() {}
             virtual void Walk() {}
         };
-        // IEatable eatable; // (X) 컴파일 오류. 소멸자가 protected
-        // IWalkable walkable; // (X) 컴파일 오류. 소멸자가 protected
+        // IEatable eatable; // (X) 컴파일 오류. 소멸자가 protected. 순가상 함수가 있음.
+        // IWalkable walkable; // (X) 컴파일 오류. 소멸자가 protected. 순가상 함수가 있음.
         Dog dog; // (O)
-        
-        // IEatable* p = &dog:
-        // delete* p; // (X) 컴파일 오류. IEatable의 소멸자가 protected
+
+        IEatable* p = new Dog();
+        // delete* p; // (X) 컴파일 오류. IEatable의 소멸자가 protected    
     }  
     // ----
     // 나쁜 상속 - 부모 개체의 무의미한 구현
@@ -473,15 +473,15 @@ TEST(TestClassicCpp, Inheritance) {
             virtual ~T() {}
         };
 
-        T t; // (△) 비권장. 순가상 함수가 없으면 개체 정의(인스턴스화) 할 수 있습니다.        
+        T t; // (△) 비권장. 순가상 함수가 없으면 개체 정의(인스턴스화)를 할 수 있습니다.        
     }
     // ----
     // 상속 강제 - 순가상 소멸자
     // ----  
     {
         class U : public T {};
-        // T t; // (X) 정상 코딩 계약. 순가상 소멸자가 있어 개체 정의(인스턴스화) 안됨
-        U u; // (O) 상속하면 개체 정의(인스턴스화) 가능
+        // T t; // (X) 컴파일 오류. 순가상 소멸자가 있어 개체 정의(인스턴스화)를 할 수 없습니다.
+        U u; // (O) 상속하면 개체 정의(인스턴스화)가 가능합니다.
     }    
     // ----
     // 상속 제한
@@ -509,15 +509,15 @@ TEST(TestClassicCpp, Inheritance) {
     {
         class ISinger {
         protected:
-            ~ISinger() {} // 인터페이스여서 protected non-virtual(상속해서 사용하고, 다형 소멸 안함) 입니다.     
+            ~ISinger() {} 
         public:
-            virtual void Sing() const = 0; // 노래를 부릅니다.
+            virtual void Sing() const = 0; 
         };
         class IDancer {
         protected:
-            ~IDancer() {} // 인터페이스여서 protected non-virtual(상속해서 사용하고, 다형 소멸 안함) 입니다.   
+            ~IDancer() {} 
         public:
-            virtual void Dance() const = 0; // 춤을 춥니다.
+            virtual void Dance() const = 0; 
         };
         class Idol : 
             public ISinger,
@@ -549,7 +549,7 @@ TEST(TestClassicCpp, Inheritance) {
     {
         class Shape {
         protected:
-            Shape() {} // (O) 상속해서 생성할 수 있게끔 protected 입니다.
+            Shape() {} // (O) 자식 개체에서만 사용할 수 있게끔 protected 입니다.
         public:
             Shape(const Shape& other) {
                 if (typeid(*this) != typeid(other)) {
@@ -571,8 +571,8 @@ TEST(TestClassicCpp, Inheritance) {
     {
         class Shape {
         protected:
-            Shape() {} // (O) 상속해서 생성할 수 있게끔 protected 입니다.    
-            Shape(const Shape& other) {} // (O) 상속해서 생성할 수 있게끔 protected 입니다.
+            Shape() {} // (O) 자식 개체에서만 사용할 수 있게끔 protected 입니다.    
+            Shape(const Shape& other) {} // (O) 자식 개체에서만 사용할 수 있게끔 protected 입니다.
         public:
             virtual ~Shape() {} // 다형 소멸 하도록 public virtual    
             virtual Shape* Clone() const = 0; // (O) 부모 개체에서는 Shape* 으로 리턴합니다.
@@ -615,8 +615,8 @@ TEST(TestClassicCpp, Inheritance) {
     {
         class Shape {
         protected:
-            Shape() {} // (O) 상속해서 생성할 수 있게끔 protected 입니다.  
-            Shape(const Shape& other) {} // (O) 상속해서 생성할 수 있게끔 protected 입니다.  
+            Shape() {} // (O) 자식 개체에서만 사용할 수 있게끔 protected 입니다.  
+            Shape(const Shape& other) {} // (O) 자식 개체에서만 사용할 수 있게끔 protected 입니다.
         public:
             virtual ~Shape() {} // 다형 소멸 하도록 public virtual    
             Shape& operator =(const Shape& other) { //  (△) 비권장. 자식 개체가 복사 대입될 수 있습니다.
@@ -652,11 +652,10 @@ TEST(TestClassicCpp, Inheritance) {
     }
     {
         class Shape {
-        protected:    
-            Shape& operator =(const Shape& other) {return *this;} // (O) 부모 개체는 사용 못하게 막아 버립니다.
         protected:
-            Shape() {} // (O) 상속해서 생성할 수 있게끔 protected 입니다.  
-            Shape(const Shape& other) {} // (O) 상속해서 생성할 수 있게끔 protected 입니다.  
+            Shape() {} // (O) 자식 개체에서만 사용할 수 있게끔 protected 입니다.
+            Shape(const Shape& other) {} // (O) 자식 개체에서만 사용할 수 있게끔 protected 입니다. 
+            Shape& operator =(const Shape& other) {return *this;} // (O) 부모 개체를 외부에서 직접 사용 못하게 막아 버립니다. 자식 개체에서만 사용할 수 있게끔 protected 입니다.
         public:
             virtual ~Shape() {} // 다형 소멸 하도록 public virtual    
             virtual Shape* Clone() const = 0; 
@@ -664,7 +663,7 @@ TEST(TestClassicCpp, Inheritance) {
 
         class Rectangle : public Shape {
         public:
-            Rectangle& operator =(const Rectangle& other) { // (O) 자식 개체는 사용할 수 있게 합니다.
+            Rectangle& operator =(const Rectangle& other) { // (O) 자식 개체는 사용할 수 있습니다.
                 return *this;
             }   
             virtual Rectangle* Clone() const { 
@@ -673,7 +672,7 @@ TEST(TestClassicCpp, Inheritance) {
         };
         class Ellipse : public Shape {
         public:
-            Ellipse& operator =(const Ellipse& other) { // (O) 자식 개체는 사용할 수 있게 합니다.
+            Ellipse& operator =(const Ellipse& other) { // (O) 자식 개체는 사용할 수 있습니다.
                 return *this;
             } 
             virtual Ellipse* Clone() const { 
@@ -687,6 +686,6 @@ TEST(TestClassicCpp, Inheritance) {
         Shape* shape = &rect1;
 
         rect1 = rect2; // (O) 메시지 표시 안됨
-        // *shape = rect2; // (X) 컴파일 오류. 복사 대입 연산은 private임         
+        // *shape = rect2; // (X) 컴파일 오류. 복사 대입 연산은 protected임         
     }
 }

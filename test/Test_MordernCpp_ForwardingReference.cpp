@@ -57,7 +57,7 @@ namespace ForwardingReference_8 {
     struct remove_reference_11<T&> { 
         using type = T; 
     };
-    // 우측값 참조인 경우 탬플릿 부분 특수화. 우측값 참조를 제거한 T를 type으로 사용합니다.
+    // 우측값 참조인 경우 템플릿 부분 특수화. 우측값 참조를 제거한 T를 type으로 사용합니다.
     template<typename T>
     struct remove_reference_11<T&&> { 
         using type = T; 
@@ -99,7 +99,7 @@ namespace ForwardingReference_11 {
     void f_11(A param1, A& param2, A&& param3) {}
 
     template<typename U, typename V, typename W>
-    void Forwarding_11(U&& param1, V&& param2, W&& param3) {
+    void Forwarding_11(U&& param1, V&& param2, W&& param3) { // 전달 참조를 사용합니다.
         f_11(
             std::forward<U>(param1), // A&로 전달합니다. 
             std::forward<V>(param2), // A&로 전달합니다.
@@ -217,7 +217,7 @@ namespace ForwardingReference_18_1 {
     public:
         template<typename T>
         int Func_11(T&& param) {return 1;} // 어지간 하면, 다 전달 참조 버전이 호출됩니다.
-        int Func_11(int) {return 2;}
+        int Func_11(int) {return 2;} // int 만 호출됩니다.
     }; 
 }
 
@@ -287,7 +287,7 @@ namespace ForwardingReference_19 {
     public:
         template<typename T>
         void SetString_11(T&& str) { // 전달 참조
-            // forward() 가 적합한데, move()를 사용했습니다. 무조건 이동 연산 합니다.
+            // (△) 비권장. forward() 가 적합한데, move()를 사용했습니다. 무조건 이동 연산 합니다.
             m_String = std::move<T>(str); 
         }
     }; 
@@ -506,8 +506,8 @@ TEST(TestMordern, Forwarding) {
         class A_11 {
             std::string m_String;
         public:
-            void SetString(const std::string& str) {m_String = str;} // lvalue 로 세팅
-            void SetString(std::string&& str) {m_String = str;} // 임시 개체이면 이동 연산을 위해 rvalue로 세팅
+            void SetString(const std::string& str) {m_String = str;} // 좌측값으로 세팅
+            void SetString(std::string&& str) {m_String = str;} // 임시 개체이면 이동 연산을 위해 우측값으로 세팅
             void SetString(const char* str) {m_String = str;} // const char*로 세팅.    
         }; 
     }
@@ -525,7 +525,7 @@ TEST(TestMordern, Forwarding) {
 
         A_11 a;
 
-        EXPECT_TRUE(a.Func_11(1) == 2);
+        EXPECT_TRUE(a.Func_11(1) == 2); // int 버전이 호출됩니다. 
         EXPECT_TRUE(a.Func_11((short)1) == 1); // (△) 비권장. 전달 참조 버전이 호출됩니다.
         EXPECT_TRUE(a.Func_11((char)'a') == 1); // (△) 비권장. 전달 참조 버전이 호출됩니다.
     }
@@ -560,6 +560,10 @@ TEST(TestMordern, Forwarding) {
 
         int val;
         A_11 c(val); // 전달 참조 버전이 호출됩니다.
+        EXPECT_TRUE(c.m_Val == 1);
+
+        A_11 d((char)'a'); // 전달 참조 버전이 호출됩니다.
+        EXPECT_TRUE(d.m_Val == 1);
     } 
     // 전달 참조와 중괄호 초기화
     {
@@ -581,7 +585,7 @@ TEST(TestMordern, Forwarding) {
         // 2. auto로 초기화한 후 auto를 전달합니다.
         {
             auto v_11 = {1, 2, 3}; // initializer_list로 초기화 됩니다.
-            EXPECT_TRUE(f_11(v_11) == 3); // initializer_list로 암시적으로 vector를 생성하여 전달합니다.
+            EXPECT_TRUE(f_11(v_11) == 3); // initializer_list로부터 암시적으로 vector를 생성하여 전달합니다.
         }
     }
     {
@@ -590,9 +594,9 @@ TEST(TestMordern, Forwarding) {
         A_11 a;
 
         std::string str = "Hello";
-        a.SetString_11(str); // str은 이동 연산되어 무효화됩니다.
+        a.SetString_11(str); // (△) 비권장. str은 이동 연산되어 무효화됩니다.
 
-        std::string str2 = str; // 이동 연산되어 무효화된 값으로 str2를 초기화했습니다.
+        std::string str2 = str; // (△) 비권장. 이동 연산되어 무효화된 값으로 str2를 초기화했습니다.
         EXPECT_TRUE(str2.empty() == true); 
     }
     // 리턴문에서 move()와 forward() 사용

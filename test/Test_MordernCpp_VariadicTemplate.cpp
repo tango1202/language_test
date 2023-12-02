@@ -8,8 +8,8 @@ namespace VariadicTemplate_1 {
     // Types는 파라메터 팩입니다.
     template<typename Type, typename... Types>
     Type Sum_11(Type param, Types... params) {
-        // 재귀 호출시 params의 첫번째 인자인 prams#1은 param으로 전달되고, 
-        // 나머지 params#2 ~ params#N 은 params에 전달됩니다.
+        // 재귀 호출시 params의 첫번째 인자인 params[1]은 param으로 전달되고, 
+        // 나머지 params[2] ~ params[3]N 은 params에 전달됩니다.
         return param + Sum_11(params...); 
     }    
 

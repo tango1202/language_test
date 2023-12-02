@@ -13,40 +13,56 @@ TEST(TestClassicCpp, Constructor) {
         T t; // (O) 개체 정의(인스턴스화)
         // T t(); // (X) T를 리턴하는 함수 t() 선언
     }
+    // 암시적 기본 생성자
     {
         class T1 {
-            int m_Val; // (△) 암시적으로 기본 생성자가 자동 제로 초기화되거나 안되거나 할 수 있습니다.
         };
-        T1 t1; // (O) 컴파일러가 암시적으로 정의한 기본 생성자
-       
+        T1 t1; // (O) 암시적 기본 생성자 사용
+
         class T2 {
+        public:
+            T2() {} // 사용자 정의 기본 생성자가 있음
+        };
+        T2 t2; // (O) 사용자가 정의한 기본 생성자 사용
+
+        class T3 {
+        public:
+            T3(int, int) {} // 값 생성자가 있어 암시적 기본 생성자가 정의되지 않음
+        };
+        // T3 t3; // (X) 컴파일 오류. 기본 생성자 정의 안됨
+
+        class T4 {
+        public:
+            T4(const T4& other) {*this = other;} // 복사 생성자가 있어 암시적 기본 생성자가 정의되지 않음
+        };
+        // T4 t4; // (X) 컴파일 오류. 기본 생성자 정의 안됨
+    }
+    {
+        class T {
+            int m_Val; // (△) 암시적으로 기본 생성자가 자동 제로 초기화되거나 안되거나 할 수 있습니다.
+        public:
+            int GetVal() const {return m_Val;}
+        };
+        T t1; // (O) 컴파일러가 암시적으로 정의한 기본 생성자
+
+        EXPECT_TRUE(t1.GetVal() == 0 || t1.GetVal() != 0); // 0으로 자동 초기화 되거나 안될 수 있습니다.
+
+        T t2 = T(); // 자동 제로 초기화 됩니다. T t2();는 T를 리턴하는 함수 선언이어서(초기화 파싱 오류) T t2 = T();와 같이 초기화 합니다.
+        EXPECT_TRUE(t2.GetVal() == 0);        
+    }
+
+    {
+     
+        class T1 {
         private:
             const int& m_Val; // 멤버 변수에 참조자가 있어, 암시적으로 생성한 기본 생성자에서 초기화 할 수 없음
         };
-        // T2 t2; // (X) 컴파일 오류. 기본 생성자에서 멤버 변수 초기화 안됨
+        // T1 t1; // (X) 컴파일 오류. 기본 생성자에서 멤버 변수 초기화 안됨
         
-        class T3 {
-            const T1 m_Val; // 멤버 변수에 상수형 개체가 있어, 암시적으로 생성한 기본 생성자에서 초기화 할 수 없음
+        class T2 {
+            const int m_Val; // 멤버 변수에 상수형 개체가 있어, 암시적으로 생성한 기본 생성자에서 초기화 할 수 없음
         };
-        // T3 t3; // (X) 컴파일 오류. 기본 생성자에서 멤버 변수 초기화 안됨 
-   
-        class T4 {
-        public:
-            T4() {} // 사용자 정의 기본 생성자가 있음
-        };
-        T4 t4; // (O) 사용자가 정의한 기본 생성자 사용
-        
-        class T5 {
-        public:
-            T5(int, int) {} // 값 생성자가 있어 암시적 기본 생성자가 정의되지 않음
-        };
-        // T5 t5; // (X) 컴파일 오류. 기본 생성자 정의 안됨
-        
-        class T6 {
-        public:
-            T6(const T6& other) {*this = other;} // 복사 생성자가 있어 암시적 기본 생성자가 정의되지 않음
-        };
-        // T6 t6; // (X) 컴파일 오류. 기본 생성자 정의 안됨
+        // T2 t2; // (X) 컴파일 오류. 기본 생성자에서 멤버 변수 초기화 안됨 
     }
     {
         class T {
@@ -82,7 +98,7 @@ TEST(TestClassicCpp, Constructor) {
                 m_X(x), // 초기화 리스트로 모든 멤버 변수 초기화
                 m_Y(y) {}
         };
-        T t(10, 20); // (O) 개체 정의(인스턴스화)
+        T t(10, 20); // (O) 
     }
     // ----
     // 복사 생성자
@@ -163,11 +179,13 @@ TEST(TestClassicCpp, Constructor) {
                 m_Ptr(ptr) {}
 
             // (O) NULL 포인터가 아니라면 복제합니다.    
-            IntPtr(const IntPtr& other) :
-                m_Ptr(other.IsValid() ? new int(*other.m_Ptr) : NULL) {}
+            IntPtr(const IntPtr& other) : // #2
+                m_Ptr(other.IsValid() ? new int(*other.m_Ptr) : NULL) {} // #3
 
             // 힙 개체를 메모리에서 제거 합니다.
-            ~IntPtr() {delete m_Ptr;}
+            ~IntPtr() { // #4
+                delete m_Ptr; // #5
+            }
 
             // 포인터 연산자 호출시 m_Ptr에 접근할 수 있게 합니다.
             const int* operator ->() const {return m_Ptr;}
@@ -183,7 +201,7 @@ TEST(TestClassicCpp, Constructor) {
         class T {
             // (O) IntPtr로 복사 생성시 포인터의 복제본을 만들고, 소멸시 IntPtr에서 delete 합니다.
             // (O) 암시적 복사 생성자에서 정상 동작하므로, 명시적으로 복사 생성자를 구현할 필요가 없습니다.
-            IntPtr m_Val;
+            IntPtr m_Val; // #1
         public:
             // val : new 로 생성된 것을 전달하세요.
             explicit T(int* val) :
@@ -215,7 +233,7 @@ TEST(TestClassicCpp, Constructor) {
             Base() : 
                 m_Val(0) {
                 // (△) 비권장. 가상 함수를 생성자에서 호출합니다.
-                // Derived::SetVal() 이 호출되길 기대하지만, 
+                // Derived::SetVal()이 호출되길 기대하지만, 
                 // Base::SetVal()이 호출됩니다.        
                 SetVal(); 
             }
@@ -235,10 +253,10 @@ TEST(TestClassicCpp, Constructor) {
         };
 
         Derived d;
-        // (X) 오동작. Base 생성자에서 가상함수인 SeVal() 을 호출하면, 
-        // Derived::SetVal() 이 호출되길 기대하나,
+        // (X) 오동작. Base 생성자에서 가상 함수인 SeVal()을 호출하면, 
+        // Derived::SetVal()이 호출되길 기대하나,
         // 아직 Derived가 완전히 생성되지 않은 상태이기에,
-        // Base::SetVal() 이 호출됨
+        // Base::SetVal()이 호출됨
         EXPECT_TRUE(d.GetVal() == 1); 
     }
     // 생성자 사용 제한

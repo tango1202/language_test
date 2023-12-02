@@ -28,7 +28,7 @@ TEST(TestMordern, MemberFunctionRef) {
         T t;
         EXPECT_TRUE(t.Func_11() == 1); // 좌측값이므로 #1 호출
         EXPECT_TRUE(std::move(t).Func_11() == 2); // move는 우측값이므로 #2 호출
-        EXPECT_TRUE(T().Func_11() == 2); // T() 는 임시 개체(우측값)이므로 #2 호출   
+        EXPECT_TRUE(T{}.Func_11() == 2); // T() 는 임시 개체(우측값)이므로 #2 호출   
     }
     {
         class Wrapper_11 {
@@ -42,29 +42,39 @@ TEST(TestMordern, MemberFunctionRef) {
 
         {
             Wrapper_11 wrapper;
-            const Big_11& big = wrapper.GetData(); // const Big_11&을 리턴하므로 참조만 합니다.
+            const Big_11& big{wrapper.GetData()}; // const Big_11&을 리턴하므로 참조만 합니다.
         }
         {
             Wrapper_11 wrapper;
-            Big_11 big = wrapper.GetData(); // const Big_11& 를 리턴한 것을 Big_11로 받으므로 복사 생성 합니다.         
+            Big_11 big{wrapper.GetData()}; // const Big_11& 를 리턴한 것을 Big_11로 받으므로 복사 생성 합니다.         
         }
         {
             // std::move(wrapper)로 우측값으로 만들어 봤자, std::move(a).GetData()는 const Big_11&(좌측값 참조)를 리턴
             Wrapper_11 wrapper;
-            Big_11 big = std::move(wrapper).GetData(); // 복사 생성자를 호출합니다.
+            Big_11 big{std::move(wrapper).GetData()}; // 복사 생성자를 호출합니다.
         }  
  
         {
             // Wrapper_11()은 임시 개체인 우측값 이지만, 여전히 GetData()는 const Big_11&(좌측값 참조)를 리턴
-            Big_11 big = Wrapper_11().GetData(); // 복사 생성자를 호출합니다.
+            Big_11 big{Wrapper_11{}.GetData()}; // 복사 생성자를 호출합니다.
         }    
         {
             // Wrapper_11().GetData()는 const Big_11&를 리턴하고, move() 는 const Big_11&& 을 리턴. 이동 생성자와 인자 타입과 다르므로, 그냥 복사 생성자 호출 
-            Big_11 big = std::move(Wrapper_11{}.GetData()); 
+            Big_11 big{
+                std::move(
+                    Wrapper_11{}.GetData()
+                )
+            };
         }     
         {
             // Big_11의 이동 생성자 호출
-            Big_11 big = std::move(const_cast<Big_11&>(Wrapper_11{}.GetData()));             
+            Big_11 big{ // 3. 이동 생성자 호출
+                std::move( // 2. Big&&로 변환하여
+                    const_cast<Big_11&>( // 1. 상수성을 떼고
+                        Wrapper_11{}.GetData()
+                    )
+                )
+            };            
         }            
     }
     // const 타입 move()

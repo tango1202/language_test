@@ -42,21 +42,21 @@ TEST(TestClassicCpp, MemberFunction) {
         class T {
             int m_Val;
         public:
-            // void Func() const {m_Val = 10;} // (X) 컴파일 오류. 멤버 변수 수정
+            // void Func() const {m_Val = 10;} // (X) 컴파일 오류. const 함수는 멤버 변수를 수정할 수 없습니다.
         };        
     }
     {
         class T {
             int m_Val;
         public:
-            // int* Func() const {return &m_Val;} // (X) 컴파일 오류. int* 리턴. const int*를 리턴해야 함.
+            // int* Func() const {return &m_Val;} // (X) 컴파일 오류. int* 리턴. const 함수는 const int*를 리턴해야 합니다.
         };
     }
     {
         class T {
             int m_Val;
         public:
-            // void Func() const { NonConstFunc();} // (X) 컴파일 오류. 비 상수 멤버 함수 호출.
+            // void Func() const { NonConstFunc();} // (X) 컴파일 오류. const 함수는 비 상수 멤버 함수 호출할 수 없습니다.
             void NonConstFunc() {}
         };        
     }
@@ -73,7 +73,9 @@ TEST(TestClassicCpp, MemberFunction) {
         class U {
             T m_T;
         public:
-            // int GetInnerVal() const {m_T.GetVal();} // (X) 컴파일 오류. m_T.GetVal()은 비 상수 멤버 함수여서 상수 멤버 함수인 GetInnerVal() 이 호출할 수 없습니다.
+            // m_T.GetVal()은 비 상수 멤버 함수여서 상수 멤버 함수인 GetInnerVal()에서 호출할 수 없습니다.
+            // 어쩔 수 없이 GetInnerVal()을 비 상수로 만들어야 컴파일 할 수 있습니다.
+            // int GetInnerVal() const {return m_T.GetVal();} // (X) 컴파일 오류.
         };
     }
     // ----
@@ -124,7 +126,7 @@ TEST(TestClassicCpp, MemberFunction) {
 
         class Derived : public Base {
         public:
-            virtual Derived* v() {return this;} // (O) Derived 는 Base와 상속관계여서 가능
+            virtual Derived* v() {return this;} // (O) Derived 는 Base와 상속 관계여서 가능
             // virtual int* v() {return NULL;} // (X) 컴파일 오류. 밑도 끝도 없는 타입은 안됨
         };
     }
@@ -141,7 +143,7 @@ TEST(TestClassicCpp, MemberFunction) {
         public:        
             virtual void Eat() {} // 순가상 함수는 자식 개체에서 실제 구현을 해야 합니다.
         };
-        // IEatable eatable; // (X) 컴파일 오류. 순가상 함수
+        // IEatable eatable; // (X) 컴파일 오류. 순가상 함수가 있기 때문에 인스턴스화 할 수 없습니다.
         Dog dog; // (O)
     }
     // ----
