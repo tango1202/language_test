@@ -11,8 +11,8 @@ namespace AutoPtr_1 {
     U Func() {
         T* t = new T();
         U u(t);
-        delete t; // (△) 비권장. t를 new로 생성했으니 delete 합니다. 그럼 u에 저장된 t는 어쩔까요?
-        return u; // (△) 비권장. 삭제된 t를 담고 있는 u를 사용하면 안되죠.
+        delete t; // (X) 오동작. t를 new로 생성했으니 delete 합니다. 그럼 u에 저장된 t는 어쩔까요?
+        return u; // (X) 오동작. 소멸된 t를 담고 있는 u를 사용하면 안되죠.
     }    
 }
 namespace AutoPtr_2 {
@@ -50,6 +50,7 @@ namespace AutoPtr_4 {
 #endif
     public:
         explicit U(T* t) : m_T(t) {}
+        T* GetPtr() {return m_T.get();}
     };
 }
 namespace AutoPtr_5 {
@@ -66,12 +67,12 @@ namespace AutoPtr_5 {
         // 소유권 이전
         my_auto_ptr(my_auto_ptr& other) : 
             m_Ptr(other.m_Ptr) { 
-            other.m_Ptr = NULL; // 소유권이 this로 왔으므로 other는 NULL 
+            other.m_Ptr = NULL; // 소유권이 this로 왔으므로 other는 NULL 입니다.
         }
         my_auto_ptr& operator =(my_auto_ptr& other) { 
-            delete m_Ptr; // 이전 관리하던 포인터는 삭제
+            delete m_Ptr; // 이전 관리하던 포인터는 소멸시킵니다.
             m_Ptr = other.m_Ptr; 
-            other.m_Ptr = NULL; // 소유권이 this로 왔으므로 other는 NULL 
+            other.m_Ptr = NULL; // 소유권이 this로 왔으므로 other는 NULL 입니다.
 
             return *this;
         } 
@@ -86,7 +87,7 @@ namespace AutoPtr_5 {
         } 
         T* release() { 
             T* result = m_Ptr; 
-            m_Ptr = NULL; // 더이상 소유권 없음
+            m_Ptr = NULL; // 더이상 소유권 없습니다.
             return result; 
         }
     };
@@ -98,7 +99,7 @@ TEST(TestClassicCpp, AutoPtr) {
         U u1(new T);
         U u2 (new T);
 
-        delete u1.m_T; // (△) 비권장. U의 사용법을 잘 숙지하고, 엄청 꼼꼼해서 잊지 않고 호출해야 합니다.
+        delete u1.m_T; // (△) 비권장. U의 사용법을 잘 숙지하고, 엄청 꼼꼼하게 잊지 않고 호출해야 합니다.
         delete u2.m_T;
     }
     {
@@ -107,7 +108,7 @@ TEST(TestClassicCpp, AutoPtr) {
         U u1(new T); // (O) delete m_T;는 U 소멸자에서 호출합니다.
         U u2(new T);
 
-        // u1 = u2; //(X) 예외 발생. 기존 u1 것은 delete해야 하고, u1, u2는 동일한 포인터를 소유합니다. 누가 삭제해야 하나요? 
+        // u1 = u2; //(X) 예외 발생. 기존 u1 것은 delete해야 하고, u1, u2는 동일한 포인터를 소유합니다. 누가 소멸시켜야 하나요? 
     } 
     {
         using namespace AutoPtr_4;
@@ -117,7 +118,9 @@ TEST(TestClassicCpp, AutoPtr) {
 #if 201103L <= __cplusplus // C++11~
         u1 = std::move(u2);
 #else
-        u1 = u2; //(O) 소유권을 u1으로 이전합니다. 
+        u1 = u2; //(O) 소유권을 u1으로 이전합니다. u2는 무효화된 포인터가 됩니다. 
+        EXPECT_TRUE(u1.GetPtr() != NULL);
+        EXPECT_TRUE(u2.GetPtr() == NULL);       
 #endif
     }   
     {
@@ -128,7 +131,7 @@ TEST(TestClassicCpp, AutoPtr) {
 
         a = b;
 
-        EXPECT_TRUE(*a == 20); // 이전 b 값을 저장
-        EXPECT_TRUE(b.get() == NULL); // 더이상 포인터를 관리하지 않음
+        EXPECT_TRUE(*a == 20); // 이전 b 값을 저장합니다.
+        EXPECT_TRUE(b.get() == NULL); // 더이상 포인터를 관리하지 않습니다.
     }
 }

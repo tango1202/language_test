@@ -38,7 +38,7 @@ TEST(TestMordern, ExplicitConversions) {
     {
         using namespace ExplicitConversions;
         T t;
-        int val1{t}; // (△) 비권장. bool() 을 이용하여 형변환 하고 암시적으로 int로 변환합니다.
+        int val1{t}; // (△) 비권장. bool()을 이용하여 형변환 하고 암시적으로 int로 변환합니다.
 
         T_11 t_11;
         // int val2{t_11}; // (X) 컴파일 오류

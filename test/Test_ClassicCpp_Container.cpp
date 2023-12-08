@@ -15,34 +15,34 @@ namespace {
     }
 
     template<typename ContainerT>
-    class BackInsertIterator {
+    class MyBackInsertIterator {
         ContainerT& m_Container;
     public:
         // 값 생성자에서는 Container를 전달받습니다.
-        explicit BackInsertIterator(ContainerT& container) : // #1
+        explicit MyBackInsertIterator(ContainerT& container) : // #1
             m_Container(container) {}
 
         // 복사 생성자에서는 컨테이너 참조자를 복사합니다.
-        BackInsertIterator(const BackInsertIterator& other) : // #2
+        MyBackInsertIterator(const MyBackInsertIterator& other) : // #2
             m_Container(other.m_Container) {}
     private:   
         // 복사 대입 연산자는 사용하지 않습니다.
-        BackInsertIterator& operator =(const BackInsertIterator& other) {return *this;} // #3
+        MyBackInsertIterator& operator =(const MyBackInsertIterator& other) {return *this;} // #3
 
     public:
         // = 에서 컨테이너 값 타입을 전달하면, push_back()을 하여 추가합니다.
-        BackInsertIterator& operator =(const typename ContainerT::value_type& value) { // #4
+        MyBackInsertIterator& operator =(const typename ContainerT::value_type& value) { // #4
             m_Container.push_back(value);
             return *this;
         }
 
         // 무조건 끝에 추가하므로 ++는 별다른 동작하지 않습니다.
-        BackInsertIterator& operator ++() { // #5
+        MyBackInsertIterator& operator ++() { // #5
             return *this;
         }
 
         // * 시 자기 자신을 리턴하여 *first = value;시 #4가 호출되게 합니다.
-        BackInsertIterator& operator *() { //# 6
+        MyBackInsertIterator& operator *() { //# 6
             return *this;
         }
     };
@@ -60,7 +60,7 @@ TEST(TestClassicCpp, Container) {
             // 복사 생성자를 구현해야 합니다.
             A(const A& other) : m_Val(other.m_Val) {}
         private:
-            // 복사 대입 연산자를 사용하지 못하도록 private로 정의합니다.
+            // 복사 대입 연산자는 필수는 아닙니다.
             A& operator =(const A& other) {
                 m_Val = other.m_Val;
                 return *this;
@@ -68,7 +68,7 @@ TEST(TestClassicCpp, Container) {
         };
 
         std::vector<A> v;
-        v.push_back(A(0)); // vector 뒤에 요소 추가
+        v.push_back(A(0)); // vector의 끝에 요소를 추가합니다.
         v.push_back(A(1));
     }
     // sort 등 알고리즘 사용시
@@ -96,7 +96,7 @@ TEST(TestClassicCpp, Container) {
         v.push_back(A(0));
 
         // 정렬합니다. 
-        // 내부적으로 요소의 복사 대입 연산자와 대소 비교 연산자를 사용합니다.
+        // 내부적으로 요소의 복사 대입 연산자와 비교 연산자를 사용합니다.
         std::sort(v.begin(), v.end()); 
         EXPECT_TRUE(v[0].m_Val == 0 && v[1].m_Val == 1); // 크기순으로 정렬됩니다.
     }
@@ -110,7 +110,7 @@ TEST(TestClassicCpp, Container) {
             // 복사 생성자
             A(const A& other) : m_Val(other.m_Val) {}
         private:    
-            // 복사 대입 연산자를 사용하지 못하도록 private로 정의합니다.
+            // 복사 대입 연산자는 필수는 아닙니다.
             A& operator =(const A& other) {
                 m_Val = other.m_Val;
                 return *this;
@@ -154,6 +154,41 @@ TEST(TestClassicCpp, Container) {
         EXPECT_TRUE(v.size() == 2); // 요소 갯수 2개
         EXPECT_TRUE(*result == 1); // 삭제한 요소의 다음 요소를 리턴함
     }
+    {
+        std::vector<int> v;
+        v.push_back(0);
+        v.push_back(1);
+        v.push_back(1);
+        v.push_back(1);
+        v.push_back(4); 
+        v.push_back(5); 
+
+        std::remove(v.begin(), v.end(), 1); // 1인 요소를 remove 합니다.
+        EXPECT_TRUE(v.size() == 6); 
+        EXPECT_TRUE(v[0] == 0);
+        EXPECT_TRUE(v[1] == 4); // #1
+        EXPECT_TRUE(v[2] == 5); // #1
+        EXPECT_TRUE(v[3] == 1); // #2. 이전값이 남아 있습니다.
+        EXPECT_TRUE(v[4] == 4); // #3. 이전값이 남아 있습니다.
+        EXPECT_TRUE(v[5] == 5); // #3. 이전값이 남아 있습니다.   
+    }
+    {
+        std::vector<int> v;
+        v.push_back(0);
+        v.push_back(1);
+        v.push_back(1);
+        v.push_back(1);
+        v.push_back(4); 
+        v.push_back(5); 
+
+        std::vector<int>::iterator result = std::remove(v.begin(), v.end(), 1); // 삭제하지 않을 요소를 컨테이너의 앞으로 옮기고 erase할 위치를 리턴합니다.
+        v.erase(result, v.end()); // 요소를 실제로 삭제합니다.
+
+        EXPECT_TRUE(v.size() == 3); 
+        EXPECT_TRUE(v[0] == 0);
+        EXPECT_TRUE(v[1] == 4); 
+        EXPECT_TRUE(v[2] == 5); 
+    }    
     // ----
     // list 의 삽입과 삭제
     // ----
@@ -177,16 +212,28 @@ TEST(TestClassicCpp, Container) {
         EXPECT_TRUE(l.size() == 2); // 요소 갯수 2개
         EXPECT_TRUE(*result == 1); // 삭제한 요소의 다음 요소를 리턴함
     }
+    {
+        std::list<int> l;
+        l.push_back(0);
+        l.push_back(1);
+        l.push_back(1);
+        l.push_back(2);
+
+        l.remove(1); // 1인 요소들을 삭제합니다.(알고리즘의 remove()와는 다르게 실제로 삭제합니다.) 
+
+        EXPECT_TRUE(*(l.begin()) == 0);
+        EXPECT_TRUE(*(++l.begin()) == 2);        
+    }
     // ----
     // map 의 삽입과 삭제
     // ----
     {
         std::map<int, std::string> m;
 
-        // (X) 컴파일 오류. map은 정렬하는 것이라 뒤에 추가를 제공하지 않음
+        // (X) 컴파일 오류. map은 정렬하는 것이라 push_back()을 제공하지 않음
         // m.push_back(std::make_pair(0, "data1")); 
 
-        // 삽입. 삽입시 key 값으로 정렬됨
+        // 삽입시 key 값으로 정렬됨
         std::pair<std::map<int, std::string>::iterator, bool> result = m.insert(std::make_pair(1, "data1"));
         result = m.insert(std::make_pair(0, "data0")); 
  
@@ -199,7 +246,7 @@ TEST(TestClassicCpp, Container) {
         EXPECT_TRUE(result.second == true); // 삽입 성공
 
         // 동일 key 삽입
-        result = m.insert(std::make_pair(0, "data2")); 
+        result = m.insert(std::make_pair(0, "data2")); // key 0 은 이미 map에 있습니다.
         EXPECT_TRUE((*result.first).first == 0 && (*result.first).second == "data0"); // 기존 동일키 요소를 리턴함
         EXPECT_TRUE(result.second == false); // 삽입 실패
 
@@ -264,10 +311,12 @@ TEST(TestClassicCpp, Container) {
     // 역방향 이터레이터
     // ----
     {
-        std::vector<int> v(5); 
+        
  
         // 순방향
         {
+            std::vector<int> v(5); 
+
             std::vector<int>::iterator itr = v.begin(); // 요소의 시작
             std::vector<int>::iterator endItr = v.end(); // 요소의 끝
             for (int i = 0; itr != endItr; ++itr, ++i) { 
@@ -277,6 +326,8 @@ TEST(TestClassicCpp, Container) {
         }
         // 역방향
         {
+            std::vector<int> v(5); 
+
             std::vector<int>::reverse_iterator itr = v.rbegin(); // 요소의 끝
             std::vector<int>::reverse_iterator endItr = v.rend(); // 요소의 시작
             for (int i = 0; itr != endItr; ++itr, ++i) { 
@@ -291,7 +342,7 @@ TEST(TestClassicCpp, Container) {
     {
         std::vector<int> v; 
         // Fill(v.begin(), 5, 7); // v[0] ~ v[4] 에 7 대입. v가 5개 할당되지 않았다면 예외 발생 
-        Fill(BackInsertIterator<std::vector<int>>(v), 5, 7); // 현 컨테이너 뒤 5 개에 7 삽입. BackInsertIterator에서 operator = 을 push_back() 으로 구현
+        Fill(MyBackInsertIterator<std::vector<int>>(v), 5, 7); // 현 컨테이너 뒤 5 개에 7 삽입. MyBackInsertIterator operator = 을 push_back() 으로 구현
         
         EXPECT_TRUE(v[0] == 7 && v[1] == 7 && v[2] == 7 && v[3] == 7 && v[4] == 7);
     }
@@ -312,18 +363,12 @@ TEST(TestClassicCpp, Container) {
         EXPECT_TRUE(v[0] == 10);
         EXPECT_TRUE(v[1] == 20);
 
-        EXPECT_TRUE(*(&v[0]) == 10);
-        EXPECT_TRUE(*((&v[0]) + 1) == 20); // 연속된 메모리여서 포인터 연산으로도 접근 가능합니다.
+        EXPECT_TRUE(*(&v[0] + 0) == 10);
+        EXPECT_TRUE(*(&v[0] + 1) == 20); // 연속된 메모리여서 포인터 연산으로도 접근 가능합니다.   
     }
     // ----
     // size와 capacity
     // ----
-    {
-        std::vector<int> v(100);
-        size_t old = v.capacity();
-        v.clear();
-        EXPECT_TRUE(v.capacity() == old); // clear해서 요소를 모두 지웠지만, capacity는 그대로 입니다.
-    }
     {
         std::vector<int> v;
 
@@ -340,7 +385,7 @@ TEST(TestClassicCpp, Container) {
         v.reserve(100);
         EXPECT_TRUE(v.capacity() == 100); // 100개를 저장할 수 있는 메모리 공간이 확보됨
         // v[0] = 0; // (X) 컴파일 오류. 아직 요소는 아직 생성된게 아니기에 접근할 수 없습니다.
-        v.push_back(0); // (0) 
+        v.push_back(0); // (O) 
     }
     // ----
     // clear와 swap
@@ -353,10 +398,14 @@ TEST(TestClassicCpp, Container) {
     }
     {
         std::vector<int> v(100);
+        EXPECT_TRUE(v.size() == 100);
         EXPECT_TRUE(v.capacity() == 100);
-        std::vector<int> temp;
+
+        std::vector<int> temp; // 크기가 0인 텅빈 vector입니다.
         v.swap(temp); // vector는 pImpl로 구현되어 swap시 복사 부하가 없습니다.
-        EXPECT_TRUE(v.capacity() == 0); // 크기가 0인 vector와 바꿔치기 했습니다.
+
+        EXPECT_TRUE(v.size() == 0); // 크기가 0인 vector와 바꿔치기해서 요소가 없습니다.
+        EXPECT_TRUE(v.capacity() == 0); // 크기가 0인 vector와 바꿔치기해서 할당된 메모리가 없습니다.
     }
     // ----
     // vector<bool>

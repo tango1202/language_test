@@ -43,11 +43,11 @@ namespace Template_5 {
         // 일반 멤버 함수
         void f() {}
 
-        // 템플릿 멤버 함수
+        // 멤버 함수 템플릿
         template<typename U> 
         U g(U left, U right) {return left + right;} 
 
-        // 템플릿 중첩 클래스
+        // 중첩 클래스 템플릿
         template<typename V> 
         class B {
         public:
@@ -63,14 +63,14 @@ namespace Template_6 {
         void f(); // 멤버 함수 선언
 
         template<typename U>
-        U g(U val); // 템플릿 멤버 함수 선언
+        U g(U val); // 멤버 함수 템플릿 선언
     };
 
     // 클래스 템플릿의 멤버 함수 정의
     template<typename T> // 클래스 템플릿
     void A<T>::f() {} 
 
-    // 클래스 템플릿의 템플릿 멤버 함수 정의 - 인자 집합 2개 필요
+    // 클래스 템플릿의 멤버 함수 템플릿수 정의 - 인자 집합 2개 필요
     template<typename T> // 바깥쪽 인자
     template<typename U> // 안쪽 인자
     U A<T>::g(U val) {return val + val;} 
@@ -89,7 +89,7 @@ TEST(TestClassicCpp, Template) {
         using namespace Template_3;
 
         A<int> a;
-        a.f(); // A<int>::g() 를 사용하지 않았기에 컴파일 됨 
+        a.f(); // A<int>::g()를 사용하지 않았기에 컴파일 됨 
         // a.g(); // (X) 컴파일 오류. 함수 정의부가 없음
     }
 
@@ -108,13 +108,14 @@ TEST(TestClassicCpp, Template) {
         // EXPECT_TRUE(Plus('a', 1) == 'b'); // (X) 컴파일 오류. 인수가 int, char로 각각 다르므로 추론이 어려움 
         EXPECT_TRUE(Plus('a', static_cast<char>(1)) == 'b'); // (O) 인수로부터 char 가 추론됨
     }   
-    // 템플릿 멤버 함수와 템플릿 중첩 클래스
+    // 멤버 함수 템플릿과 중첩 클래스 템플릿
     {
         using namespace Template_5;
         int val;
         A a(val); // 템플릿 생성자 호출, 타입을 명시적으로 지정 못함
         a.f(); // 일반 함수 호출
-        a.g<int>(10, 10); // 템플릿 멤버 함수 호출
+        a.g(10, 10); // 멤버 함수 템플릿 호출 
+        a.g<int>(10, 10); // 타입을 명시적으로 지정할 수 있음
         
         A::B<int> b; // 중첩 클래스 인스턴스화
         b.h(); 
@@ -126,7 +127,7 @@ TEST(TestClassicCpp, Template) {
         A<int> a;
 
         a.f(); // 일반 함수 호출
-        a.g<int>(10); // 템플릿 멤버 함수 호출
+        a.g<int>(10); // 멤버 함수 템플릿 호출
     }
 }
 

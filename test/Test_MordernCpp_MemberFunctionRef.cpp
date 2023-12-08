@@ -28,7 +28,7 @@ TEST(TestMordern, MemberFunctionRef) {
         T t;
         EXPECT_TRUE(t.Func_11() == 1); // 좌측값이므로 #1 호출
         EXPECT_TRUE(std::move(t).Func_11() == 2); // move는 우측값이므로 #2 호출
-        EXPECT_TRUE(T{}.Func_11() == 2); // T() 는 임시 개체(우측값)이므로 #2 호출   
+        EXPECT_TRUE(T{}.Func_11() == 2); // T()는  임시 개체(우측값)이므로 #2 호출   
     }
     {
         class Wrapper_11 {
@@ -59,7 +59,7 @@ TEST(TestMordern, MemberFunctionRef) {
             Big_11 big{Wrapper_11{}.GetData()}; // 복사 생성자를 호출합니다.
         }    
         {
-            // Wrapper_11().GetData()는 const Big_11&를 리턴하고, move() 는 const Big_11&& 을 리턴. 이동 생성자와 인자 타입과 다르므로, 그냥 복사 생성자 호출 
+            // Wrapper_11().GetData()는 const Big_11&를 리턴하고, move()는  const Big_11&& 을 리턴. 이동 생성자와 인자 타입과 다르므로, 그냥 복사 생성자 호출 
             Big_11 big{
                 std::move(
                     Wrapper_11{}.GetData()

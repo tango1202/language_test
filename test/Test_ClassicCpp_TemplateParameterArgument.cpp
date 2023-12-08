@@ -14,7 +14,7 @@ namespace Parameter_2 {
     template<typename T, typename U>
     class A {
     public:
-        T f(U param) {return param;}
+        T f(U param) {return param;} // U를 T로 암시적으로 형변환 합니다.
     };    
 }
 namespace Parameter_3 {
@@ -33,23 +33,23 @@ namespace Parameter_4 {
 }
 namespace Parameter_5 {
     template<typename T> 
-    class A {
+    class A { // #1
     public:
         int m_X;
     };
  
     template<typename T> 
-    class A<T*> { // A의 템플릿 특수화 버전
+    class A<T*> { // #2. A의 템플릿 특수화 버전
     public: 
         long m_Y;
     };
  
-    // U : 템플릿 템플릿 인자. 인스턴스화된 타입이 아닌 템플릿을 전달함
+    // U : 템플릿 템플릿 인자. 인스턴스화 하지 않은 템플릿을 전달함
     template<template<typename> typename U>
     class B {
     public:
-        U<int> m_U1; // 템플릿인 U로 부터 개체 생성
-        U<int*> m_U2;
+        U<int> m_U1; // #1로 개체 정의
+        U<int*> m_U2; // #2로 개체 정의
     };
 }
 namespace Parameter_6 {
@@ -63,6 +63,9 @@ namespace Parameter_7 {
 
     template<typename T = char, typename U = int>
     class A {};
+
+    // template<typename T = char, typename U> // (X) 컴파일 오류. T가 기본값을 사용했기 때문에 U도 기본값을 사용해야 합니다.
+    // class B {};    
 }
 namespace Parameter_8 {
     template<typename T>
@@ -118,12 +121,12 @@ namespace Parameter_10 {
     class A {
     public:
         template<typename U>
-        int f(U val) {return 1;} 
+        int f(U val) {return 1;} // 멤버 함수 템플릿입니다.
     };
     class B {
     public:
         template<typename U>
-        int f(U val) {return 2;} 
+        int f(U val) {return 2;} // 멤버 함수 템플릿입니다.
     };
 }
 
@@ -133,7 +136,7 @@ namespace Parameter_11 {
         T m_Obj;
     public:
         int Run() {
-            // (X) 컴파일 오류. 템플릿 멤버 함수를 명시적으로 호출하기 위해 <>을 사용하면, 
+            // (X) 컴파일 오류. 멤버 함수 템플릿을 명시적으로 호출하기 위해 <>을 사용하면, 
             // < 을 비교 연산으로 파싱해서 컴파일 오류가 납니다.
             // return m_Obj.f<int>(10);   
 

@@ -21,8 +21,8 @@ namespace Specialization_2 {
     int Func<int>(int val) {return 2;} // #2
 
     // 혹은 추론되는 타입을 아예 빼서 정의할 수 있습니다.
-    // template<>
-    // int Func(int val) {return 2;} // #2
+    template<>
+    int Func(double val) {return 3;} // #3
 }
 namespace Specialization_3 {
     template<typename T>
@@ -37,11 +37,11 @@ namespace Specialization_3 {
     };
 
     template<> // 바깥쪽 주 템플릿도 특수화
-    template<> // 안쪽 중첩 클래스 특수화
-    template<> // 템플릿 멤버 함수 특수화
+    template<> // 안쪽 중첩 클래스 템플릿 특수화
+    template<> // 멤버 함수 템플릿 특수화
     int A<int>::B<int>::f<int>(int val) {return 2;} // #2
 
-    // (X) 컴파일 오류. 템플릿 멤버 함수를 특수화 하면, 상위 템플릿도 특수화 해야 합니다.
+    // (X) 컴파일 오류. 멤버 함수 템플릿을 특수화 하면, 상위 템플릿도 특수화 해야 합니다.
     // template<typename T> 
     // template<typename U> 
     // template<> 
@@ -65,7 +65,7 @@ namespace Specialization_5 {
     template<typename T, typename U> 
     class A {
     public:
-        int f(); 
+        int f() {return 1;} 
     };
     
     // 부분 특수화
@@ -74,10 +74,6 @@ namespace Specialization_5 {
     public:
         int f();
     };
-
-    // 주 템플릿 정의
-    template<typename T, typename U>
-    int A<T, U>::f() {return 1;}  
 
     // 부분 특수화 정의
     template<typename T>
@@ -154,8 +150,9 @@ TEST(TestClassicCpp, Specialization) {
 
         EXPECT_TRUE(Func('a') == 1);
         EXPECT_TRUE(Func(10) == 2); // int에 특수화된 버전 호출
+        EXPECT_TRUE(Func(10.0) == 3); // double에 특수화된 버전 호출
     }
-    // 템플릿 멤버 함수, 템플릿 중첩 클래스 특수화
+    // 멤버 함수 템플릿, 중첩 클래스 템플릿 특수화
     {  
         using namespace Specialization_3;
 

@@ -29,3 +29,43 @@ TEST(TestClassicCpp, Algorithm) {
         EXPECT_TRUE(v[0] == 10 && v[1] == 10 && v[2] == 10); 
     }
 }
+
+TEST(TestClassicCpp, Find) {
+    
+    std::vector<int> v;
+    v.push_back(0);
+    v.push_back(1);
+    v.push_back(2);
+
+    std::vector<int>::iterator result = std::find(v.begin(), v.end(), 1); // 값이 1인 위치를 리턴합니다.
+    EXPECT_TRUE(*result == 1 && result == (v.begin() + 1));
+}
+TEST(TestClassicCpp, Search) {
+    std::vector<int> v;
+    v.push_back(0);
+    v.push_back(1);
+    v.push_back(1);
+    v.push_back(2);
+    v.push_back(3);
+
+    std::vector<int> sub; // 검색하려는 부분 시퀀스
+    sub.push_back(1);
+    sub.push_back(2);
+
+    std::vector<int>::iterator result = std::search(v.begin(), v.end(), sub.begin(), sub.end()); // 부분 시퀀스가 1, 2인 위치를 찾습니다.
+    EXPECT_TRUE(*result == 1 && result == (v.begin() + 2));
+}
+TEST(TestClassicCpp, Count) {
+    std::vector<int> v;
+    v.push_back(0);
+    v.push_back(1);
+    v.push_back(1); 
+    v.push_back(2);
+    v.push_back(3);
+
+    size_t result = std::count(v.begin(), v.end(), 1); // 1인 요소의 갯수를 구합니다.
+    EXPECT_TRUE(result == 2); // 1은 2개 입니다.
+}
+
+
+

@@ -7,6 +7,6 @@ void TerminateHandler() {
 }
 int main() {
     std::set_terminate(TerminateHandler); // terminate 핸들러를 설정합니다.
-    throw 0; // 예외 발생. 내부적으로 매칭되는 catch() 가 없어 terminate()를 호출하고, TerminateHandler()가 호출 됩니다. 
+    throw 0; // 예외 발생. 내부적으로 매칭되는 catch()가 없어 terminate()를 호출하고, TerminateHandler()가 호출 됩니다. 
     return 0;
 }

@@ -13,7 +13,7 @@ namespace VariadicTemplate_1 {
         return param + Sum_11(params...); 
     }    
 
-    // func(params...) 를 호출합니다.
+    // func(params...)를 호출합니다.
     template<typename Func, typename... Params>
     int Forwarding_11(Func func, Params&&... params) {
         return func(std::forward<Params>(params)...);

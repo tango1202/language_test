@@ -6,7 +6,7 @@ namespace Functor_1 {
     template<typename InputIterator, typename Function>
     Function my_for_each(InputIterator first, InputIterator last, Function f) {
         for (; first != last; ++first) { 
-            f(*first); // 함수명 + () 로 호출됩니다.
+            f(*first); // 함수명 + () 또는 개체명 + () 로 호출됩니다.
         }
         return f; 
     }
@@ -25,7 +25,7 @@ namespace Functor_1 {
 
     // 각 요소에 지정한 값을 추가합니다.
     class Adder {
-        int m_Val;
+        int m_Val; // 상태를 저장합니다.
     public:
         explicit Adder(int val) : m_Val(val) {}
         void operator ()(int& val) {
@@ -61,7 +61,7 @@ namespace Functor_2 {
         InputIterator last,
 	    Predicate pred) {
         
-        // 조건자(Predicate) 가 참이면 해당 위치의 이터레이터를 리턴합니다.
+        // 조건자(Predicate)가 참이면 해당 위치의 이터레이터를 리턴합니다.
         while (first != last && !pred(*first)) {
             ++first;
         }
@@ -157,7 +157,7 @@ TEST(TestClassicCpp, Functor) {
 #if 201103L <= __cplusplus // C++11~
             std::bind(std::less<int>(), std::placeholders::_1, 7)
 #else            
-            std::bind2nd(std::less<int>(), 7)
+            std::bind2nd(std::less<int>(), 7) // 7보다 작으면 true를 리턴하는 단항 함수자
 #endif
         );  
 
@@ -180,7 +180,10 @@ TEST(TestClassicCpp, Functor) {
 #if 201103L <= __cplusplus // C++11~
         std::for_each(v.begin(), v.end(), std::mem_fn(&A::Func));
 #else
-        std::for_each(v.begin(), v.end(), std::mem_fun_ref(&A::Func));
+        std::for_each(
+            v.begin(), v.end(), 
+            std::mem_fun_ref(&A::Func) // 요소.Func()으로 호출해 주는 어뎁터입니다.
+        );
 #endif
     }
 }

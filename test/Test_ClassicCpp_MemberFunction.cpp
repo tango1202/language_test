@@ -114,8 +114,8 @@ TEST(TestClassicCpp, MemberFunction) {
         EXPECT_TRUE(d.f() == 20); // (△) 비권장. Derived 개체를 이용하면 Derived::f()가 호출됨        
         EXPECT_TRUE(static_cast<Base&>(d).f() == 10); // (△) 비권장. 가려진 Base::f() 함수를 호출
 
-        EXPECT_TRUE(b->v() == 20); // (O) 가상 함수여서 Derived::v() 가 호출됨
-        EXPECT_TRUE(d.v() == 20); // (O) 가상 함수여서 Derived::v() 가 호출됨
+        EXPECT_TRUE(b->v() == 20); // (O)가상 함수여서 Derived::v()가 호출됨
+        EXPECT_TRUE(d.v() == 20); // (O)가상 함수여서 Derived::v()가 호출됨
     }
     // 리턴값 변경
     {

@@ -41,7 +41,7 @@ namespace ForwardingReference_5 {
 }
 namespace ForwardingReference_6 {
     template<typename T>
-    void f_11(T&& param1, T&& param2) {} // 전달 참조가 아닙니다. param1, param2중 어느 하나가 추론된 뒤에는 나머지는 추론된 것으로 부터 구체화 될 수 있기 때문입니다. 
+    void f_11(T&& param1, T&& param2) {} // 전달 참조가 아닙니다. param1, param2중 어느 하나가 추론된 뒤에는 나머지는 추론된 것으로부터 구체화 될 수 있기 때문입니다. 
 }
 namespace ForwardingReference_7 {
     template<typename T, typename U>
@@ -287,7 +287,7 @@ namespace ForwardingReference_19 {
     public:
         template<typename T>
         void SetString_11(T&& str) { // 전달 참조
-            // (△) 비권장. forward() 가 적합한데, move()를 사용했습니다. 무조건 이동 연산 합니다.
+            // (△) 비권장. forward()가 적합한데, move()를 사용했습니다. 무조건 이동 연산 합니다.
             m_String = std::move<T>(str); 
         }
     }; 
@@ -534,9 +534,9 @@ TEST(TestMordern, Forwarding) {
         using namespace ForwardingReference_18_2;      
         A_11 a;
 
-        EXPECT_TRUE(a.Func_11(1) == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type) 이 호출됩니다.
-        EXPECT_TRUE(a.Func_11((short)1) == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type) 이 호출됩니다.
-        EXPECT_TRUE(a.Func_11((char)'a') == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type) 이 호출됩니다. 
+        EXPECT_TRUE(a.Func_11(1) == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type)이 호출됩니다.
+        EXPECT_TRUE(a.Func_11((short)1) == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type)이 호출됩니다.
+        EXPECT_TRUE(a.Func_11((char)'a') == 2); // (O) 정수 계열은 FuncInternal_11(int, true_type)이 호출됩니다. 
         EXPECT_TRUE(a.Func_11("Hello") == 1);           
     }
     {
@@ -602,10 +602,10 @@ TEST(TestMordern, Forwarding) {
     // 리턴문에서 move()와 forward() 사용
     {
         using namespace ForwardingReference_20;
-        A_11 a = f(); // f() 가 리턴한 임시 개체로 a를 생성합니다
+        A_11 a = f(); // f()가 리턴한 임시 개체로 a를 생성합니다
     }
     {
         using namespace ForwardingReference_20;
-        A_11 a = f_11(); // f() 가 리턴한 임시 개체로 a를 생성합니다
+        A_11 a = f_11(); // f()가 리턴한 임시 개체로 a를 생성합니다
     }
 }

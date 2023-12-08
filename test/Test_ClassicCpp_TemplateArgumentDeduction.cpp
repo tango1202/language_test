@@ -90,7 +90,7 @@ TEST(TestClassicCpp, TemplateDeduction) {
 
         f(val, ptr, ref); // f<int, int*, int>(int, int*, int). 참조자가 제거됩니다.
 
-        f<int, int*, int&>(val, ptr, ref); // f<int, int*, int&>(int, int*, int&). 명시적으로 지정하면 참조자로 사용됨
+        f<int, int*, int&>(val, ptr, ref); // f<int, int*, int&>(int, int*, int&). 명시적으로 지정하면 참조자로 사용할 수 있습니다.
     }
     // 배열 인수는 포인터로 추론합니다.
     {
@@ -108,6 +108,10 @@ TEST(TestClassicCpp, TemplateDeduction) {
 
         int arr[3];
         EXPECT_TRUE(sizeof(arr) == 3 * sizeof(int)); // 배열의 전체 용량
+
+        // Argument : int[3] 
+        // T : int(&)[3] 
+        // Parameter : int(&)[3]      
         EXPECT_TRUE(f(arr) == 3); // 배열 요소 갯수
     }
     // 함수는 함수 포인터로 추론합니다.
@@ -167,7 +171,7 @@ TEST(TestClassicCpp, TemplateDeduction) {
         // Parameter : Base<int>*
         f(&d); // f<int>(Base<int>*)
     } 
-    // 다른 인수의 추론으로 부터 추론
+    // 다른 인수의 추론으로부터 추론
     {
         using namespace Deduction_8;
 
@@ -185,11 +189,12 @@ TEST(TestClassicCpp, TemplateDeduction) {
 
         A<10> a;
         // Argument :A<10>에서 10은 int 타입임
-        // Parameter : A<short>이어서 A<10>을 전달받을 수 없음.
+        // Parameter : 템플릿 인자가 A<short>이어서 A<10>을 전달받을 수 없음.
         // f(a); // (X) 컴파일 오류. A<int>와 A<short>는 서로 다른 타입이기에 암시적 변환할 수 없음
 
-        // Argument :A<10> 
-        // Parameter : A<10>
+        // Argument :int 타입 10으로 만들어진 A<10>
+        // T : short 타입의 10
+        // Parameter : short 타입 10으로 만들어진 A<10>
         f<10>(a); // 명시적으로 10을 전달하여 A<10> 타입이 됨. 같은 타입이어서 함수 호출됨 
     }
 }
@@ -259,7 +264,7 @@ namespace Overloading_8 {
     class A {
     public:
         template<typename U>
-        int operator +(U) const {return 1;} // #1. 멤버 버전
+        int operator +(U) const {return 1;} // #1. 멤버 버전도 함수 템플릿 입니다.
     };
     
     template<typename T, typename U>
@@ -278,10 +283,10 @@ namespace Overloading_9 {
 }
 namespace Overloading_10 {
     template<typename T>
-    int f(T a) {return 1;} // #1.
+    int f(T a) {return 1;} // #1
 
     // template<typename T>
-    // int f(const T a) {return 2;} // #2. (X) 컴파일 오류. 재정의됨. 최상위 const는 제거되어 f(T a)와 동일
+    // int f(const T a) {return 2;} // #2. (X) 컴파일 오류. 재정의됨. 최상위 const는 제거되어 #1인 f(T a)와 동일합니다.
 }
 namespace Overloading_11 {
     template<typename T>
@@ -307,8 +312,7 @@ TEST(TestClassicCpp, TemplateOverloading) {
 
         // #1 : f(int)
         // #2 : T == int 이면 f(int)
-        // 일반 버전을 선택함
-        EXPECT_TRUE(f(1) == 1); 
+        EXPECT_TRUE(f(1) == 1); // 일반 버전을 선택합니다.
     }
 
     // T 보다는 T*가 특수화된 버전
@@ -318,8 +322,7 @@ TEST(TestClassicCpp, TemplateOverloading) {
         int* p;
         // #1 : T == int* 이면 f(int*) 
         // #2 : T == int 이면 f(int*)
-        // 특수화된 버전으로 선택함.
-        EXPECT_TRUE(f(p) == 2);
+        EXPECT_TRUE(f(p) == 2); // 특수화된 버전으로 선택합니다.
     }
     // T 보다는 T* 보다는 const T*가 특수화된 버전
     {
@@ -329,18 +332,16 @@ TEST(TestClassicCpp, TemplateOverloading) {
         // #1 : T == const int* 이면 f(const int*) 
         // #2 : T == const int 이면 f(const int*) 
         // #3 : T == int 이면 f(const int*) 
-        // 더 특수화된 버전으로 선택함.    
-        EXPECT_TRUE(f(p) == 3);
+        EXPECT_TRUE(f(p) == 3); // 더 특수화된 버전으로 선택합니다.
     }
     // 특수화된 버전 선택시 기본 인자는 무시하고 판단함
     {
         using namespace Overloading_4;
 
         int* p;
-        // #1 : T == int* 이면 f(int*) 인자 1개 - 인자가 1개라고 무조건 선택되지 않음. 인자 2개인 #2에서 기본값 인자를 뺀 버전과 경합
-        // #2 : T == int 이면 f(int*, int = 1) 인자 2개
-        // 더 특수화된 버전으로 선택함.
-        EXPECT_TRUE(f(p) == 2);
+        // #1 : T == int* 이면 f(int*) 인자 1개 - 인자가 1개라고 무조건 선택되지 않습니다. 인자 2개인 #2에서 기본값 인자를 뺀 버전과 경합합니다.
+        // #2 : T == int 이면 f(int*, int = 1) 인자 2개 -> 기본값이 있는 인자를 빼면 f(int*)
+        EXPECT_TRUE(f(p) == 2); // 더 특수화된 버전으로 선택합니다.
     }    
     // 템플릿 템플릿 인자에서 특수화된 버전 선택
     {
@@ -349,8 +350,7 @@ TEST(TestClassicCpp, TemplateOverloading) {
         A<int> a;
         // #1 : T == A<int> 이면 f(A<int>&) 
         // #2 : T == int 이면 f(A<int>&)
-        // 더 특수화된 버전으로 선택함.
-        EXPECT_TRUE(f(a) == 2);
+        EXPECT_TRUE(f(a) == 2); // 더 특수화된 버전으로 선택합니다.
     }
     // 기본 인자가 템플릿 템플릿 인자인 경우 타입에 따라 특수화된 버전으로 선택함
     {
@@ -358,33 +358,29 @@ TEST(TestClassicCpp, TemplateOverloading) {
 
         // #1 : T == int, U == char 이면 f(int, A<int, char>*) 
         // #2 : T == int 이면 f(int, A<int, int>*)
-        // 인자가 더 잘 맞는 버전으로 선택함.
-        EXPECT_TRUE(f(0, (A<int, char>*)0) == 1); 
+        EXPECT_TRUE(f(0, (A<int, char>*)0) == 1); // 인자가 더 잘 맞는 버전으로 선택합니다. 
 
         // #1 : T == int, U == int 이면 f(int, A<int, int>*) 
         // #2 : T == int 이면 f(int, A<int, int>*) 
-        // 더 특수화된 버전으로 선택함.
-        EXPECT_TRUE(f(0, (A<int, int>*)0) == 2); 
+        EXPECT_TRUE(f(0, (A<int, int>*)0) == 2); // 더 특수화된 버전으로 선택합니다.    
         EXPECT_TRUE(f(0) == 2);  
     }    
     // 멤버 버전과 전역 버전에서의 모호함
     {
         using namespace Overloading_7;
         A<int> a;
-        // #1 : T == A<int> 이면 A<int>&.operator +(int)
+        // #1 : T == A<int> 이면 operator +(int)
         // #2 : T == A<int> 이면 operator +(A<int>&, int) 
-        // 멤버 함수 버전 호출
-        EXPECT_TRUE( a + 10 == 1);
+        EXPECT_TRUE( a + 10 == 1); // 멤버 함수 버전이 호출됩니다.
     }  
     {
         using namespace Overloading_8;
         A<int> a;
         
-        // #1 : T == A<int>, U == int 이면 A<int>&.operator +(int)
-        //      비멤버 버전 변환        operator +(A<int>&, int)             
-        // #2 : T == A<int>, U == int 이면 operator +(A<int>&, int) 
-        // (X) 컴파일 경고. #1 과 #2 가 모호하고, 대충 비멤버 버전 호출함
-        // EXPECT_TRUE( a + 10 == 2);
+        // #1 : T == A<int>, U == int 이면 operator +(int)
+        //      비멤버 버전으로 변환 하면    operator +(const A<int>&, int)             
+        // #2 : T == A<int>, U == int 이면 operator +(const A<int>&, int) 
+        // EXPECT_TRUE( a + 10 == 2); // (X) 컴파일 경고. #1 과 #2 가 모호하고, 대충 비멤버 버전을 호출합니다.
     } 
     {
         using namespace Overloading_9;
@@ -392,18 +388,12 @@ TEST(TestClassicCpp, TemplateOverloading) {
         
         // #1 : T == int, U == int 이면 operator +(A<int>&, int)
         // #2 : T == A<int>, U == int 이면 operator +(A<int>&, int) 
-        // (O) 더 특수화된 버전으로 선택함.
-        EXPECT_TRUE( a + 10 == 1);
+        EXPECT_TRUE( a + 10 == 1); // (O) 더 특수화된 버전으로 선택합니다.
     } 
 
     // 동등한 함수 템플릿 - 최상위 const 제거
     {
         using namespace Overloading_10;
-        // #1 : T == int 이면 f(int) 
-        // #2 : T == int 이면 f(const int)인데, 오버로딩시 최상위 const는 제거되므로 f(int)
-        // (X) 컴파일 오류. 최상위 const는 제거됨. 오버로딩 함수가 중복됨
-        // EXPECT_TRUE(f(a) == 1); 
-        // EXPECT_TRUE(f(b) == 2);
     }  
 
     // 참조자로 인한 모호
@@ -415,9 +405,8 @@ TEST(TestClassicCpp, TemplateOverloading) {
         // #1 : T == int 이면 f(int), 
         //      T == int& 이면 f(int&) 
         // #2 : T == int 이면 f(int&)
-        // (X) 컴파일 오류. 어느것을 호출할지 모호함.
-        // EXPECT_TRUE(f(a) == 1);
-        // EXPECT_TRUE(f(b) == 2);
+        // EXPECT_TRUE(f(a) == 1); // (X) 컴파일 오류. 어느것을 호출할지 모호합니다.
+        // EXPECT_TRUE(f(b) == 2); // (X) 컴파일 오류. 어느것을 호출할지 모호합니다.
     }
 
     // 특수화 판단 모호
@@ -429,13 +418,11 @@ TEST(TestClassicCpp, TemplateOverloading) {
 
         // #1 : T == char 이면 f(char, char*)
         // #2 : T == char 이면 f(char, int*) 
-        // 인자 타입이 일치하는 #2를 선택함.
-        EXPECT_TRUE(f(ch, p) == 2);
+        EXPECT_TRUE(f(ch, p) == 2);  // (O) 인자 타입이 일치하는 #2를 선택합니다.
 
         // #1 : T == int 이면 f(int, int*)
         // #2 : T == int 이면 f(int, int*) 
-        // (X) 컴파일 오류. 어느것을 호출할지 모호함.
-        // EXPECT_TRUE(f(i, p) == 2);
+        // EXPECT_TRUE(f(i, p) == 2); // (X) 컴파일 오류. 어느것을 호출할지 모호합니다.
     }  
 
 }
@@ -483,10 +470,10 @@ TEST(TestClassicCpp, SFINAE) {
     // SFINAE
     {
         using namespace SFINAE_1;
-        EXPECT_TRUE(f<A>(10) == 1);
-        EXPECT_TRUE(f<A>('a') == 2);
+        EXPECT_TRUE(f<A>(10) == 1); // (O) T::Int f(typename T::Int param) 버전을 호출합니다.
+        EXPECT_TRUE(f<A>('a') == 2);  // (O) T::Char f(typename T::Char param) 버전을 호출합니다.
 
-        EXPECT_TRUE(f<B>(10) == 1);
+        EXPECT_TRUE(f<B>(10) == 1);  
         EXPECT_TRUE(f<B>('a') == 1); // char를 전달했는데 int 버전이 호출됩니다.  
     }  
      {

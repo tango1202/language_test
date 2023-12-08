@@ -9,7 +9,7 @@ namespace Auto {
 
 namespace Decltype_1 {
     template<typename T, typename U>
-    void Func_11(T a, U b, decltype(a + b)* result) { // decltype(a + b) 은 int
+    void Func_11(T a, U b, decltype(a + b)* result) { // decltype(a + b)은 int
         *result = a + b;
     }  
 }

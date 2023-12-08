@@ -195,7 +195,7 @@ namespace MetaProgramming_4 {
 
 namespace MetaProgramming_5 {
 
-    // Clone() 을 제공하는 단위 인터페이스
+    // Clone()을 제공하는 단위 인터페이스
     class ICloneable {
     private:
         ICloneable(const ICloneable& other) {} // 인터페이스여서 외부에서 사용 못하게 복사 생성자 막음
@@ -302,9 +302,7 @@ namespace MetaProgramming_5 {
         virtual ~Shape() {}
 
         // Shape::Clone()을 하면 ICloneable*이 아니라 Shape* 리턴되도록 조정합니다.
-        virtual Shape* Clone() const { 
-            return NULL; 
-        }
+        virtual Shape* Clone() const = 0;
     };
 
     class Rectangle : public Shape {

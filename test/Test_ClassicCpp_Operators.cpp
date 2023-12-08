@@ -330,7 +330,7 @@ TEST(TestClassicCpp, Operators) {
                 ++m_Val;
                 return *this; // 자기 자신을 리턴합니다.
             }
-            // 후위형. 인자 int는 전위형과 구분하기 위한 dummy입니다.
+            // 후위형. 인자 int는 전위형과 구분하기 위한 더미(Dummy)입니다.
             const T operator ++(int) { // t++++가 안되도록 const T를 리턴합니다.
                 T result = *this; // 복제합니다.
                 ++m_Val; // this의 값을 증가시킵니다.

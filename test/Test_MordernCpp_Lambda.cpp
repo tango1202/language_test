@@ -17,7 +17,7 @@ namespace Lambda_1 {
     };   
 #if 201402L <= __cplusplus // C++14~  
     template<typename T, typename U> 
-    auto add_14(T a, U b) { // add_14(T a, T b) 가 아닙니다. 
+    auto add_14(T a, U b) { // add_14(T a, T b)가 아닙니다. 
                             // auto이다 보니 a, b가 같은 타입이라는 보장이 없습니다.
         return a + b;
     } 
@@ -249,7 +249,7 @@ TEST(TestMordern, Lambda) {
         [&a]() {a;}(); // (O) 참조로 사용해서 컴파일 오류는 없습니다. 그러나 이동된 것은 아니죠.
 
         auto func_11 { // #1. bind 개체를 저장합니다. func_11() 형태로 호출할 수 있습니다.
-            std::bind( // #2. bind 개체를 생성합니다. lambda_11(우측값 참조로 생성한 개체) 를 호출하는 함수자를 만듭니다. 이시점에 이동 생성자가 호출됩니다. 
+            std::bind( // #2. bind 개체를 생성합니다. lambda_11(우측값 참조로 생성한 개체)를 호출하는 함수자를 만듭니다. 이시점에 이동 생성자가 호출됩니다. 
                 [](const A_11& param) {param;}, // #3. 이동 생성자로부터 생성된 개체(#4에서 생성된 개체)를 참조합니다. 
                 std::move(a) // #4. 우측값 참조. bind 내에서 이동 생성자로부터 생성된 개체가 만들어 집니다.
             )

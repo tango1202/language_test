@@ -30,6 +30,9 @@ namespace Traits_1 {
         typedef int Type;
         typedef int* PointerType;
     };
+
+    // Type과 PointerType을 제공하지 않습니다.
+    class C {};
 }
 
 namespace Traits_2 {
@@ -69,33 +72,33 @@ namespace Traits_2 {
 
 namespace Traits_3 {
 
-    // 올림, 내림 오버로딩을 위한 더미 클래스
-    class CeilTag {};
-    class FloorTag {};
+    // 올림, 내림 오버로딩을 위한 더미(*Dummy*) 클래스
+    class CeilTag {}; // #1
+    class FloorTag {}; // #1
 
     // A와 B는 더하기시 올림을 해야 합니다.
     class A {
     public:
-        typedef CeilTag AddTag; // 올림
+        typedef CeilTag AddTag; // #2. 올림
         double m_Val;
         explicit A(double val) : m_Val(val) {}    
     };
     class B {
     public:
-        typedef CeilTag AddTag; // 올림
+        typedef CeilTag AddTag; // #2. 올림
         double m_Val;    
         explicit B(double val) : m_Val(val) {}
     }; 
     // C와 D는 더하기시 내림을 해야 합니다.
     class C {
     public:
-        typedef FloorTag AddTag; // 내림
+        typedef FloorTag AddTag; // #2. 내림
         double m_Val;  
         explicit C(double val) : m_Val(val) {}  
     }; 
     class D {
     public:
-        typedef FloorTag AddTag; // 내림
+        typedef FloorTag AddTag; // #2. 내림
         double m_Val;  
         explicit D(double val) : m_Val(val) {}   
     };
@@ -103,8 +106,8 @@ namespace Traits_3 {
     // T::AddTag에 따라 올림과 내림을 오버로딩을 통해 분기하여 호출합니다.
     template<typename T> 
     int Add(T val1, T val2) {
-        typename T::AddTag addTag;
-        return AddInternal(val1, val2, addTag);
+        typename T::AddTag addTag; // #3
+        return AddInternal(val1, val2, addTag); // #4
     } 
     // 올림을 합니다.
     template<typename T>
@@ -125,13 +128,13 @@ namespace Traits_4 {
     class C;
     class D;
 
-    // 올림, 내림 오버로딩을 위한 더미 클래스
+    // 올림, 내림 오버로딩을 위한 더미(*Dummy*) 클래스
     class CeilTag {};
     class FloorTag {};
 
     // 일반적으로 모든 타입은 올림을 사용합니다.
     template<typename T>
-    class AddTraits {
+    class AddTraits { // #1
     public:
         typedef CeilTag AddTag; 
     };
@@ -139,12 +142,12 @@ namespace Traits_4 {
     template<> 
     class AddTraits<C> {
     public:
-        typedef FloorTag AddTag;         
+        typedef FloorTag AddTag; // #2        
     };
     template<> 
     class AddTraits<D> {
     public:
-        typedef FloorTag AddTag;         
+        typedef FloorTag AddTag; // #2        
     };
 
     class A {
@@ -171,7 +174,7 @@ namespace Traits_4 {
     // AddTraits<T>::AddTag에 따라 올림과 내림을 오버로딩을 통해 분기하여 호출합니다.
     template<typename T> 
     int Add(T val1, T val2) {
-        typename AddTraits<T>::AddTag addTag;
+        typename AddTraits<T>::AddTag addTag; // #3
         return AddInternal(val1, val2, addTag);
     } 
     // 올림을 합니다.
@@ -192,8 +195,9 @@ TEST(TestClassicCpp, Traits) {
     {
         using namespace Traits_1;
 
-        Runner<A> a;
-        Runner<B> b;
+        Runner<A> a; // (O)
+        Runner<B> b; // (O)
+        // Runner<C> c; // (X) 컴파일 오류. Type과 PointerType가 정의되지 않았습니다.
     }
 
     {

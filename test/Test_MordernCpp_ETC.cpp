@@ -81,8 +81,8 @@ namespace VA_OPT_1 {
 }
 TEST(TestMordern, VA_OPT) {
     using namespace VA_OPT_1;
-    EXPECT_TRUE(MY_FUNC_20(1, 2, 3) == 10 + 1 + 2 + 3); // f(10, 1, 2, 3) 가변 인수가 있다면 , 를 넣습니다.
-    EXPECT_TRUE(MY_FUNC_20() == 10); // f(10) 가변 인수가 없다면 ,를 넣지 않습니다.
+    EXPECT_TRUE(MY_FUNC_20(1, 2, 3) == 10 + 1 + 2 + 3); // f(10, 1, 2, 3)가변 인수가 있다면 , 를 넣습니다.
+    EXPECT_TRUE(MY_FUNC_20() == 10); // f(10)가변 인수가 없다면 ,를 넣지 않습니다.
 }
 #endif 
 
