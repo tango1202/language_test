@@ -326,6 +326,10 @@ TEST(TestMordern, Concept) {
             return val;
         };  
     }
+    // 구조화된 바인딩
+    {
+        // std::integral auto [x_17, y_17] = std::pair{1, 2}; // (X) 컴파일 오류   
+    }
     {
         using namespace Concept_9;
 
