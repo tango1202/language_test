@@ -390,6 +390,57 @@ TEST(TestMordern, UniformInitialization) {
         std::vector<int> v2_11 = {1, 2};
         EXPECT_TRUE(v2_11[0] == 1 && v2_11[1] == 2);
     }
+    
+    {
+        class A_11 {
+        private:
+            int m_Val;
+        public:
+            A_11(int val) : m_Val{val} { // explicit가 없습니다. int가 암시적으로 A_11로 형변환됩니다.
+                std::cout << "A : Value Constructor" << std::endl;    
+            }
+            A_11(const A_11& other) : m_Val(other.m_Val) {
+                std::cout << "A : Copy Constructor" << std::endl;
+            }
+
+            int GetVal() const {return m_Val;}
+        };
+
+        std::vector<A_11> v1{ // Value Constructor 3회, Copy Constructor 3회 호출
+            1, 2, 3 // (O) 축약 표현. 1, 2, 3은 A_11로 암시적으로 형변환 됩니다.
+        }; 
+        std::vector<A_11> v2{ // Value Constructor 3회, Copy Constructor 3회 호출
+            {1}, {2}, {3} // (O) 축약 표현. 암시적 형변환이 되므로 A_11{1}, A_11{2}, A_11{3}의 축약 표현이 가능합니다.
+        }; 
+        std::vector<A_11> v3{ // Value Constructor 3회, Copy Constructor 3회 호출
+            A_11{1}, A_11{2}, A_11{3}
+        }; 
+    }
+    {
+        class A_11 {
+        private:
+            int m_Val;
+        public:
+            explicit A_11(int val) : m_Val{val} { // explicit입니다. 암시적 형변환이 되지 않습니다.
+                std::cout << "A : Value Constructor" << std::endl;    
+            }
+            A_11(const A_11& other) : m_Val(other.m_Val) {
+                std::cout << "A : Copy Constructor" << std::endl;
+            }
+
+            int GetVal() const {return m_Val;}
+        };
+
+        // std::vector<A_11> v1{ 
+        //     1, 2, 3 // (X) 컴파일 오류. int는 A_11로 암시적으로 형변환 되지 않습니다. 
+        // }; 
+        // std::vector<A_11> v2{ 
+        //     {1}, {2}, {3} // (X) 컴파일 오류. 암시적 형변환이 되지 않으므로, 축약 표현은 사용할 수 없습니다.
+        // }; 
+        std::vector<A_11> v3{ // Value Constructor 3회, Copy Constructor 3회 호출
+            A_11{1}, A_11{2}, A_11{3}
+        }; 
+    }
     // initializer_list의 암시적 생성
     {
         class T_11 {

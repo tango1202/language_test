@@ -253,6 +253,15 @@ TEST(TestMordern, Concept) {
     }
 #endif   
 #if 202002L <= __cplusplus // C++20~    
+    // 컨셉 테스트
+    {
+        using namespace Concept_4;
+
+        static_assert(Integral_20<int>); // (O)
+        static_assert(Integral_20<char>); // (O)
+        // static_assert(Integral_20<float>); // (X) 컴파일 오류. 정수 타입이 아닙니다.
+        // static_assert(Integral_20<double>); // (X) 컴파일 오류. 정수 타입이 아닙니다.       
+    }
     {
         // 컨셉 설계
         using namespace Concept_5;

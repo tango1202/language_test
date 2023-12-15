@@ -55,6 +55,29 @@ TEST(TestMordern, Container) {
         v.emplace_back(1, 2); // (O) A개체 생성을 위한 데이터를 전달합니다. 개체 생성 1회
         // v.emplace_back({1, 2}); // (X) 컴파일 오류. A는 {1, 2} 를 전달받는 생성자가 없습니다.
     }
+    {
+        class A {
+            int m_X;
+            int m_Y;
+        public:
+            A(int x, int y) {std::cout << "A::Value Constructor" << std::endl;}
+            A(const A& other) {std::cout << "A::Copy Constructor" << std::endl;}
+            A(A&& other) noexcept {std::cout << "A::Move Constructor" << std::endl;}
+
+            A& operator =(const A& other) = delete;
+            A& operator =(A&& other) noexcept = delete;
+        };
+
+        // 값 생성자 2회 
+        // initializer_list 요소로 만들기 위해 이동 생성자 2회 -> 컴파일러 최적화에 의해 생략됨
+        // 복사 생성자 2회 - vector에서 복제본 관리
+        std::vector<A> v1{A{1, 2}, A{3, 4}}; 
+                                             
+        std::vector<A> v2;
+        v2.reserve(2);
+        v2.emplace_back(1, 2); // 값 생성자 1회
+        v2.emplace_back(3, 4); // 값 생성자 1회
+    }    
 
 }
 
@@ -90,7 +113,7 @@ TEST(TestMordern, HeterogeneousLookup) {
         };
         auto result{
             dataSet.find(
-                Data{"Lee", 10} // 같은 타입만 탐색이 가능하므로 "Lee"를 탐색하고 싶어도 Data 개체를 동일하게 만들어 탐색해야 합니다.
+                Data{"Lee", 10} // (△) 비권장. 같은 타입만 탐색이 가능하므로 "Lee"를 탐색하고 싶어도 Data 개체를 동일하게 만들어 탐색해야 합니다.
             )
         }; 
 

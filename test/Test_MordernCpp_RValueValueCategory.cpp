@@ -278,7 +278,7 @@ TEST(TestMordern, RValue) {
         EXPECT_TRUE(a.GetSize() == 30);
         EXPECT_TRUE(c.GetSize() == 0); // c는 이동되어 초기화 되었고, 더이상 사용할 수 없음
 
-        a = Big_11(40); // Big(40) 이름이 없는 rvalue를 생성. 이동 대입 연산자 호출
+        a = Big_11(40); //  Big_11(40) 이름이 없는 임시 개체인 rvalue를 생성. 이동 대입 연산자 호출
         EXPECT_TRUE(a.GetSize() == 40);
 
         Big_11 d(50);
@@ -505,6 +505,75 @@ TEST(TestMordern, RValue) {
         b = T_11(); // T()는 임시 개체인 우측값입니다. 이동 대입 합니다.
     }
 
+    // 이동 연산의 명시적 delete
+    {
+        class A_11 {
+        private:
+            int m_Val;
+        public:
+            A_11(int val) : m_Val{val} {
+                std::cout << "A_11 : Value Constructor" << std::endl;    
+            }
+            // 복사 생성자를 정의했습니다. 암시적 이동 생성자는 정의되지 않습니다.
+            A_11(const A_11& other) : m_Val(other.m_Val) {
+            std::cout << "A_11 : Copy Constructor" << std::endl;
+            }
+            A_11& operator =(const A_11&) = delete;
+            A_11& operator =(A_11&&) = delete;
+        };   
+
+        // A_11(int val)로 임시 개체 생성후, A_11(const A_11& other)로 복사 생성합니다.
+        // 하지만 컴파일러 최적회에 의해 A_11(int val)만 호출됩니다.
+        A_11 a{A_11{0}}; 
+    }
+    {
+        class A_11 {
+        private:
+            int m_Val;
+        public:
+            A_11(int val) : m_Val{val} {
+                std::cout << "A_11 : Value Constructor" << std::endl;    
+            }
+            // 복사 생성자를 정의했습니다.
+            A_11(const A_11& other) : m_Val(other.m_Val) {
+                std::cout << "A_11 : Copy Constructor" << std::endl;
+            }
+            // 어짜피 사용하지 않으니 명시적으로 delete 합니다.
+            A_11(A_11&&) noexcept = delete;
+            
+            A_11& operator =(const A_11&) = delete;
+            A_11& operator =(A_11&&) noexcept = delete;
+        };   
+
+        // A_11(int val)로 임시 개체 생성후, A_11(A_11&&)로 이동 생성하는 구문입니다.
+        // 하지만 A_11(A_11&&)이 delete되어 컴파일 오류가 발생합니다.
+        // A_11 a{A_11{0}}; // (X) 컴파일 오류. 
+
+        A_11 lvalue{0};
+        A_11 a{lvalue}; // 좌측값은 복사 생성자를 호출하므로 잘 됩니다.
+    }    
+    {
+#if 201703L <= __cplusplus // C++17~
+        class A_17 {
+        private:
+            int m_Val;
+        public:
+            A_17(int val) : m_Val{val} {
+                std::cout << "A_17 : Value Constructor" << std::endl;    
+            }
+            // 복사 생성자와 이동 생성자를 사용하지 않습니다.
+            A_17(const A_17&) = delete;
+            A_17(A_17&&) noexcept = delete;
+            
+            A_17& operator =(const A_17&) = delete;
+            A_17& operator =(A_17&&) noexcept = delete;
+        };   
+
+        // 컴파일러 최적화에 의해 복사 생성자나 이동 생성자를 호출하지 않았었는데,
+        // C++17 부터는 문법적으로 호출하지 않습니다.
+        A_17 a{A_17{0}}; // (O)
+#endif        
+    } 
     // move
     {
         class A {};
