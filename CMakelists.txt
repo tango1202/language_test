@@ -146,6 +146,7 @@ set(TestFiles
    test/Test_MordernCpp_Coroutine.cpp
    test/Test_MordernCpp_Ranges.cpp
    test/Test_MordernCpp_Span.cpp
+   test/Test_MordernCpp_Utility.cpp
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
    test/Test_CppPattern_SmartPointer.cpp

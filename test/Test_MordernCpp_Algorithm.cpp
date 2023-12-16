@@ -99,5 +99,13 @@ TEST(TestMordern, Algorithm) {
         static_assert(sum == 1 + 2 + 3); // 컴파일 타임 상수로 구합니다.
     }
 #endif
-
+#if 202002L <= __cplusplus // C++20~
+    {
+        static_assert(std::midpoint(1.0, 2.0) == 1.5); // 실수
+        
+        static_assert(std::midpoint(1, 3) == 2); 
+        static_assert(std::midpoint(1, 2) == 1); // 나누어 떨어지지 않으면 내림을 합니다.
+        static_assert(std::midpoint(1, 4) == 2); // 나누어 떨어지지 않으면 내림을 합니다.  
+    }
+#endif
 }
