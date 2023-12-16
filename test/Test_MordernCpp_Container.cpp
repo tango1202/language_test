@@ -78,7 +78,49 @@ TEST(TestMordern, Container) {
         v2.emplace_back(1, 2); // 값 생성자 1회
         v2.emplace_back(3, 4); // 값 생성자 1회
     }    
-
+#if 202002L <= __cplusplus // C++20~
+    // constexpr 컨테이너
+    {
+        constexpr int maxVal { 
+            [] {
+                std::vector<int> v{3, 2, 1};
+                std::sort(v.begin(), v.end()); // 컴파일 타임에 정렬됩니다.
+                
+                return v.back(); // 가장 뒤의 값을 리턴합니다.
+            }()
+        };
+        static_assert(maxVal == 3); // 컴파일 타임 상수입니다.
+    }
+#endif
+    // erase(), erase_if()
+    {
+        std::vector<int> v{1, 1, 2, 1, 1, 3};
+        std::vector<int>::iterator result{std::remove(v.begin(), v.end(), 1)}; // 삭제하지 않을 요소를 컨테이너의 앞으로 옮기고 erase할 위치를 리턴합니다.
+        v.erase(result, v.end()); // 요소를 실제로 삭제합니다.
+        EXPECT_TRUE(v.size() == 2 && v[0] == 2 && v[1] == 3);        
+    }
+#if 202002L <= __cplusplus // C++20~
+    {
+        std::vector<int> v{1, 1, 2, 1, 1, 3};
+        std::erase(v, 1); // 값이 1인 요소를 삭제합니다.
+        EXPECT_TRUE(v.size() == 2 && v[0] == 2 && v[1] == 3);
+    }
+#endif
+    // contains()
+    {
+        std::set s{1, 2, 3};
+        if (s.find(2) != s.end()) {
+            // s에 2가 있을때의 코드
+        }    
+    }
+#if 202002L <= __cplusplus // C++20~    
+    {
+        std::set s{1, 2, 3};
+        if (s.contains(2)) {
+            // s에 2가 있을때의 코드   
+        }        
+    }
+#endif
 }
 
 namespace HeterogeneousLookup_1 {

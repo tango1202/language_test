@@ -91,5 +91,13 @@ TEST(TestMordern, Algorithm) {
         std::cout << "SumPararell Duration : " << duration3.count() << std::endl; 
 #endif        
     }
-  
+#if 202002L <= __cplusplus // C++20~
+    // constexpr 알고리즘
+    {
+        constexpr int arr[]{1, 2, 3};
+        constexpr int sum{std::accumulate(arr, arr + 3, 0)}; // 시퀀스의 값을 누적합니다.
+        static_assert(sum == 1 + 2 + 3); // 컴파일 타임 상수로 구합니다.
+    }
+#endif
+
 }

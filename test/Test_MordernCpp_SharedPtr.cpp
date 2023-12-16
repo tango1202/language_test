@@ -405,10 +405,17 @@ TEST(TestMordern, SharedPtr) {
         }
     }
 #if 201703L <= __cplusplus // C++17~    
-    // C++17 배열 지원
+    // make_shared()의 배열 지원
     {
-        std::unique_ptr<int[]> ptr{new int[3]{0, 1, 2}}; // 배열 개체. delete[] 를 호출하여 2개가 소멸됩니다.
+        std::shared_ptr<int[]> ptr{new int[3]{0, 1, 2}}; // 배열 개체. delete[] 를 호출하여 3개가 소멸됩니다.
         EXPECT_TRUE(ptr[0] == 0 && ptr[1] == 1 && ptr[2] == 2);
     }
-#endif    
+#endif  
+#if 202002L <= __cplusplus // C++20~
+    // make_shared()의 배열 지원
+    {
+        std::shared_ptr<int[]> ptr{std::make_shared<int[]>(3)}; // 기본값으로 초기화된 3개의 int 요소를 가진 배열입니다.
+        EXPECT_TRUE(ptr[0] == 0 && ptr[1] == 0 && ptr[2] == 0);
+    }
+#endif  
 }

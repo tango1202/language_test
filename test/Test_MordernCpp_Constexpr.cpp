@@ -195,26 +195,36 @@ namespace Constexpr_5 {
 }
 
 TEST(TestMordern, Constexpr) {
+    // 컴파일 타임 상수
+    {
+        const int size{20}; // 상수 입니다.
+
+        // 열거형 상수
+        enum class MyEnum_11 {Val = size}; // (O) size는 컴파일 타임 상수 입니다.
+
+        // 비타입 템플릿 인자
+        T<size> t; // (O) size는 컴파일 타임 상수 입니다.
+
+        // static_assert
+        static_assert(size == 20); // (O) size는 컴파일 타임 상수 입니다.
+    }
     // constexpr
     {
         const int size{20}; // 상수 입니다.
 
-        enum class MyEnum_11 {Val = size}; // (O) size는 컴파일 타임 상수 입니다.
-        T<size> t; // (O) size는 컴파일 타임 상수 입니다.
+        static_assert(size == 20); // (O) size는 컴파일 타임 상수 입니다.
     }
 
     {
         int a{20};
         const int size{a}; // 변수로부터 const int를 초기화 해서 런타임 상수 입니다.
 
-        // enum class MyEnum_11 {Val = size}; // (X) 컴파일 오류. size는 런타임 상수 입니다.
-        // T<size> t; // (X) 컴파일 오류. size는 런타임 상수 입니다.
+        // static_assert(size == 20); // (X) 컴파일 오류. size는 런타임 상수 입니다.
     }
     {
         constexpr int size_11{20}; // 컴파일 타임 상수 입니다.
 
-        enum class MyEnum_11 {Val = size_11}; // (O)
-        T<size_11> t; // (O) 
+        static_assert(size_11 == 20); // (O)  
     }    
     {
         int a{20};
@@ -337,15 +347,14 @@ TEST(TestMordern, Constexpr) {
 
         const Base* ptr = &a_20;
         EXPECT_TRUE(ptr->Func() == 1); // 부모 개체의 포인터로 런타임에 가상 함수를 호출할 수 있습니다.
-        // enum class MyEnum_11 {Val = ptr->Func()}; // (X) 컴파일 오류. 컴파일 타임 상수가 아닙니다.
+        // static_assert(ptr->Func()); // (X) 컴파일 오류. 컴파일 타임 상수가 아닙니다.
     }
 #endif
 
     {
         using namespace Constexpr_4;
 
-        enum class MyEnum_11 {Val = Func_20()}; 
-  
+        static_assert(Func_20()); 
     }
 
 }
