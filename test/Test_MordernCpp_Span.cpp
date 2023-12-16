@@ -83,7 +83,6 @@ TEST(TestMordern, Span) {
         std::string str{"abc"};
         std::span<char> e{str};
         EXPECT_TRUE(e[0] == 'a' && e[1] == 'b' && e[2] == 'c'); 
-
     }
 #endif
 }
