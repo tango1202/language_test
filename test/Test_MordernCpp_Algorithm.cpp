@@ -5,6 +5,7 @@
 #endif
 #include <thread>
 #include <algorithm>
+#include <cmath>
 #include <numeric>
 
 namespace {
@@ -106,6 +107,14 @@ TEST(TestMordern, Algorithm) {
         static_assert(std::midpoint(1, 3) == 2); 
         static_assert(std::midpoint(1, 2) == 1); // 나누어 떨어지지 않으면 내림을 합니다.
         static_assert(std::midpoint(1, 4) == 2); // 나누어 떨어지지 않으면 내림을 합니다.  
+    }
+    {
+        // (a + t(b - a))
+        static_assert(std::lerp(1, 3, 0.5) == 2); // (1 + 0.5(3 - 1)) 
+        static_assert(std::lerp(1, 3, 1) == 3); 
+        static_assert(std::lerp(1, 3, 2) == 5);
+        static_assert(std::lerp(1, 3, 3) == 7);
+        static_assert(std::lerp(1, 3, 4) == 9);
     }
 #endif
 }

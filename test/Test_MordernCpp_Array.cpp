@@ -72,7 +72,7 @@ TEST(TestMordern, Array) {
     }
 
     {
-        // !! 테스트 시간이 오래걸려 주석
+        //!! 테스트 시간이 오래걸려 주석
         // 생성/소멸 테스트
         // std::cout << "CStyleArray : " << Measure(CStyleArrayConstruct).count() << std::endl;
         // std::cout << "STLArray : " << Measure(STLArrayConstruct).count() << std::endl;

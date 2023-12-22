@@ -192,7 +192,7 @@ TEST(TestCppPattern, NewHandler) {
         };
 
         // 최초 사용시 메모리 영역을 예약합니다.
-        // !! 테스트 속도가 느려 임시로 막습니다. 그리고 Windows11에서 메모리 할당 실패로 테스트가 종종 중단됩니다.
+        //!! 테스트 속도가 느려 임시로 막습니다. 그리고 Windows11에서 메모리 할당 실패로 테스트가 종종 중단됩니다.
         // NewHandler::GetInstanceRef().ResetReserved(sizeof(T) * 2);
         // {
         //     try {

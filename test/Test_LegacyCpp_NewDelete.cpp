@@ -426,7 +426,7 @@ TEST(TestLegacyCpp, NewHandler) {
 
         std::new_handler oldHandler = std::set_new_handler(&T::MyExceptionHandler); // #3. 핸들러를 설치합니다.
 
-        // !! 테스트 속도가 느려 임시로 막습니다. 
+        //!! 테스트 속도가 느려 임시로 막습니다. 
         // T* arr[100] = {}; // 모두 NULL(0)로 초기화
         // for (int i = 0; i < 100; ++i) { // 대략 예외를 발생시킬때까지 반복합니다. 5 ~ 6개정도 할당하면 발생합니다.
         //     try {

@@ -47,7 +47,7 @@ TEST(TestMordern, UniformInitialization) {
         T obj1; // 기본 생성자로 T 개체 생성
         // T obj2(T()); // (△) 비권장. T 타입의 기본 생성자로 생성한 것을 T obj2에 복사 생성하고 싶지만, T 타입을 리턴하고, T(*)()함수 포인터를 인자로 전달받는 함수 obj2를 선언합니다.
         T obj3 = T(); // T obj(T());와 유사. T()로 기본 생성된 것을 T obj3에 복사 생성. 단 컴파일러 최적화로 1회만 생성될 수 있음
-        T obj4(10, 'b'); // m_A == 10, m_B == `b`인 T 개체 생성
+        T obj4(10, 'b'); // m_A == 10, m_B == 'b'인 T 개체 생성
 
         T arr[] = {T(), T(10, 'b')}; // T 요소 2개인 배열 생성
 
@@ -55,7 +55,7 @@ TEST(TestMordern, UniformInitialization) {
             int m_A;
             char m_B;
         };
-        U objs = {10, 'b'}; // m_A == 10, m_B == `b`인 U 개체 생성
+        U objs = {10, 'b'}; // m_A == 10, m_B == 'b'인 U 개체 생성
     }
     {
         class T {
@@ -69,7 +69,7 @@ TEST(TestMordern, UniformInitialization) {
         T obj1_11{}; // 기본 생성자로 T 개체 생성
         T obj2_11{T{}}; // 기본 생성자인 T()로 생성한 개체를 obj2_11의 복사 생성자로 복사 생성
         T obj3_11 = T{}; // T obj2_11{T{}}와 유사. T{}로 기본 생성된 것을 T obj2_11 복사 생성. 단 컴파일러 최적화로 1회만 생성될 수 있음
-        T obj4_11{10, 'b'}; // T(int a, char b) 생성자 호출. m_A == 10, m_B == `b`인 T 개체 생성
+        T obj4_11{10, 'b'}; // T(int a, char b) 생성자 호출. m_A == 10, m_B == 'b'인 T 개체 생성
 
         T arr_11[]{T{}, T{10, 'b'}}; // T 요소 2개인 배열 생성
 
@@ -77,7 +77,7 @@ TEST(TestMordern, UniformInitialization) {
             int m_A;
             char m_B;
         };
-        U objs_11{10, 'b'}; // m_A == 10, m_B == `b`인 U 개체 생성
+        U objs_11{10, 'b'}; // m_A == 10, m_B == 'b'인 U 개체 생성
     }
     // 중괄호 직접 초기화
     {
@@ -338,8 +338,8 @@ TEST(TestMordern, UniformInitialization) {
         };
 
         A arr_11[]{
-            {1, 2}, // A{1, 2} 와 동일
-            {2, 3} // A{2, 3} 과 동일
+            {1, 2}, // A{1, 2} 처럼 동작합니다.
+            {2, 3} // A{2, 3} 처럼 동작합니다.
         };
     }
     {
@@ -356,7 +356,7 @@ TEST(TestMordern, UniformInitialization) {
            B(int val, A a) : m_Val{val}, m_A{a} {}
         };
 
-        B b_11{1, {2, 3}}; // B b_11{1, A{2, 3}};와 동일
+        B b_11{1, {2, 3}}; // B b_11{1, A{2, 3}}; 처럼 동작합니다.
 
     }
     {
@@ -371,7 +371,7 @@ TEST(TestMordern, UniformInitialization) {
             A m_A;
         };
 
-        B b_11{1, {2, 3}}; // B b_11 = B{1, A{2, 3}};와 동일
+        B b_11{1, {2, 3}}; // B b_11 = B{1, A{2, 3}}; 처럼 동작합니다.
     }
 
     // initializer_list

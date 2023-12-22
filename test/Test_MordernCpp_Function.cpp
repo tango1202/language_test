@@ -234,5 +234,21 @@ TEST(TestMordern, Function) {
         EXPECT_TRUE(std::invoke(Sum, 1, 2) == 1 + 2); // 일반 함수를 호출합니다.
     }
 #endif
+#if 202002L <= __cplusplus // C++20~
+    // bind_front()
+    {
+        using namespace Function_1;
+
+        auto func1{
+            std::bind(Sum, 1, std::placeholders::_1, std::placeholders::_2) // placeholders를 지정해야 합니다.
+        };
+        EXPECT_TRUE(func1(2, 3) == 1 + 2 + 3);
+
+        auto func2{
+            std::bind_front(Sum, 1) // 앞쪽 인자부터 순서대로 적용하기 때문에 placeholders를 지정할 필요가 없습니다.
+        };
+        EXPECT_TRUE(func2(2, 3) == 1 + 2 + 3);
+    }
+#endif
 
 }

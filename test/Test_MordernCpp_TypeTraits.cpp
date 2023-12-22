@@ -17,6 +17,28 @@ namespace Enable_If_2 {
         return a + b;
     }
 }
+namespace Constant_1 {
+#if 202002L <= __cplusplus // C++20~      
+    constexpr int Factorial(int val) {
+        
+        int result{1}; // 초기화된 지역 변수 정의
+
+        if (val < 1) {
+            return 1; // 2개 이상의 리턴문
+        }
+
+        for (int i{val}; 0 < i; --i) { // 제어문
+            result *= i;
+        }
+        bool isConstant = std::is_constant_evaluated();
+
+        if (!std::is_constant_evaluated()) {
+            std::cout << "Factorial Result : " << result << std::endl; // 컴파일 타임 함수가 아니라면, 메시지를 출력합니다.
+        }
+        return result;
+    } 
+#endif    
+}
 
 TEST(TestMordern, TypeTraits) {
     {
@@ -24,11 +46,19 @@ TEST(TestMordern, TypeTraits) {
         EXPECT_TRUE(Add(10, 20) == 30); // 정수 합
         EXPECT_TRUE(Add(std::string("Hello"), std::string("World")) == std::string("HelloWorld"));         
     }
-     {
+    {
         using namespace Enable_If_2;
         EXPECT_TRUE(Add(10, 20) == 30); // 정수 합
         // EXPECT_TRUE(Add(std::string("Hello"), std::string("World")) == std::string("HelloWorld")); // (X) 컴파일 오류. 정수 타입이 아니어서 enable_if<>::type이 정의되지 않고, SFINIE에 의해 오버로딩된 함수 후보 목록에서 제외됩니다. 따라서 함수가 없습니다. 
-    }   
+    }  
+#if 202002L <= __cplusplus // C++20~
+    {
+        using namespace Constant_1;
+        static_assert(Factorial(5) == 1 * 2 * 3 * 4 * 5); // 컴파일 타임 함수입니다.
 
-
+        int val{5};
+        int result{Factorial(val)}; // 런타임 함수입니다. 메시지를 출력합니다.
+        EXPECT_TRUE(result == 1 * 2 * 3 * 4 * 5);
+    } 
+#endif
 }

@@ -232,9 +232,8 @@ TEST(TestMordern, Constexpr) {
     }
     // constexpr 함수
     {
-        // 컴파일 타임에 계산된 120이 Val에 대입됩니다.
-        enum class MyEnum_11 {Val = Factorial_11(5)};
-        EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 1 * 2 * 3 * 4 * 5);       
+        // 컴파일 타임에 계산된 120입니다.
+        static_assert(Factorial_11(5) == 1 * 2 * 3 * 4 * 5);  
 
         // 변수를 전달하면, 일반 함수처럼 동작합니다.
         int val{5};
@@ -289,9 +288,8 @@ TEST(TestMordern, Constexpr) {
 #if 201402L <= __cplusplus // C++14~        
     // (C++14~) constexpr 함수 제약 완화
     {
-        // 컴파일 타임에 계산된 120이 Val에 대입됩니다.
-        enum class MyEnum_11 {Val = Factorial_14(5)};
-        EXPECT_TRUE(static_cast<int>(MyEnum_11::Val) == 1 * 2 * 3 * 4 * 5);       
+        // 컴파일 타임에 계산된 120입니다.
+        static_assert(Factorial_14(5) == 1 * 2 * 3 * 4 * 5);     
     }
 #endif    
     // C++17 if constexpr
