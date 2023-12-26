@@ -96,5 +96,15 @@ TEST(TestMordern, Memory) {
 
         delete std::launder(ptr);
     }
+#endif  
+#if 202002L <= __cplusplus // C++20~
+    {
+        int* rawPtr{new int{0}};
+        std::shared_ptr<int> sp{rawPtr};
+
+        EXPECT_TRUE(rawPtr == std::to_address(rawPtr)); // 일반 포인터나 스마트 포인터 구분없이 실제 관리되는 메모리 주소를 접근하는 일관된 방법을 제공합니다.
+        EXPECT_TRUE(rawPtr == std::to_address(sp));
+        EXPECT_TRUE(rawPtr == sp.get()); 
+    }  
 #endif    
 }

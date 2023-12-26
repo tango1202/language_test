@@ -138,3 +138,147 @@ TEST(TestMordern, Future) {
     }        
 
 }
+
+#if 202002L <= __cplusplus // C++20~
+namespace AtomicFlag_1 {
+
+    std::atomic_flag g_IsCompleted{}; // 기본 생성자는 false로 세팅됩니다.
+
+    void Async(int& data) {
+        data = 1; // 데이터를 설정합니다.
+
+        g_IsCompleted.test_and_set(); // true로 설정합니다.
+        g_IsCompleted.notify_all(); // 값이 수정되었음을 통지합니다.
+    }
+
+    int Sync() {
+
+        int data{0};
+        std::thread worker{&Async, std::ref(data)};
+
+        g_IsCompleted.wait(false); // 값이 false 이면 대기합니다.
+        worker.join(); 
+
+        return data; 
+    }     
+}
+TEST(TestMordern, AtomicFlag) {
+        // atomic_flag를 이용한 쓰레드 동기화
+    {
+        using namespace AtomicFlag_1;
+
+        EXPECT_TRUE(Sync() == 1);
+
+    }
+}
+#endif
+#if 202002L <= __cplusplus // C++20~
+namespace Semaphore_1 {
+    std::binary_semaphore g_IsCompleted{0}; // 0입니다. acquire()에서 대기합니다.
+
+    void Async(int& data) {
+        data = 1; // 데이터를 설정합니다.
+
+        g_IsCompleted.release(); // 1로 증가시킵니다.
+    }
+
+    int Sync() {
+
+        int data{0};
+        std::thread worker{&Async, std::ref(data)};
+
+        g_IsCompleted.acquire(); // 카운트가 0보다 커질때까지 대기합니다.
+        worker.join(); 
+
+        return data; 
+    }     
+}
+TEST(TestMordern, Semaphore) {
+
+    using namespace Semaphore_1;
+
+    EXPECT_TRUE(Sync() == 1);
+
+}
+#endif
+
+#if 202002L <= __cplusplus // C++20~
+#include <latch>
+#include <format>
+
+namespace Latch_1 {
+    std::latch g_IsAsyncComplated{5}; // 최대 5개가 동시에 진행됩니다.
+    std::mutex messageMutex;   
+
+    // std::cout 시 쓰레드 경쟁에 출력이 뒤섞이지 않도록 뮤텍스를 사용합니다.
+    void SyncMessage(int i, const char* str) {
+        std::lock_guard<std::mutex> lock(messageMutex); // 유효 범위를 벗어나면 unlock을 호출합니다.
+
+        std::cout << std::format("Work {} : {}", i, str) << std::endl;
+    }
+    void Async(int i) {
+        SyncMessage(i, "First");
+
+        g_IsAsyncComplated.arrive_and_wait(); // #1. 숫자를 감소시키고 0이 될때까지 대기합니다.
+
+        SyncMessage(i, "Last"); // #2
+    }
+}
+
+TEST(TestMordern, Latch) {
+    using namespace Latch_1;
+
+    std::vector<std::thread> v;
+
+    for (int i{0}; i < 5; ++i) {
+        v.emplace_back(&Async, i);
+    }
+
+    for (auto& work : v) {
+        work.join();
+    }
+}
+
+#include <barrier>
+
+namespace Barrier_1 {
+    std::barrier g_IsAsyncComplated{5}; // 최대 5개가 동시에 진행됩니다.
+    std::mutex messageMutex;   
+
+    // std::cout 시 쓰레드 경쟁에 출력이 뒤섞이지 않도록 뮤텍스를 사용합니다.
+    void SyncMessage(int i, const char* str) {
+        std::lock_guard<std::mutex> lock(messageMutex); // 유효 범위를 벗어나면 unlock을 호출합니다.
+
+        std::cout << std::format("Work {} : {}", i, str) << std::endl;
+    }
+    void Async(int i) {
+        SyncMessage(i, "First");
+        g_IsAsyncComplated.arrive_and_wait(); // #1. 숫자를 감소시키고 현 단계가 끝날때까지 대기합니다.
+
+        SyncMessage(i, "Second");
+        g_IsAsyncComplated.arrive_and_wait(); // #2. 숫자를 감소시키고 현 단계가 끝날때까지 대기합니다.
+ 
+        SyncMessage(i, "Third");
+        g_IsAsyncComplated.arrive_and_wait(); // #3. 숫자를 감소시키고 현 단계가 끝날때까지 대기합니다.
+ 
+        SyncMessage(i, "Last"); // #4
+    }
+  
+}
+
+TEST(TestMordern, Barrier) {
+    using namespace Barrier_1;
+
+    std::vector<std::thread> v;
+
+    for (int i{0}; i < 5; ++i) {
+        v.emplace_back(&Async, i);
+    }
+
+    for (auto& work : v) {
+        work.join();
+    }
+}
+#endif
+
+

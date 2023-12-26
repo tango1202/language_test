@@ -5,13 +5,15 @@
 
 namespace {
     void Message1() {
-        for(int i{0};i < 100; ++i) {
-            std::cout << "Message1 : " << i << std::endl;
+        for(int i{0}; i < 100; ++i) {
+            //!! 메시지 표시가 많아 임시 주석
+            //!! std::cout << "Message1 : " << i << std::endl;
         }        
     }
      void Message2() {
-        for(int i{0};i < 100; ++i) {
-            std::cout << "Message2 : " << i << std::endl;
+        for(int i{0}; i < 100; ++i) {
+            //!! 메시지 표시가 많아 임시 주석
+            //!! std::cout << "Message2 : " << i << std::endl;
         }        
     }   
     void Sum(std::vector<int>::iterator itr, std::vector<int>::iterator endItr, int& result) {
@@ -43,8 +45,8 @@ namespace {
             std::ref(result2) // 인수의 참조성 유지
         }; 
 
-        worker1.join(); // worker1이 종료될때까지 기다립니다.
-        worker2.join(); // worker2가 종료될때까지 기다립니다.
+        worker1.join(); // worker1이 종료되고 합류할때까지 기다립니다.
+        worker2.join(); // worker2가 종료되고 합류할때까지 기다립니다.
 
         // worker1, worker2 결과를 더합니다.
         result = result1 + result2;
@@ -115,8 +117,8 @@ TEST(TestMordern, Thread) {
         std::thread worker1{Message1};
         std::thread worker2{Message2};
 
-        worker1.join(); // worker1이 종료될때까지 기다립니다.
-        worker2.join(); // worker2가 종료될때까지 기다립니다.
+        worker1.join(); // worker1이 종료되고 합류할때까지 기다립니다.
+        worker2.join(); // worker2가 종료되고 합류할때까지 기다립니다.
     }
 
     {
@@ -386,6 +388,68 @@ TEST(TestMordern, Thread) {
         worker2.join(); 
     }
 #endif
-
-
 }
+
+#if 202002L <= __cplusplus // C++20~
+
+namespace JThread {
+    void Message1() {
+        for(int i{0}; i < 100; ++i) {
+            std::cout << "Message1 : " << i << std::endl;
+        }        
+    }
+    void Message2() {
+        for(int i{0}; i < 100; ++i) {
+            std::cout << "Message2 : " << i << std::endl;
+        }        
+    } 
+}
+TEST(TestMordern, JThread) {
+
+
+    std::jthread worker1{Message1};
+    std::jthread worker2{Message2};
+
+    // worker1.join(); // jthread는 소멸자에서 join()을 하므로 join()을 생략해도 됩니다.
+    // worker2.join(); // jthread는 소멸자에서 join()을 하므로 join()을 생략해도 됩니다.
+}
+#endif
+
+#if 202002L <= __cplusplus // C++20~
+
+namespace Stop_1 {
+    void Message(std::stop_source stopSource) { // #1
+
+        std::stop_callback stopCallback{ // #5
+            stopSource.get_token(),
+            [] {
+                std::cout << "Call : request_stop()" << std::endl;    
+            }
+        };
+
+        for(int i{0}; i < 100; ++i) {
+            std::this_thread::sleep_for(std::chrono::milliseconds{50}); // 50밀리초 만큼 쉽니다.
+            std::cout << "Message : " << i << std::endl;
+
+            if (stopSource.stop_requested()) { // #4. 쓰레드 중지 요청이 있는지 확인합니다.
+                break; // 중지합니다.
+            }
+        }         
+    }
+}
+
+TEST(TestMordern, Stop) {
+    //  stop_token, stop_source, stop_callback
+    {
+        using namespace Stop_1;
+
+        std::stop_source stopSource;
+        std::jthread worker{Message, stopSource}; // #1
+
+        std::this_thread::sleep_for(std::chrono::milliseconds{500}); // #2. 500밀리초 만큼 쉽니다. 대략 메시지를 9 ~ 10개 출력할때까지 기다립니다.
+         
+        stopSource.request_stop(); // #3. 쓰레드 중지를 요청합니다.
+    }
+}
+#endif
+

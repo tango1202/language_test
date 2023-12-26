@@ -74,7 +74,7 @@ TEST(TestMordern, IfForInit) {
 #if 201703L <= __cplusplus // C++17~    
     {
         using namespace IfForInit_2;
-        // result_17은 if 문 이 끝나면 소멸됩니다.
+        // result_17은 if 문이 끝나면 소멸됩니다.
         if (std::shared_ptr<int> result_17{Func()}; result_17 != nullptr) {
             // Todo
         }

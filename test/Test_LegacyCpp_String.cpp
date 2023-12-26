@@ -47,7 +47,12 @@ TEST(TestLegacyCpp, String) {
         EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 0) == 0xEA);
         EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 1) == 0xB0);
         EXPECT_TRUE(*reinterpret_cast<const unsigned char*>(str + 2) == 0x80);
+
     }
+    {
+        EXPECT_TRUE("abc가나다" == "\x61\x62\x63\xEA\xB0\x80\xEB\x82\x98\xEB\x8B\xA4"); // UTF-8로 저장하면, UTF-8 인코딩 데이터와 동일합니다.
+        EXPECT_TRUE("abc가나다" == "\u0061\u0062\u0063\uAC00\uB098\uB2E4"); // 유니코드로 작성해도 동일합니다.     
+    }    
     {
         // euc-kr
         // const char* str = "가"; // 완성형 가[0xB0 0xA1] 가 저장된 곳을 가리키는 포인터 입니다.
@@ -99,7 +104,7 @@ TEST(TestLegacyCpp, String) {
         EXPECT_TRUE(mblen(str + 9, MB_CUR_MAX) == 3); // 다 문자는 3byte 크기임
 
         wchar_t wstr[7];
-        std::mbstowcs(wstr, str, 7); // UTF-8로 저장되어 있는 데이터를 디코딩하여 문자 1개씩 유니코드로 변경하여 저장합니다.
+        std::mbstowcs(wstr, str, 7); // UTF-8로 저장되어 있는 멀티 바이트 문자열을 디코딩하여 문자 1개씩 유니코드로 변경하여 와이드 문자열로 저장합니다.
 
         EXPECT_TRUE(wstr[0] == 0x0061); // 0x0061. 아스키 코드 a
         EXPECT_TRUE(wstr[1] == 0x0062); // 0x0062. 아스키 코드 b

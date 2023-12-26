@@ -61,4 +61,15 @@ TEST(TestMordern, TypeTraits) {
         EXPECT_TRUE(result == 1 * 2 * 3 * 4 * 5);
     } 
 #endif
+#if 202002L <= __cplusplus // C++20~
+    {
+        static_assert(std::is_bounded_array<int[3]>::value == true); // 요소의 갯수가 알려진 타입입니다.
+        static_assert(std::is_bounded_array<int[]>::value == false); // 요소의 갯수가 알려지지 않았습니다.          
+        static_assert(std::is_bounded_array<int>::value == false); // 배열이 아니면 false 입니다.  
+
+        static_assert(std::is_unbounded_array<int[3]>::value == false); // 요소의 갯수가 알려진 타입입니다.
+        static_assert(std::is_unbounded_array<int[]>::value == true); // 요소의 갯수가 알려지지 않았습니다.          
+        static_assert(std::is_unbounded_array<int>::value == false); // 배열이 아니면 false 입니다.          
+    }
+#endif
 }

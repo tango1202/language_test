@@ -77,6 +77,7 @@ TEST(TestMordern, Utility) {
         EXPECT_TRUE(std::compare_strong_order_fallback(T{1}, T{2}) < 0); // 삼중 비교 연산자가 없더라도, 삼중 비교를 할 수 있습니다.
     }
 #endif
+#if 202002L <= __cplusplus // C++20~
     // 유틸리티의 점진적 constexpr 개선
     {
         using namespace Swap_1;
@@ -84,4 +85,15 @@ TEST(TestMordern, Utility) {
         constexpr std::pair<int, int> result{ConstSwap(0, 1)};
         static_assert(result.first == 1 && result.second == 0);        
     }
+#endif    
+#if 202002L <= __cplusplus // C++20~
+    {
+#if __cpp_lib_string_view
+        std::cout << "Support string_view" << std::endl; // string_view를 지원합니다.
+#else 
+        std::cout << "No string_view" << std::endl;
+#endif         
+    }
+#endif
+
 }

@@ -59,3 +59,58 @@ TEST(TestMordern, InputOutput) {
 
 }
 
+#if 202002L <= __cplusplus // C++20~
+#include <syncstream>
+namespace OSyncStream_1 {
+    void Message() {
+        for(int i{0}; i < 10; ++i) {
+            std::this_thread::sleep_for(std::chrono::milliseconds{50}); // 50밀리초 만큼 쉽니다.
+            std::cout << "Message : " << i << std::endl;
+        }        
+    }
+    // std::cout 시 쓰레드 경쟁에 출력이 뒤섞이지 않도록 뮤텍스를 사용합니다.
+    std::mutex messageMutex;
+    void MutexMessage() {
+        std::lock_guard<std::mutex> lock(messageMutex);
+        for(int i{0}; i < 10; ++i) {
+            std::this_thread::sleep_for(std::chrono::milliseconds{50}); // 50밀리초 만큼 쉽니다.
+            std::cout << "MutexMessage : " << i << std::endl;
+        }        
+    }
+
+    void SyncMessage() {
+        for(int i{0}; i < 10; ++i) {
+            std::this_thread::sleep_for(std::chrono::milliseconds{50}); // 50밀리초 만큼 쉽니다.
+            // GCC 13.1.0에서 런타임 오류가 발생합니다.
+            // std::osyncstream(std::cout) << "SyncMessage : " << i << std::endl;
+        }   
+    }   
+}
+TEST(TestMordern, OSyncStream) {
+    {
+        using namespace OSyncStream_1;
+
+        std::thread worker1{Message};
+        std::thread worker2{Message};
+        worker1.join(); 
+        worker2.join(); 
+    }
+    {
+        using namespace OSyncStream_1;
+
+        std::thread worker1{MutexMessage};
+        std::thread worker2{MutexMessage};
+        worker1.join(); 
+        worker2.join(); 
+    }  
+    {
+        using namespace OSyncStream_1;
+
+        std::thread worker1{SyncMessage};
+        std::thread worker2{SyncMessage};
+        worker1.join(); 
+        worker2.join(); 
+    }       
+}
+#endif
+
