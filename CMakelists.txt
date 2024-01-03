@@ -154,6 +154,12 @@ set(TestFiles
    test/Test_CppPattern_Holder.cpp
    test/Test_CppPattern_SmartPointer.cpp
    test/Test_CppPattern_NewHandler.cpp
+   test/Test_Pattern_AbstractFactory.cpp   
+   test/Test_Pattern_Builder.cpp 
+   test/Test_Pattern_FactoryMethod.cpp 
+   test/Test_Pattern_Prototype.cpp 
+   test/Test_Pattern_Singleton.cpp 
+   test/Test_Pattern_Adapter.cpp    
 )
 
 # 실행파일 구성
