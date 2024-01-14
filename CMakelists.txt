@@ -173,6 +173,9 @@ set(TestFiles
    test/Test_Pattern_Memento.cpp 
    test/Test_Pattern_Observer.cpp
    test/Test_Pattern_State.cpp
+   test/Test_Pattern_Strategy.cpp
+   test/Test_Pattern_TemplateMethod.cpp
+   test/Test_Pattern_Visitor.cpp
 )
 
 # 실행파일 구성
