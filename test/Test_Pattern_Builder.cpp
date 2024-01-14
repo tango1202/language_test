@@ -17,57 +17,62 @@ namespace {
         std::vector<std::shared_ptr<Control>> m_Controls;
     public:
         void Add(std::unique_ptr<Control> control) {
+            assert(control);
             m_Controls.emplace_back(control.release());
         }
     };
 
     // ----
-    // 기본 인터페이스
+    // #1. 각 컨트롤들을 생성할 수 있는 인터페이스를 제공합니다.
     // ----
-    class IControlBuilder { // #1
+    class IControlBuilder { 
     protected:
-        IControlBuilder() = default; // 상속해서만 사용하도록 protected
+        IControlBuilder() = default; // 인터페이스여서 상속해서만 사용하도록 protected
+        ~IControlBuilder() = default; // 인터페이스여서 다형 소멸을 하지 않으므로 protected non-virtual
     private:
         IControlBuilder(const IControlBuilder&) = delete;
         IControlBuilder(IControlBuilder&&) = delete;
         IControlBuilder& operator =(const IControlBuilder&) = delete;
         IControlBuilder& operator =(IControlBuilder&&) = delete;
-    protected:
-        ~IControlBuilder() = default; // 다형 소멸을 하지 않으므로 protected non-virtual
     public:
         virtual void AddLabel(const char* caption) = 0;
         virtual void AddEdit() = 0;
         virtual void AddOk() = 0;
         virtual void AddCancel() = 0;
     };
-
-    class PanelBuilder : public IControlBuilder { // #2
+    // ----
+    // #2. Panel을 생성하고, AddLabel(), AddEdit(), AddOk(), AddCancel()호출시 m_Panel에 추가합니다.
+    // ----
+    class PanelBuilder : public IControlBuilder { 
     private:
         std::unique_ptr<Panel> m_Panel;
     public:
         PanelBuilder() : m_Panel{new Panel{}} {}
 
         virtual void AddLabel(const char* caption) override {
-            m_Panel->Add(std::unique_ptr<Control>(new Label{caption}));
+            m_Panel->Add(std::unique_ptr<Control>{new Label{caption}});
         }
         virtual void AddEdit() override {
-            m_Panel->Add(std::unique_ptr<Control>(new Edit{}));
+            m_Panel->Add(std::unique_ptr<Control>{new Edit{}});
         }
         virtual void AddOk() override {
-            m_Panel->Add(std::unique_ptr<Control>(new Ok{}));   
+            m_Panel->Add(std::unique_ptr<Control>{new Ok{}});   
         }
         virtual void AddCancel() override {
-            m_Panel->Add(std::unique_ptr<Control>(new Cancel{}));   
+            m_Panel->Add(std::unique_ptr<Control>{new Cancel{}});   
         }  
 
         // #4. 생성된 패널을 리턴하고 내부 멤버 변수는 초기화 합니다.
-        std::unique_ptr<Panel> Release() {return std::move(m_Panel);}  
+        std::unique_ptr<Panel> Release() {
+            assert(m_Panel);
+            return std::move(m_Panel);
+        }  
     };
 
     // ----
-    // Builder를 이용하여 요소를 합성합니다.
+    // #3. Builder를 이용하여 요소를 합성합니다.
     // ----
-    class IdPasswordDirector { // #3
+    class IdPasswordDirector { 
     private:
         IControlBuilder& m_Builder;
     public:
@@ -95,6 +100,7 @@ namespace {
             std::cout << "</Panel>" << std::endl;
         } 
         virtual void AddLabel(const char* caption) override {
+            assert(caption);
             std::cout << "    <Label caption = \"" << caption << "\"/>" << std::endl; 
         }
         virtual void AddEdit() override {
@@ -131,17 +137,26 @@ namespace {
 TEST(TestPattern, Builder) {
 
     {
+        // ----
+        // 테스트 코드
+        // ----   
         PanelBuilder panelBuilder;
         IdPasswordDirector director{panelBuilder};
         director.Construct();
         std::unique_ptr<Panel> panel{panelBuilder.Release()}; // #4. 생성된 panel을 구합니다.
     }
     {
+        // ----
+        // 테스트 코드
+        // ----           
         PanelWriter panelWriter;
         IdPasswordDirector director{panelWriter};
         director.Construct(); // 생성하는 정보를 cout으로 출력합니다.
     }
     {
+        // ----
+        // 테스트 코드
+        // ----           
         PanelCounter panelCounter;
         IdPasswordDirector director{panelCounter};
         director.Construct();

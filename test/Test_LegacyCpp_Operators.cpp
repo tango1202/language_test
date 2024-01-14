@@ -211,6 +211,17 @@ TEST(TestLegacyCpp, Operators) {
             // b2Ref = d2로 b2Ref는 다형적 동작하며, 여전히 Derived2 타입임.(원래 개체의 타입 정보)
             EXPECT_TRUE(typeid(b2Ref).name() == typeid(Derived2).name());   
         }
+        // before()를 이용한 대소 비교
+        {
+            Derived2 d1, d2;
+            Base2& b1 = d1;
+            Base2& b2 = d2;
+
+            const std::type_info& ti1 = typeid(b1);
+            const std::type_info& ti2 = typeid(b2);
+            EXPECT_TRUE(ti1.before(ti2) == false); // 모두 Derived2여서 ti1 < ti2는 false입니다. 
+            EXPECT_TRUE(ti2.before(ti1) == false); // 모두 Derived2여서 ti2 > ti1는 false입니다.          
+        }
     }
     // ----
     // 조건 연산자

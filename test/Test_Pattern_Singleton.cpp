@@ -18,7 +18,7 @@ namespace {
 
     public:
         // ----
-        // Singleton
+        // #1. Singleton 입니다. 1회만 생성됩니다.
         // ----
         static ErrorCodeManager& GetInstance() {
             static ErrorCodeManager s_ErrorCodeManager; // #1. 함수내 정적 지역 변수여서 함수 호출시 1회만 생성됩니다.
@@ -28,6 +28,8 @@ namespace {
 
         // #3. 동일한 ErrorCode가 있으면 수정하고, 없으면 추가합니다.
         void SetMessage(ErrorCode errorCode, const char* message) {
+            assert(message);
+
             auto result = m_Map.insert(std::make_pair(errorCode, message));
             
             // 동일한 ErrorCode가 있어서 insert에 실패하면 message를 변경합니다.
@@ -48,14 +50,16 @@ namespace {
 
 TEST(TestPattern, Singleton) {
 
-    {
-        // #4. 등록하지 않은 것들을 등록합니다.
-        ErrorCodeManager::GetInstance().SetMessage(ErrorCode::InvalidArgument, "Invalid Argument");
-        ErrorCodeManager::GetInstance().SetMessage(ErrorCode::OutOfRange, "Out Of Range");
-    
-        // #4. 원래 입력했던 Unknown 과 새롭게 등록한 Invalid Argument, Out Of Range가 있습니다.
-        EXPECT_TRUE(ErrorCodeManager::GetInstance().GetMessage(ErrorCode::Unknown) == "Unknown");
-        EXPECT_TRUE(ErrorCodeManager::GetInstance().GetMessage(ErrorCode::InvalidArgument) == "Invalid Argument");
-        EXPECT_TRUE(ErrorCodeManager::GetInstance().GetMessage(ErrorCode::OutOfRange) == "Out Of Range");
-    }
+    // ----
+    // 테스트 코드
+    // ----
+    // #4. 등록하지 않은 것들을 등록합니다.
+    ErrorCodeManager::GetInstance().SetMessage(ErrorCode::InvalidArgument, "Invalid Argument");
+    ErrorCodeManager::GetInstance().SetMessage(ErrorCode::OutOfRange, "Out Of Range");
+
+    // #4. 원래 입력했던 Unknown 과 새롭게 등록한 Invalid Argument, Out Of Range가 있습니다.
+    EXPECT_TRUE(ErrorCodeManager::GetInstance().GetMessage(ErrorCode::Unknown) == "Unknown");
+    EXPECT_TRUE(ErrorCodeManager::GetInstance().GetMessage(ErrorCode::InvalidArgument) == "Invalid Argument");
+    EXPECT_TRUE(ErrorCodeManager::GetInstance().GetMessage(ErrorCode::OutOfRange) == "Out Of Range");
+
 }

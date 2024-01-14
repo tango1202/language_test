@@ -3,7 +3,7 @@ project(UnitTester VERSION 0.1.0) # PROJECT_NAME 과 PROJECT_VERSION
 
 #set(CMAKE_C_STANDARD 99)
 #set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wimplicit-fallthrough") # -fopenmp -march=native -D_GLIBCXX_PARALLEL
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wimplicit-fallthrough") # -fopenmp -march=native -D_GLIBCXX_PARALLEL
 
 set(This UnitTester) # 빌드 타겟
 set(SrcLib SrcLib) # cpp/src 라이브러리
@@ -84,72 +84,72 @@ set(TestFiles
    test/Test_LegacyCpp_Diagonostics.cpp     
    test/Test_LegacyCpp_ExceptionWarranty.cpp
    test/Test_LegacyCpp_Pair.cpp 
-   test/Test_MordernCpp_Type.cpp
-   test/Test_MordernCpp_RValueValueCategory.cpp
-   test/Test_MordernCpp_ForwardingReference.cpp
-   test/Test_MordernCpp_AutoDecltype.cpp
-   test/Test_MordernCpp_Class.cpp
-   test/Test_MordernCpp_ScopedEnum.cpp
-   test/Test_MordernCpp_Constexpr.cpp    
-   test/Test_MordernCpp_Initialization.cpp   
-   test/Test_MordernCpp_VariadicTemplate.cpp
-   test/Test_MordernCpp_UnrestrictedUnion.cpp
-   test/Test_MordernCpp_String.cpp
-   test/Test_MordernCpp_Literals.cpp
-   test/Test_MordernCpp_StaticAssert.cpp
-   test/Test_MordernCpp_Attribute.cpp
-   test/Test_MordernCpp_Statement.cpp
-   test/Test_MordernCpp_NoExcept.cpp
-   test/Test_MordernCpp_Lambda.cpp 
-   test/Test_MordernCpp_ETC.cpp 
-   test/Test_MordernCpp_MemberFunctionRef.cpp 
-   test/Test_MordernCpp_Namespace.cpp 
-   test/Test_MordernCpp_ExplicitConversions.cpp 
-   test/Test_MordernCpp_ExternTemplate1.cpp 
-   test/Test_MordernCpp_ExternTemplate2.cpp 
-   test/Test_MordernCpp_UniquePtr.cpp 
-   test/Test_MordernCpp_SharedPtr.cpp 
-   test/Test_MordernCpp_Tuple.cpp 
-   test/Test_MordernCpp_Function.cpp 
-   test/Test_MordernCpp_Hash.cpp 
-   test/Test_MordernCpp_Array.cpp 
-   test/Test_MordernCpp_ForwardList.cpp 
-   test/Test_MordernCpp_UnorderedMap.cpp
-   test/Test_MordernCpp_Iterator.cpp
-   test/Test_MordernCpp_Thread.cpp
-   test/Test_MordernCpp_ConditionVariable.cpp
-   test/Test_MordernCpp_Chrono.cpp
-   test/Test_MordernCpp_Ratio.cpp
-   test/Test_MordernCpp_Atomic.cpp
-   test/Test_MordernCpp_Future.cpp
-   test/Test_MordernCpp_RegularExpressions.cpp
-   test/Test_MordernCpp_Template.cpp
-   test/Test_MordernCpp_IntegerSequence.cpp
-   test/Test_MordernCpp_Exchange.cpp
-   test/Test_MordernCpp_CopyElision.cpp
-   test/Test_MordernCpp_InlineVariable1.cpp
-   test/Test_MordernCpp_InlineVariable2.cpp
-   test/Test_MordernCpp_InlineVariable3.cpp
-   test/Test_MordernCpp_StructuredBinding.cpp
-   test/Test_MordernCpp_Any.cpp
-   test/Test_MordernCpp_Optional.cpp
-   test/Test_MordernCpp_Variant.cpp
-   test/Test_MordernCpp_Functor.cpp
-   test/Test_MordernCpp_Memory.cpp
-   test/Test_MordernCpp_Algorithm.cpp
-   test/Test_MordernCpp_PolymorphicAllocator.cpp
-   test/Test_MordernCpp_StringView.cpp
-   test/Test_MordernCpp_TypeTraits.cpp
-   test/Test_MordernCpp_Operators.cpp
-   test/Test_MordernCpp_Concept.cpp
-   test/Test_MordernCpp_Container.cpp
-   test/Test_MordernCpp_Coroutine.cpp
-   test/Test_MordernCpp_Ranges.cpp
-   test/Test_MordernCpp_Span.cpp
-   test/Test_MordernCpp_Utility.cpp
-   test/Test_MordernCpp_Numeric.cpp   
-   test/Test_MordernCpp_Format.cpp   
-   test/Test_MordernCpp_InputOutput.cpp   
+   test/Test_ModernCpp_Type.cpp
+   test/Test_ModernCpp_RValueValueCategory.cpp
+   test/Test_ModernCpp_ForwardingReference.cpp
+   test/Test_ModernCpp_AutoDecltype.cpp
+   test/Test_ModernCpp_Class.cpp
+   test/Test_ModernCpp_ScopedEnum.cpp
+   test/Test_ModernCpp_Constexpr.cpp    
+   test/Test_ModernCpp_Initialization.cpp   
+   test/Test_ModernCpp_VariadicTemplate.cpp
+   test/Test_ModernCpp_UnrestrictedUnion.cpp
+   test/Test_ModernCpp_String.cpp
+   test/Test_ModernCpp_Literals.cpp
+   test/Test_ModernCpp_StaticAssert.cpp
+   test/Test_ModernCpp_Attribute.cpp
+   test/Test_ModernCpp_Statement.cpp
+   test/Test_ModernCpp_NoExcept.cpp
+   test/Test_ModernCpp_Lambda.cpp 
+   test/Test_ModernCpp_ETC.cpp 
+   test/Test_ModernCpp_MemberFunctionRef.cpp 
+   test/Test_ModernCpp_Namespace.cpp 
+   test/Test_ModernCpp_ExplicitConversions.cpp 
+   test/Test_ModernCpp_ExternTemplate1.cpp 
+   test/Test_ModernCpp_ExternTemplate2.cpp 
+   test/Test_ModernCpp_UniquePtr.cpp 
+   test/Test_ModernCpp_SharedPtr.cpp 
+   test/Test_ModernCpp_Tuple.cpp 
+   test/Test_ModernCpp_Function.cpp 
+   test/Test_ModernCpp_Hash.cpp 
+   test/Test_ModernCpp_Array.cpp 
+   test/Test_ModernCpp_ForwardList.cpp 
+   test/Test_ModernCpp_UnorderedMap.cpp
+   test/Test_ModernCpp_Iterator.cpp
+   test/Test_ModernCpp_Thread.cpp
+   test/Test_ModernCpp_ConditionVariable.cpp
+   test/Test_ModernCpp_Chrono.cpp
+   test/Test_ModernCpp_Ratio.cpp
+   test/Test_ModernCpp_Atomic.cpp
+   test/Test_ModernCpp_Future.cpp
+   test/Test_ModernCpp_RegularExpressions.cpp
+   test/Test_ModernCpp_Template.cpp
+   test/Test_ModernCpp_IntegerSequence.cpp
+   test/Test_ModernCpp_Exchange.cpp
+   test/Test_ModernCpp_CopyElision.cpp
+   test/Test_ModernCpp_InlineVariable1.cpp
+   test/Test_ModernCpp_InlineVariable2.cpp
+   test/Test_ModernCpp_InlineVariable3.cpp
+   test/Test_ModernCpp_StructuredBinding.cpp
+   test/Test_ModernCpp_Any.cpp
+   test/Test_ModernCpp_Optional.cpp
+   test/Test_ModernCpp_Variant.cpp
+   test/Test_ModernCpp_Functor.cpp
+   test/Test_ModernCpp_Memory.cpp
+   test/Test_ModernCpp_Algorithm.cpp
+   test/Test_ModernCpp_PolymorphicAllocator.cpp
+   test/Test_ModernCpp_StringView.cpp
+   test/Test_ModernCpp_TypeTraits.cpp
+   test/Test_ModernCpp_Operators.cpp
+   test/Test_ModernCpp_Concept.cpp
+   test/Test_ModernCpp_Container.cpp
+   test/Test_ModernCpp_Coroutine.cpp
+   test/Test_ModernCpp_Ranges.cpp
+   test/Test_ModernCpp_Span.cpp
+   test/Test_ModernCpp_Utility.cpp
+   test/Test_ModernCpp_Numeric.cpp   
+   test/Test_ModernCpp_Format.cpp   
+   test/Test_ModernCpp_InputOutput.cpp   
    test/Test_CppPattern_LogicalConst.cpp
    test/Test_CppPattern_Holder.cpp
    test/Test_CppPattern_SmartPointer.cpp
@@ -160,6 +160,19 @@ set(TestFiles
    test/Test_Pattern_Prototype.cpp 
    test/Test_Pattern_Singleton.cpp 
    test/Test_Pattern_Adapter.cpp    
+   test/Test_Pattern_Bridge.cpp 
+   test/Test_Pattern_Composite.cpp 
+   test/Test_Pattern_Decorator.cpp 
+   test/Test_Pattern_Flyweight.cpp  
+   test/Test_Pattern_Proxy.cpp      
+   test/Test_Pattern_ChainOfResponsibility.cpp   
+   test/Test_Pattern_Command.cpp  
+   test/Test_Pattern_Interpret.cpp 
+   test/Test_Pattern_Iterator.cpp 
+   test/Test_Pattern_Mediator.cpp
+   test/Test_Pattern_Memento.cpp 
+   test/Test_Pattern_Observer.cpp
+   test/Test_Pattern_State.cpp
 )
 
 # 실행파일 구성

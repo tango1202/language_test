@@ -8,14 +8,14 @@ namespace {
     class Doc {
     protected:
         Doc() = default; // 다형 소멸을 제공하는 추상 클래스. 상속해서만 사용하도록 protected
+    public:
+        virtual ~Doc() = default; // 다형 소멸 하도록 public virtual
     private:
         Doc(const Doc&) = delete; 
         Doc(Doc&&) = delete; 
         Doc& operator =(const Doc&) = delete; 
         Doc& operator =(Doc&&) = delete;   
     public:
-        virtual ~Doc() = default; // 다형 소멸 하도록 public virtual
-
         bool IsDirty() const {return false;} // 테스트용으로 그냥 false를 리턴합니다.
         virtual void Load() = 0;
         virtual void Save() = 0;
@@ -26,19 +26,17 @@ namespace {
         std::unique_ptr<Doc> m_Doc;
     protected:
         App() = default; // 다형 소멸을 제공하는 추상 클래스. 상속해서만 사용하도록 protected
+    public:
+        virtual ~App() = default; // 다형 소멸 하도록 public virtual
     private:
         App(const App&) = delete;
         App(const App&&) = delete;
         App& operator =(const App&) = delete;
         App& operator =(App&&) = delete;   
-    public:
-        virtual ~App() = default; // 다형 소멸 하도록 public virtual
-
     protected:
         // 자식 개체에서만 호출 가능하도록 protected입니다.
         // #2. 자식 개체에서 어떤 Doc을 생성할지 결정합니다.
         virtual std::unique_ptr<Doc> CreateDoc() = 0;
-
     public:   
         void LoadDoc() {
             
@@ -70,9 +68,9 @@ namespace {
         }
     };
     // ----
-    // 자식 클래스입니다.
+    // #2. 자식 클래스입니다. CreateDoc()이 생성하는 Doc은 자식 개체에서 정의한 구체화된 개체인 MyDoc이어야 합니다.
     // ----
-    class MyDoc : public Doc { // #2
+    class MyDoc : public Doc { 
     public:
         MyDoc() = default;
 
@@ -94,15 +92,15 @@ namespace {
             return std::unique_ptr<Doc>(new MyDoc{});
         }
     };
-
 }
 
 TEST(TestPattern, FactoryMethod) {
 
-    {
-        MyApp app;
+    // ----
+    // 테스트 코드
+    // ----
+    MyApp app;
 
-        app.LoadDoc();
-        app.SaveDoc();
-    }
+    app.LoadDoc(); // MyDoc을 사용합니다.
+    app.SaveDoc(); // MyDoc을 사용합니다.
 }

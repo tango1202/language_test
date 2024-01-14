@@ -3,17 +3,20 @@
 
 namespace {
 
+    // ----
+    // #1. Shape, Rectangle, Circle은 Clone()을 제공하며, 자기 자신을 복제합니다.
+    // ----
     class Shape {
     protected:
         Shape() = default; // 다형 소멸을 제공하는 추상 클래스. 상속해서만 사용하도록 protected
         Shape(const Shape&) = default; 
+    public:
+        virtual ~Shape() = default; // 다형 소멸 하도록 public virtual 
     private:
         Shape(Shape&&) = delete; 
         Shape& operator =(const Shape&) = delete; 
         Shape& operator =(Shape&&) = delete;   
     public:
-        virtual ~Shape() = default; // 다형 소멸 하도록 public virtual    
-
         // #1. 복제본을 생성합니다.
         virtual std::unique_ptr<Shape> Clone() const = 0;
     };
@@ -66,9 +69,11 @@ namespace {
         }
     };
 
-    // 클릭하면 해당 Shape개체를 생성해줍니다.
+    // ----
+    // #2. Client 입니다. 클릭하면 해당 Shape개체를 생성하기 위해 Shape 개체를 연결합니다.
+    // ----
     class ShapeButton {
-        std::unique_ptr<Shape> m_Shape; // #2. Prototype 개체입니다.
+        std::unique_ptr<Shape> m_Shape; // #2. Shape 개체를 연결합니다.
     public:
         explicit ShapeButton(std::unique_ptr<Shape> shape) : m_Shape{std::move(shape)} {} // #2
     private:
@@ -94,7 +99,7 @@ namespace {
         }
     };
 
-    // ShapeButton
+    // ShapeButton에 미리 정의된 도형들을 연결합니다.
     class ShapePalette {
         ShapeButton m_RectangleButton;
         ShapeButton m_SquareButton;
@@ -127,30 +132,30 @@ namespace {
 
 TEST(TestPattern, Prototype) {
 
-    {
-        ShapePalette shapePalette;
+    // ----
+    // 테스트 코드
+    // ----
+    ShapePalette shapePalette;
 
-        // #3. 각 버튼에 연결된 shape을 복제해서 사용합니다.
-        std::unique_ptr<Shape> shape1{shapePalette.GetRectangleButton().Click()};
-        const Rectangle& rectangle{dynamic_cast<const Rectangle&>(*shape1)};
-        EXPECT_TRUE(rectangle.GetLeft() == 1 && rectangle.GetTop() == 2 && rectangle.GetWidth() == 5 && rectangle.GetHeight() == 10);
+    // #3. 각 버튼에 연결된 shape을 복제해서 사용합니다.
+    std::unique_ptr<Shape> shape1{shapePalette.GetRectangleButton().Click()};
+    const Rectangle& rectangle{dynamic_cast<const Rectangle&>(*shape1)};
+    EXPECT_TRUE(rectangle.GetLeft() == 1 && rectangle.GetTop() == 2 && rectangle.GetWidth() == 5 && rectangle.GetHeight() == 10);
 
-        std::unique_ptr<Shape> shape2{shapePalette.GetSquareButton().Click()};
-        const Rectangle& square{dynamic_cast<const Rectangle&>(*shape2)};
-        EXPECT_TRUE(square.GetLeft() == 1 && square.GetTop() == 2 && square.GetWidth() == 20 && square.GetHeight() == 20);
+    std::unique_ptr<Shape> shape2{shapePalette.GetSquareButton().Click()};
+    const Rectangle& square{dynamic_cast<const Rectangle&>(*shape2)};
+    EXPECT_TRUE(square.GetLeft() == 1 && square.GetTop() == 2 && square.GetWidth() == 20 && square.GetHeight() == 20);
 
-        std::unique_ptr<Shape> shape3{shapePalette.GetCircleButton().Click()};
-        Circle& circle{dynamic_cast<Circle&>(*shape3)};
-        EXPECT_TRUE(circle.GetCenterX() == 1 && circle.GetCenterY() == 2 && circle.GetDiameter() == 30);
+    std::unique_ptr<Shape> shape3{shapePalette.GetCircleButton().Click()};
+    Circle& circle{dynamic_cast<Circle&>(*shape3)};
+    EXPECT_TRUE(circle.GetCenterX() == 1 && circle.GetCenterY() == 2 && circle.GetDiameter() == 30);
 
-        // #4. circle의 지름을 수정하고 해당 shape을 사용자 버튼에 추가합니다.
-        circle.SetDiameter(100);
-        shapePalette.SetUserButton(std::move(shape3));
+    // #4. circle의 지름을 수정하고 해당 shape을 사용자 버튼에 추가합니다.
+    circle.SetDiameter(100);
+    shapePalette.SetUserButton(std::move(shape3));
 
-        // 사용자가 추가한 개체를 복제해서 사용합니다.
-        std::unique_ptr<Shape> shape4{shapePalette.GetUserButton().Click()};
-        Circle& user{dynamic_cast<Circle&>(*shape4)};
-        EXPECT_TRUE(user.GetCenterX() == 1 && user.GetCenterY() == 2 && user.GetDiameter() == 100);
-    }
-
+    // 사용자가 추가한 개체를 복제해서 사용합니다.
+    std::unique_ptr<Shape> shape4{shapePalette.GetUserButton().Click()};
+    Circle& user{dynamic_cast<Circle&>(*shape4)};
+    EXPECT_TRUE(user.GetCenterX() == 1 && user.GetCenterY() == 2 && user.GetDiameter() == 100);
 }
