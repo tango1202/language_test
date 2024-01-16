@@ -49,7 +49,7 @@ namespace {
         }
     };
     // ----
-    // #3. Proxy입니다. Draw() 시 실제 Image를 생성하며, 그전에는 멤버 변수의 값을 이용합니다.
+    // #3. Proxy입니다. Image 생성 전에는 크기 정보 요청시 멤버 변수의 값으로 대리 실행하며, Draw() 시 실제 Image를 생성합니다.
     // ----
     class ImageProxy : public Shape {
         int m_Width; // #3. m_Image가 만들어지지 않으면 사용합니다.
