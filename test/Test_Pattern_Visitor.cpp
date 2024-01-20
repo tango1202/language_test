@@ -126,12 +126,14 @@ TEST(TestPattern, Visitor) {
 
     class ScaleVisitor : public IVisitor {
     public:
+        ScaleVisitor() = default; 
+        
         virtual void VisitRectangle(Rectangle& rectangle) override {
-            rectangle.SetWidth(rectangle.GetWidth() * 2); // 2배로 크게합니다.
+            rectangle.SetWidth(rectangle.GetWidth() * 2); // 2배로 확대합니다.
             rectangle.SetHeight(rectangle.GetHeight() * 2);
         };
         virtual void VisitCircle(Circle& rectangle) override {
-            rectangle.SetDiameter(rectangle.GetDiameter() * 2); // 2배로 크게 합니다.
+            rectangle.SetDiameter(rectangle.GetDiameter() * 2); // 2배로 확대합니다.
         }
     };
 
